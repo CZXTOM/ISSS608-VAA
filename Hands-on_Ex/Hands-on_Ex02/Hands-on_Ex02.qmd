@@ -1,17 +1,9 @@
 ---
 title: "Hands-on Exercise 2"
 author: "ZeXin Chen"
-date: "2026-04-24"
-date-modified: last-modified
-format: html
-execute:
-  echo: true
-  eval: true
-  warning: false
-  freeze: true
 ---
 
-## Getting Started
+# Getting Started
 
 ### Install and load packages
 
@@ -25,7 +17,7 @@ pacman::p_load(ggrepel, patchwork, ggthemes, hrbrthemes, tidyverse)
 exam_data <- read_csv("data/Exam_data.csv")
 ```
 
-## Beyond ggplot2 Annotation: ggrepel
+# Beyond ggplot2 Annotation: ggrepel
 
 ### Without ggrepel
 
@@ -47,7 +39,7 @@ ggplot(exam_data, aes(x = MATHS, y = ENGLISH)) +
   ggtitle("English vs Maths scores - with ggrepel")
 ```
 
-## Beyond ggplot2 Themes
+# Beyond ggplot2 Themes
 
 ### ggthemes — Economist theme
 
@@ -67,7 +59,7 @@ ggplot(exam_data, aes(x = MATHS)) +
   theme_ipsum(axis_title_size = 18, base_size = 15, grid = "Y")
 ```
 
-## Beyond Single Graph: patchwork
+# Beyond Single Graph: patchwork
 
 ### Two graphs side by side
 
