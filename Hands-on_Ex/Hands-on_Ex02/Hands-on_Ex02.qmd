@@ -1,0 +1,109 @@
+---
+title: "Hands-on Exercise 2"
+author: "ZeXin Chen"
+date: "2026-04-24"
+date-modified: last-modified
+format: html
+execute:
+  echo: true
+  eval: true
+  warning: false
+  freeze: true
+---
+
+## Getting Started
+
+### Install and load packages
+
+```{r}
+pacman::p_load(ggrepel, patchwork, ggthemes, hrbrthemes, tidyverse)
+```
+
+### Import data
+
+```{r}
+exam_data <- read_csv("data/Exam_data.csv")
+```
+
+## Beyond ggplot2 Annotation: ggrepel
+
+### Without ggrepel
+
+```{r}
+ggplot(exam_data, aes(x = MATHS, y = ENGLISH)) +
+  geom_point() +
+  geom_text(aes(label = ID), hjust = 0.5, vjust = -0.5) +
+  coord_cartesian(xlim = c(0,100), ylim = c(0,100)) +
+  ggtitle("English vs Maths scores - without ggrepel")
+```
+
+### With ggrepel
+
+```{r}
+ggplot(exam_data, aes(x = MATHS, y = ENGLISH)) +
+  geom_point() +
+  geom_text_repel(aes(label = ID), size = 3) +
+  coord_cartesian(xlim = c(0,100), ylim = c(0,100)) +
+  ggtitle("English vs Maths scores - with ggrepel")
+```
+
+## Beyond ggplot2 Themes
+
+### ggthemes — Economist theme
+
+```{r}
+ggplot(exam_data, aes(x = MATHS)) +
+  geom_histogram(bins = 20, fill = "grey", color = "black") +
+  ggtitle("Distribution of Maths scores") +
+  theme_economist()
+```
+
+### hrbrthemes
+
+```{r}
+ggplot(exam_data, aes(x = MATHS)) +
+  geom_histogram(bins = 20, fill = "grey", color = "black") +
+  ggtitle("Distribution of Maths scores") +
+  theme_ipsum(axis_title_size = 18, base_size = 15, grid = "Y")
+```
+
+## Beyond Single Graph: patchwork
+
+### Two graphs side by side
+
+```{r}
+p1 <- ggplot(exam_data, aes(x = MATHS)) +
+  geom_histogram(bins = 20, color = "grey30", fill = "grey90") +
+  ggtitle("Distribution of Maths scores")
+
+p2 <- ggplot(exam_data, aes(x = ENGLISH)) +
+  geom_histogram(bins = 20, color = "grey30", fill = "grey90") +
+  ggtitle("Distribution of English scores")
+
+p1 + p2
+```
+
+### Three graphs combined
+
+```{r}
+p3 <- ggplot(exam_data, aes(x = MATHS, y = ENGLISH)) +
+  geom_point() +
+  geom_smooth(method = lm, linewidth = 0.5) +
+  coord_cartesian(xlim = c(0,100), ylim = c(0,100)) +
+  ggtitle("English vs Maths scores")
+
+(p1 / p2) | p3
+```
+
+### With auto-tagging
+
+```{r}
+((p1 / p2) | p3) +
+  plot_annotation(tag_levels = 'I')
+```
+
+### Inset plot
+
+```{r}
+p3 + inset_element(p2, left = 0.02, bottom = 0.7, right = 0.5, top = 1)
+```
