@@ -9,23 +9,107 @@
   {
     "objectID": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html",
     "href": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html",
-    "title": "Hands-on Exercise 1",
+    "title": "Hands-on Exercise 1: A Layered Grammar of Graphics",
     "section": "",
-    "text": "The code chunk below uses p_load() of pacman package to check if tidyverse packages are installed in the computer. If they are, then they will be launched into R.\n\npacman::p_load(tidyverse)\n\n\n\n\n\nexam_data &lt;- read_csv(\"data/Exam_data.csv\")\n\nRows: 322 Columns: 7\n── Column specification ────────────────────────────────────────────────────────\nDelimiter: \",\"\nchr (4): ID, CLASS, GENDER, RACE\ndbl (3): ENGLISH, MATHS, SCIENCE\n\nℹ Use `spec()` to retrieve the full column specification for this data.\nℹ Specify the column types or set `show_col_types = FALSE` to quiet this message."
+    "text": "The code chunk below uses p_load() of pacman package to check if tidyverse packages are installed in the computer. If they are, then they will be launched into R.\n\npacman::p_load(tidyverse)\n\n\n\n\n\nexam_data &lt;- read_csv(\"data/Exam_data.csv\")\n\nThe dataset contains year-end examination grades of a cohort of Primary 3 students from a local school. It has seven attributes — four categorical (ID, CLASS, GENDER, RACE) and three continuous (MATHS, ENGLISH, SCIENCE)."
   },
   {
-    "objectID": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html#install-and-launching-r-packages",
-    "href": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html#install-and-launching-r-packages",
-    "title": "Hands-on Exercise 1",
+    "objectID": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html#installing-and-loading-r-packages",
+    "href": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html#installing-and-loading-r-packages",
+    "title": "Hands-on Exercise 1: A Layered Grammar of Graphics",
     "section": "",
     "text": "The code chunk below uses p_load() of pacman package to check if tidyverse packages are installed in the computer. If they are, then they will be launched into R.\n\npacman::p_load(tidyverse)"
   },
   {
     "objectID": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html#importing-the-data",
     "href": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html#importing-the-data",
-    "title": "Hands-on Exercise 1",
+    "title": "Hands-on Exercise 1: A Layered Grammar of Graphics",
     "section": "",
-    "text": "exam_data &lt;- read_csv(\"data/Exam_data.csv\")\n\nRows: 322 Columns: 7\n── Column specification ────────────────────────────────────────────────────────\nDelimiter: \",\"\nchr (4): ID, CLASS, GENDER, RACE\ndbl (3): ENGLISH, MATHS, SCIENCE\n\nℹ Use `spec()` to retrieve the full column specification for this data.\nℹ Specify the column types or set `show_col_types = FALSE` to quiet this message."
+    "text": "exam_data &lt;- read_csv(\"data/Exam_data.csv\")\n\nThe dataset contains year-end examination grades of a cohort of Primary 3 students from a local school. It has seven attributes — four categorical (ID, CLASS, GENDER, RACE) and three continuous (MATHS, ENGLISH, SCIENCE)."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html#bar-chart-geom_bar",
+    "href": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html#bar-chart-geom_bar",
+    "title": "Hands-on Exercise 1: A Layered Grammar of Graphics",
+    "section": "Bar Chart — geom_bar()",
+    "text": "Bar Chart — geom_bar()\nA bar chart showing the count of students by race.\n\nThe PlotThe Code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = exam_data,\n       aes(x = RACE)) +\n  geom_bar()"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html#dot-plot-geom_dotplot",
+    "href": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html#dot-plot-geom_dotplot",
+    "title": "Hands-on Exercise 1: A Layered Grammar of Graphics",
+    "section": "Dot Plot — geom_dotplot()",
+    "text": "Dot Plot — geom_dotplot()\nA dot plot of Maths scores, where each dot represents one observation.\n\nThe PlotThe Code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = exam_data,\n       aes(x = MATHS)) +\n  geom_dotplot(binwidth = 2.5,\n               dotsize = 0.5) +\n  scale_y_continuous(NULL, breaks = NULL)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html#histogram-geom_histogram",
+    "href": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html#histogram-geom_histogram",
+    "title": "Hands-on Exercise 1: A Layered Grammar of Graphics",
+    "section": "Histogram — geom_histogram()",
+    "text": "Histogram — geom_histogram()\nA histogram of Maths scores coloured by gender.\n\nThe PlotThe Code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = exam_data,\n       aes(x = MATHS,\n           fill = GENDER)) +\n  geom_histogram(bins = 20,\n                 color = \"grey30\")"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html#kernel-density-estimate-geom_density",
+    "href": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html#kernel-density-estimate-geom_density",
+    "title": "Hands-on Exercise 1: A Layered Grammar of Graphics",
+    "section": "Kernel Density Estimate — geom_density()",
+    "text": "Kernel Density Estimate — geom_density()\nA kernel density plot comparing Maths score distributions between genders.\n\nThe PlotThe Code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = exam_data,\n       aes(x = MATHS,\n           colour = GENDER)) +\n  geom_density()"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html#box-plot-geom_boxplot",
+    "href": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html#box-plot-geom_boxplot",
+    "title": "Hands-on Exercise 1: A Layered Grammar of Graphics",
+    "section": "Box Plot — geom_boxplot()",
+    "text": "Box Plot — geom_boxplot()\nA notched box plot of Maths scores by gender. Non-overlapping notches indicate differing medians.\n\nThe PlotThe Code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = exam_data,\n       aes(y = MATHS,\n           x = GENDER)) +\n  geom_boxplot(notch = TRUE)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html#violin-plot-geom_violin",
+    "href": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html#violin-plot-geom_violin",
+    "title": "Hands-on Exercise 1: A Layered Grammar of Graphics",
+    "section": "Violin Plot — geom_violin()",
+    "text": "Violin Plot — geom_violin()\nA violin plot comparing the full distribution shape of Maths scores by gender.\n\nThe PlotThe Code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = exam_data,\n       aes(y = MATHS,\n           x = GENDER)) +\n  geom_violin()"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html#combining-geoms-box-plot-jitter",
+    "href": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html#combining-geoms-box-plot-jitter",
+    "title": "Hands-on Exercise 1: A Layered Grammar of Graphics",
+    "section": "Combining Geoms — Box Plot + Jitter",
+    "text": "Combining Geoms — Box Plot + Jitter\nData points overlaid on box plots using geom_point() with jitter.\n\nThe PlotThe Code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = exam_data,\n       aes(y = MATHS,\n           x = GENDER)) +\n  geom_boxplot() +\n  geom_point(position = \"jitter\",\n             size = 0.5)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html#adding-mean-points-stat_summary",
+    "href": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html#adding-mean-points-stat_summary",
+    "title": "Hands-on Exercise 1: A Layered Grammar of Graphics",
+    "section": "Adding Mean Points — stat_summary()",
+    "text": "Adding Mean Points — stat_summary()\nMean values added to box plots using stat_summary().\n\nThe PlotThe Code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = exam_data,\n       aes(y = MATHS,\n           x = GENDER)) +\n  geom_boxplot() +\n  stat_summary(geom = \"point\",\n               fun = \"mean\",\n               colour = \"red\",\n               size = 4)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html#best-fit-line-geom_smooth",
+    "href": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html#best-fit-line-geom_smooth",
+    "title": "Hands-on Exercise 1: A Layered Grammar of Graphics",
+    "section": "Best Fit Line — geom_smooth()",
+    "text": "Best Fit Line — geom_smooth()\nA scatter plot of Maths vs English with a linear regression line.\n\nThe PlotThe Code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = exam_data,\n       aes(x = MATHS,\n           y = ENGLISH)) +\n  geom_point() +\n  geom_smooth(method = lm,\n              linewidth = 0.5)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html#trellis-plot-facet_wrap",
+    "href": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html#trellis-plot-facet_wrap",
+    "title": "Hands-on Exercise 1: A Layered Grammar of Graphics",
+    "section": "Trellis Plot — facet_wrap()",
+    "text": "Trellis Plot — facet_wrap()\nHistograms of Maths scores faceted by class.\n\nThe PlotThe Code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = exam_data,\n       aes(x = MATHS)) +\n  geom_histogram(bins = 20) +\n  facet_wrap(~ CLASS)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html#flipped-bar-chart-coord_flip",
+    "href": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html#flipped-bar-chart-coord_flip",
+    "title": "Hands-on Exercise 1: A Layered Grammar of Graphics",
+    "section": "Flipped Bar Chart — coord_flip()",
+    "text": "Flipped Bar Chart — coord_flip()\nA horizontal bar chart of race counts with theme_minimal().\n\nThe PlotThe Code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = exam_data,\n       aes(x = RACE)) +\n  geom_bar() +\n  coord_flip() +\n  theme_minimal()"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html#fixed-axis-range-coord_cartesian",
+    "href": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html#fixed-axis-range-coord_cartesian",
+    "title": "Hands-on Exercise 1: A Layered Grammar of Graphics",
+    "section": "Fixed Axis Range — coord_cartesian()",
+    "text": "Fixed Axis Range — coord_cartesian()\nScatter plot with both axes fixed from 0 to 100.\n\nThe PlotThe Code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = exam_data,\n       aes(x = MATHS,\n           y = ENGLISH)) +\n  geom_point() +\n  geom_smooth(method = lm,\n              linewidth = 0.5) +\n  coord_cartesian(xlim = c(0, 100),\n                  ylim = c(0, 100))"
   },
   {
     "objectID": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html",
