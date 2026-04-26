@@ -3,7 +3,6 @@ title: "Hands-on Exercise 1: A Layered Grammar of Graphics"
 author: "ZeXin Chen"
 date: "April 26, 2026"
 date-modified: "last-modified"
-format: html
 execute:
   echo: true
   eval: true
