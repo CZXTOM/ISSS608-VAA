@@ -1,9 +1,17 @@
 ---
 title: "Hands-on Exercise 2"
 author: "ZeXin Chen"
+date: "2026-04-25"
+date-modified: last-modified
+format: html
+execute:
+  echo: true
+  eval: true
+  warning: false
+  freeze: true
 ---
 
-# Getting Started
+## Getting Started
 
 ### Install and load packages
 
@@ -17,11 +25,14 @@ pacman::p_load(ggrepel, patchwork, ggthemes, hrbrthemes, tidyverse)
 exam_data <- read_csv("data/Exam_data.csv")
 ```
 
-# Beyond ggplot2 Annotation: ggrepel
+## Beyond ggplot2 Annotation: ggrepel
 
 ### Without ggrepel
 
+:::: panel-tabset
+## The Plot
 ```{r}
+#| echo: false
 ggplot(exam_data, aes(x = MATHS, y = ENGLISH)) +
   geom_point() +
   geom_text(aes(label = ID), hjust = 0.5, vjust = -0.5) +
@@ -29,9 +40,23 @@ ggplot(exam_data, aes(x = MATHS, y = ENGLISH)) +
   ggtitle("English vs Maths scores - without ggrepel")
 ```
 
+## The Code
+```{r}
+#| eval: false
+ggplot(exam_data, aes(x = MATHS, y = ENGLISH)) +
+  geom_point() +
+  geom_text(aes(label = ID), hjust = 0.5, vjust = -0.5) +
+  coord_cartesian(xlim = c(0,100), ylim = c(0,100)) +
+  ggtitle("English vs Maths scores - without ggrepel")
+```
+::::
+
 ### With ggrepel
 
+:::: panel-tabset
+## The Plot
 ```{r}
+#| echo: false
 ggplot(exam_data, aes(x = MATHS, y = ENGLISH)) +
   geom_point() +
   geom_text_repel(aes(label = ID), size = 3) +
@@ -39,31 +64,71 @@ ggplot(exam_data, aes(x = MATHS, y = ENGLISH)) +
   ggtitle("English vs Maths scores - with ggrepel")
 ```
 
-# Beyond ggplot2 Themes
+## The Code
+```{r}
+#| eval: false
+ggplot(exam_data, aes(x = MATHS, y = ENGLISH)) +
+  geom_point() +
+  geom_text_repel(aes(label = ID), size = 3) +
+  coord_cartesian(xlim = c(0,100), ylim = c(0,100)) +
+  ggtitle("English vs Maths scores - with ggrepel")
+```
+::::
+
+## Beyond ggplot2 Themes
 
 ### ggthemes — Economist theme
 
+:::: panel-tabset
+## The Plot
 ```{r}
+#| echo: false
 ggplot(exam_data, aes(x = MATHS)) +
   geom_histogram(bins = 20, fill = "grey", color = "black") +
   ggtitle("Distribution of Maths scores") +
   theme_economist()
 ```
 
+## The Code
+```{r}
+#| eval: false
+ggplot(exam_data, aes(x = MATHS)) +
+  geom_histogram(bins = 20, fill = "grey", color = "black") +
+  ggtitle("Distribution of Maths scores") +
+  theme_economist()
+```
+::::
+
 ### hrbrthemes
 
+:::: panel-tabset
+## The Plot
 ```{r}
+#| echo: false
 ggplot(exam_data, aes(x = MATHS)) +
   geom_histogram(bins = 20, fill = "grey", color = "black") +
   ggtitle("Distribution of Maths scores") +
   theme_ipsum(axis_title_size = 18, base_size = 15, grid = "Y")
 ```
 
-# Beyond Single Graph: patchwork
+## The Code
+```{r}
+#| eval: false
+ggplot(exam_data, aes(x = MATHS)) +
+  geom_histogram(bins = 20, fill = "grey", color = "black") +
+  ggtitle("Distribution of Maths scores") +
+  theme_ipsum(axis_title_size = 18, base_size = 15, grid = "Y")
+```
+::::
+
+## Beyond Single Graph: patchwork
 
 ### Two graphs side by side
 
+:::: panel-tabset
+## The Plot
 ```{r}
+#| echo: false
 p1 <- ggplot(exam_data, aes(x = MATHS)) +
   geom_histogram(bins = 20, color = "grey30", fill = "grey90") +
   ggtitle("Distribution of Maths scores")
@@ -75,9 +140,27 @@ p2 <- ggplot(exam_data, aes(x = ENGLISH)) +
 p1 + p2
 ```
 
+## The Code
+```{r}
+#| eval: false
+p1 <- ggplot(exam_data, aes(x = MATHS)) +
+  geom_histogram(bins = 20, color = "grey30", fill = "grey90") +
+  ggtitle("Distribution of Maths scores")
+
+p2 <- ggplot(exam_data, aes(x = ENGLISH)) +
+  geom_histogram(bins = 20, color = "grey30", fill = "grey90") +
+  ggtitle("Distribution of English scores")
+
+p1 + p2
+```
+::::
+
 ### Three graphs combined
 
+:::: panel-tabset
+## The Plot
 ```{r}
+#| echo: false
 p3 <- ggplot(exam_data, aes(x = MATHS, y = ENGLISH)) +
   geom_point() +
   geom_smooth(method = lm, linewidth = 0.5) +
@@ -87,15 +170,49 @@ p3 <- ggplot(exam_data, aes(x = MATHS, y = ENGLISH)) +
 (p1 / p2) | p3
 ```
 
+## The Code
+```{r}
+#| eval: false
+p3 <- ggplot(exam_data, aes(x = MATHS, y = ENGLISH)) +
+  geom_point() +
+  geom_smooth(method = lm, linewidth = 0.5) +
+  coord_cartesian(xlim = c(0,100), ylim = c(0,100)) +
+  ggtitle("English vs Maths scores")
+
+(p1 / p2) | p3
+```
+::::
+
 ### With auto-tagging
 
+:::: panel-tabset
+## The Plot
 ```{r}
+#| echo: false
 ((p1 / p2) | p3) +
   plot_annotation(tag_levels = 'I')
 ```
 
+## The Code
+```{r}
+#| eval: false
+((p1 / p2) | p3) +
+  plot_annotation(tag_levels = 'I')
+```
+::::
+
 ### Inset plot
 
+:::: panel-tabset
+## The Plot
 ```{r}
+#| echo: false
 p3 + inset_element(p2, left = 0.02, bottom = 0.7, right = 0.5, top = 1)
 ```
+
+## The Code
+```{r}
+#| eval: false
+p3 + inset_element(p2, left = 0.02, bottom = 0.7, right = 0.5, top = 1)
+```
+::::
