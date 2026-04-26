@@ -32,14 +32,14 @@
     "href": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html",
     "title": "Hands-on Exercise 3",
     "section": "",
-    "text": "pacman::p_load(ggiraph, plotly, patchwork, DT, tidyverse,\n               readxl, gifski, gapminder, gganimate)\n\n\nThe downloaded binary packages are in\n    /var/folders/j2/5w6mnscn6l933pyjft1mvrv40000gn/T//RtmpGMYjFd/downloaded_packages\n\n\n\nThe downloaded binary packages are in\n    /var/folders/j2/5w6mnscn6l933pyjft1mvrv40000gn/T//RtmpGMYjFd/downloaded_packages\n\n\n\nThe downloaded binary packages are in\n    /var/folders/j2/5w6mnscn6l933pyjft1mvrv40000gn/T//RtmpGMYjFd/downloaded_packages\n\n\n\nThe downloaded binary packages are in\n    /var/folders/j2/5w6mnscn6l933pyjft1mvrv40000gn/T//RtmpGMYjFd/downloaded_packages\n\n\n\nThe downloaded binary packages are in\n    /var/folders/j2/5w6mnscn6l933pyjft1mvrv40000gn/T//RtmpGMYjFd/downloaded_packages\n\n\n\n\n\n\nexam_data &lt;- read_csv(\"data/Exam_data.csv\")"
+    "text": "pacman::p_load(ggiraph, plotly, patchwork, DT, tidyverse,\n               readxl, gifski, gapminder, gganimate)\n\n\n\n\n\nexam_data &lt;- read_csv(\"data/Exam_data.csv\")"
   },
   {
     "objectID": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html#getting-started",
     "href": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html#getting-started",
     "title": "Hands-on Exercise 3",
     "section": "",
-    "text": "pacman::p_load(ggiraph, plotly, patchwork, DT, tidyverse,\n               readxl, gifski, gapminder, gganimate)\n\n\nThe downloaded binary packages are in\n    /var/folders/j2/5w6mnscn6l933pyjft1mvrv40000gn/T//RtmpGMYjFd/downloaded_packages\n\n\n\nThe downloaded binary packages are in\n    /var/folders/j2/5w6mnscn6l933pyjft1mvrv40000gn/T//RtmpGMYjFd/downloaded_packages\n\n\n\nThe downloaded binary packages are in\n    /var/folders/j2/5w6mnscn6l933pyjft1mvrv40000gn/T//RtmpGMYjFd/downloaded_packages\n\n\n\nThe downloaded binary packages are in\n    /var/folders/j2/5w6mnscn6l933pyjft1mvrv40000gn/T//RtmpGMYjFd/downloaded_packages\n\n\n\nThe downloaded binary packages are in\n    /var/folders/j2/5w6mnscn6l933pyjft1mvrv40000gn/T//RtmpGMYjFd/downloaded_packages\n\n\n\n\n\n\nexam_data &lt;- read_csv(\"data/Exam_data.csv\")"
+    "text": "pacman::p_load(ggiraph, plotly, patchwork, DT, tidyverse,\n               readxl, gifski, gapminder, gganimate)\n\n\n\n\n\nexam_data &lt;- read_csv(\"data/Exam_data.csv\")"
   },
   {
     "objectID": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html#interactive-data-visualisation-ggiraph",
