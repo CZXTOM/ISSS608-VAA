@@ -1,7 +1,7 @@
 ---
 title: "Hands-on Exercise 4"
 author: "ZeXin Chen"
-date: "2025-05-09"
+date: "2025-05-03"
 date-modified: last-modified
 format: html
 execute:
@@ -33,8 +33,9 @@ exam <- read_csv("data/Exam_data.csv")
 
 ### Basic Ridgeline Plot
 
-:::: panel-tabset
+::: panel-tabset
 ## The Plot
+
 ```{r}
 #| echo: false
 ggplot(exam, 
@@ -56,6 +57,7 @@ ggplot(exam,
 ```
 
 ## The Code
+
 ```{r}
 #| eval: false
 ggplot(exam, 
@@ -75,12 +77,13 @@ ggplot(exam,
   scale_y_discrete(name = NULL, expand = expansion(add = c(0.2, 2.6))) +
   theme_ridges()
 ```
-::::
+:::
 
 ### Varying Fill Colours Along the X Axis
 
-:::: panel-tabset
+::: panel-tabset
 ## The Plot
+
 ```{r}
 #| echo: false
 ggplot(exam, 
@@ -101,6 +104,7 @@ ggplot(exam,
 ```
 
 ## The Code
+
 ```{r}
 #| eval: false
 ggplot(exam, 
@@ -119,12 +123,13 @@ ggplot(exam,
   scale_y_discrete(name = NULL, expand = expansion(add = c(0.2, 2.6))) +
   theme_ridges()
 ```
-::::
+:::
 
 ### Mapping Probabilities onto Colour
 
-:::: panel-tabset
+::: panel-tabset
 ## The Plot
+
 ```{r}
 #| echo: false
 ggplot(exam,
@@ -139,6 +144,7 @@ ggplot(exam,
 ```
 
 ## The Code
+
 ```{r}
 #| eval: false
 ggplot(exam,
@@ -151,12 +157,13 @@ ggplot(exam,
                        direction = -1) +
   theme_ridges()
 ```
-::::
+:::
 
 ### Ridgeline Plot with Quantile Lines
 
-:::: panel-tabset
+::: panel-tabset
 ## The Plot
+
 ```{r}
 #| echo: false
 ggplot(exam,
@@ -174,6 +181,7 @@ ggplot(exam,
 ```
 
 ## The Code
+
 ```{r}
 #| eval: false
 ggplot(exam,
@@ -189,12 +197,13 @@ ggplot(exam,
   scale_fill_viridis_d(name = "Quartiles") +
   theme_ridges()
 ```
-::::
+:::
 
 ### Ridgeline Plot with Tail Highlighting
 
-:::: panel-tabset
+::: panel-tabset
 ## The Plot
+
 ```{r}
 #| echo: false
 ggplot(exam,
@@ -216,6 +225,7 @@ ggplot(exam,
 ```
 
 ## The Code
+
 ```{r}
 #| eval: false
 ggplot(exam,
@@ -235,14 +245,15 @@ ggplot(exam,
   ) +
   theme_ridges()
 ```
-::::
+:::
 
 ## Raincloud Plot
 
 ### Step 1: Half Eye Plot
 
-:::: panel-tabset
+::: panel-tabset
 ## The Plot
+
 ```{r}
 #| echo: false
 ggplot(exam, 
@@ -255,6 +266,7 @@ ggplot(exam,
 ```
 
 ## The Code
+
 ```{r}
 #| eval: false
 ggplot(exam, 
@@ -265,12 +277,13 @@ ggplot(exam,
                .width = 0,
                point_colour = NA)
 ```
-::::
+:::
 
 ### Step 2: Adding Boxplot
 
-:::: panel-tabset
+::: panel-tabset
 ## The Plot
+
 ```{r}
 #| echo: false
 ggplot(exam, 
@@ -285,6 +298,7 @@ ggplot(exam,
 ```
 
 ## The Code
+
 ```{r}
 #| eval: false
 ggplot(exam, 
@@ -297,12 +311,13 @@ ggplot(exam,
   geom_boxplot(width = .20,
                outlier.shape = NA)
 ```
-::::
+:::
 
 ### Step 3: Adding Dot Plot
 
-:::: panel-tabset
+::: panel-tabset
 ## The Plot
+
 ```{r}
 #| echo: false
 ggplot(exam, 
@@ -321,6 +336,7 @@ ggplot(exam,
 ```
 
 ## The Code
+
 ```{r}
 #| eval: false
 ggplot(exam, 
@@ -337,12 +353,13 @@ ggplot(exam,
             binwidth = .5,
             dotsize = 2)
 ```
-::::
+:::
 
 ### Step 4: Final Raincloud Plot
 
-:::: panel-tabset
+::: panel-tabset
 ## The Plot
+
 ```{r}
 #| echo: false
 ggplot(exam, 
@@ -363,6 +380,7 @@ ggplot(exam,
 ```
 
 ## The Code
+
 ```{r}
 #| eval: false
 ggplot(exam, 
@@ -381,7 +399,7 @@ ggplot(exam,
   coord_flip() +
   theme_economist()
 ```
-::::
+:::
 
 # Visual Statistical Analysis
 
@@ -395,8 +413,9 @@ pacman::p_load(ggstatsplot, tidyverse)
 
 ## One-Sample Test: gghistostats()
 
-:::: panel-tabset
+::: panel-tabset
 ## The Plot
+
 ```{r}
 #| echo: false
 set.seed(1234)
@@ -411,6 +430,7 @@ gghistostats(
 ```
 
 ## The Code
+
 ```{r}
 #| eval: false
 set.seed(1234)
@@ -423,12 +443,13 @@ gghistostats(
   xlab = "English scores"
 )
 ```
-::::
+:::
 
 ## Two-Sample Mean Test: ggbetweenstats()
 
-:::: panel-tabset
+::: panel-tabset
 ## The Plot
+
 ```{r}
 #| echo: false
 ggbetweenstats(
@@ -441,6 +462,7 @@ ggbetweenstats(
 ```
 
 ## The Code
+
 ```{r}
 #| eval: false
 ggbetweenstats(
@@ -451,12 +473,13 @@ ggbetweenstats(
   messages = FALSE
 )
 ```
-::::
+:::
 
 ## One-Way ANOVA Test: ggbetweenstats()
 
-:::: panel-tabset
+::: panel-tabset
 ## The Plot
+
 ```{r}
 #| echo: false
 ggbetweenstats(
@@ -473,6 +496,7 @@ ggbetweenstats(
 ```
 
 ## The Code
+
 ```{r}
 #| eval: false
 ggbetweenstats(
@@ -487,12 +511,13 @@ ggbetweenstats(
   messages = FALSE
 )
 ```
-::::
+:::
 
 ## Significant Test of Correlation: ggscatterstats()
 
-:::: panel-tabset
+::: panel-tabset
 ## The Plot
+
 ```{r}
 #| echo: false
 ggscatterstats(
@@ -504,6 +529,7 @@ ggscatterstats(
 ```
 
 ## The Code
+
 ```{r}
 #| eval: false
 ggscatterstats(
@@ -513,12 +539,13 @@ ggscatterstats(
   marginal = FALSE
 )
 ```
-::::
+:::
 
 ## Significant Test of Association: ggbarstats()
 
-:::: panel-tabset
+::: panel-tabset
 ## The Plot
+
 ```{r}
 #| echo: false
 exam1 <- exam %>% 
@@ -533,6 +560,7 @@ ggbarstats(exam1,
 ```
 
 ## The Code
+
 ```{r}
 #| eval: false
 exam1 <- exam %>% 
@@ -545,7 +573,7 @@ ggbarstats(exam1,
            x = MATHS_bins, 
            y = GENDER)
 ```
-::::
+:::
 
 # Visualising Uncertainty
 
@@ -576,8 +604,9 @@ my_sum <- exam %>%
 
 ### Standard Error Bars
 
-:::: panel-tabset
+::: panel-tabset
 ## The Plot
+
 ```{r}
 #| echo: false
 ggplot(my_sum) +
@@ -599,6 +628,7 @@ ggplot(my_sum) +
 ```
 
 ## The Code
+
 ```{r}
 #| eval: false
 ggplot(my_sum) +
@@ -618,12 +648,13 @@ ggplot(my_sum) +
              alpha=1) +
   ggtitle("Standard error of mean maths score by race")
 ```
-::::
+:::
 
 ### 95% Confidence Interval
 
-:::: panel-tabset
+::: panel-tabset
 ## The Plot
+
 ```{r}
 #| echo: false
 ggplot(my_sum) +
@@ -646,6 +677,7 @@ ggplot(my_sum) +
 ```
 
 ## The Code
+
 ```{r}
 #| eval: false
 ggplot(my_sum) +
@@ -666,12 +698,13 @@ ggplot(my_sum) +
   labs(x = "Maths score",
        title = "95% confidence interval of mean maths score by race")
 ```
-::::
+:::
 
 ### Interactive Error Bars: 99% Confidence Interval
 
-:::: panel-tabset
+::: panel-tabset
 ## The Plot
+
 ```{r}
 #| echo: false
 shared_df = SharedData$new(my_sum)
@@ -721,6 +754,7 @@ bscols(widths = c(4,8),
 ```
 
 ## The Code
+
 ```{r}
 #| eval: false
 shared_df = SharedData$new(my_sum)
@@ -768,14 +802,15 @@ bscols(widths = c(4,8),
          formatRound(columns=c('mean', 'sd', 'se'),
                      digits=2))
 ```
-::::
+:::
 
 ## Visualising Uncertainty with ggdist
 
 ### stat_pointinterval()
 
-:::: panel-tabset
+::: panel-tabset
 ## The Plot
+
 ```{r}
 #| echo: false
 exam %>%
@@ -788,6 +823,7 @@ exam %>%
 ```
 
 ## The Code
+
 ```{r}
 #| eval: false
 exam %>%
@@ -798,12 +834,13 @@ exam %>%
     title = "Visualising confidence intervals of mean math score",
     subtitle = "Mean Point + Multiple-interval plot")
 ```
-::::
+:::
 
 ### stat_pointinterval() with Median
 
-:::: panel-tabset
+::: panel-tabset
 ## The Plot
+
 ```{r}
 #| echo: false
 exam %>%
@@ -817,6 +854,7 @@ exam %>%
 ```
 
 ## The Code
+
 ```{r}
 #| eval: false
 exam %>%
@@ -828,12 +866,13 @@ exam %>%
     title = "Visualising confidence intervals of median math score",
     subtitle = "Median Point + Multiple-interval plot")
 ```
-::::
+:::
 
 ### stat_gradientinterval()
 
-:::: panel-tabset
+::: panel-tabset
 ## The Plot
+
 ```{r}
 #| echo: false
 exam %>%
@@ -849,6 +888,7 @@ exam %>%
 ```
 
 ## The Code
+
 ```{r}
 #| eval: false
 exam %>%
@@ -862,7 +902,7 @@ exam %>%
     title = "Visualising confidence intervals of mean math score",
     subtitle = "Gradient + interval plot")
 ```
-::::
+:::
 
 ## Visualising Uncertainty with HOPs
 
@@ -875,8 +915,9 @@ devtools::install_github("wilkelab/ungeviz")
 
 ### Hypothetical Outcome Plot
 
-:::: panel-tabset
+::: panel-tabset
 ## The Plot
+
 ```{r}
 #| echo: false
 library(ungeviz)
@@ -899,6 +940,7 @@ ggplot(data = exam,
 ```
 
 ## The Code
+
 ```{r}
 #| eval: false
 library(ungeviz)
@@ -919,7 +961,7 @@ ggplot(data = exam,
   theme_bw() + 
   transition_states(.draw, 1, 3)
 ```
-::::
+:::
 
 # Funnel Plots for Fair Comparisons
 
@@ -942,8 +984,9 @@ covid19 <- read_csv("data/COVID-19_DKI_Jakarta.csv") %>%
 
 ### Basic Funnel Plot
 
-:::: panel-tabset
+::: panel-tabset
 ## The Plot
+
 ```{r}
 #| echo: false
 funnel_plot(
@@ -955,6 +998,7 @@ funnel_plot(
 ```
 
 ## The Code
+
 ```{r}
 #| eval: false
 funnel_plot(
@@ -964,12 +1008,13 @@ funnel_plot(
   group = `Sub-district`
 )
 ```
-::::
+:::
 
 ### Makeover 1: Proportions with Axis Range
 
-:::: panel-tabset
+::: panel-tabset
 ## The Plot
+
 ```{r}
 #| echo: false
 funnel_plot(
@@ -984,6 +1029,7 @@ funnel_plot(
 ```
 
 ## The Code
+
 ```{r}
 #| eval: false
 funnel_plot(
@@ -996,12 +1042,13 @@ funnel_plot(
   yrange = c(0, 0.05)
 )
 ```
-::::
+:::
 
 ### Makeover 2: Adding Labels and Title
 
-:::: panel-tabset
+::: panel-tabset
 ## The Plot
+
 ```{r}
 #| echo: false
 funnel_plot(
@@ -1020,6 +1067,7 @@ funnel_plot(
 ```
 
 ## The Code
+
 ```{r}
 #| eval: false
 funnel_plot(
@@ -1036,7 +1084,7 @@ funnel_plot(
   y_label = "Cumulative Fatality Rate"
 )
 ```
-::::
+:::
 
 ## Funnel Plot with ggplot2
 
@@ -1065,8 +1113,9 @@ dfCI <- data.frame(number.ll95, number.ul95, number.ll999,
 
 ### Static Funnel Plot
 
-:::: panel-tabset
+::: panel-tabset
 ## The Plot
+
 ```{r}
 #| echo: false
 p <- ggplot(df, aes(x = Positive, y = rate)) +
@@ -1104,6 +1153,7 @@ p
 ```
 
 ## The Code
+
 ```{r}
 #| eval: false
 p <- ggplot(df, aes(x = Positive, y = rate)) +
@@ -1139,12 +1189,13 @@ p <- ggplot(df, aes(x = Positive, y = rate)) +
         legend.key.height = unit(0.3, "cm"))
 p
 ```
-::::
+:::
 
 ### Interactive Funnel Plot
 
-:::: panel-tabset
+::: panel-tabset
 ## The Plot
+
 ```{r}
 #| echo: false
 fp_ggplotly <- ggplotly(p,
@@ -1155,6 +1206,7 @@ fp_ggplotly
 ```
 
 ## The Code
+
 ```{r}
 #| eval: false
 fp_ggplotly <- ggplotly(p,
@@ -1163,4 +1215,4 @@ fp_ggplotly <- ggplotly(p,
               "y"))
 fp_ggplotly
 ```
-::::
+:::

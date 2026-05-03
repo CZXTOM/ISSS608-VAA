@@ -256,7 +256,7 @@
     "href": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04.html#getting-started-3",
     "title": "Hands-on Exercise 4",
     "section": "Getting Started",
-    "text": "Getting Started\n\nInstalling and Loading Packages\n\npacman::p_load(tidyverse, FunnelPlotR, plotly, knitr)\n\n\nThe downloaded binary packages are in\n    /var/folders/j2/5w6mnscn6l933pyjft1mvrv40000gn/T//RtmpPTWJQk/downloaded_packages\n\n\n\n\nImporting Data\n\ncovid19 &lt;- read_csv(\"data/COVID-19_DKI_Jakarta.csv\") %&gt;%\n  mutate_if(is.character, as.factor)"
+    "text": "Getting Started\n\nInstalling and Loading Packages\n\npacman::p_load(tidyverse, FunnelPlotR, plotly, knitr)\n\n\n\nImporting Data\n\ncovid19 &lt;- read_csv(\"data/COVID-19_DKI_Jakarta.csv\") %&gt;%\n  mutate_if(is.character, as.factor)"
   },
   {
     "objectID": "Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04.html#funnelplotr-methods",
