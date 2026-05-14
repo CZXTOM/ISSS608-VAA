@@ -9,7 +9,7 @@ format:
     slide-number: true
     transition: slide
     background-transition: fade
-    footer: "ISSS608 Take-home Exercise 1 | ZeXin Chen"
+    footer: "ISSS608 Take-home Exercise 1 | ZeXin Chen | [↩ Back to Site](https://isss-608-vaa-eta.vercel.app)"
     logo: ""
     chalkboard: false
     embed-resources: false

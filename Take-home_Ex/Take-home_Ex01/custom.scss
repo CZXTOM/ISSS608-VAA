@@ -23,34 +23,19 @@ $code-block-font-size: 0.55em;
 
 /*-- scss:rules --*/
 
-// Section title slides
-.reveal .slide-background-content {
-  background-color: #1565C0;
-}
-
-.reveal section.has-dark-background h1,
-.reveal section.has-dark-background h2,
-.reveal section.has-dark-background p {
-  color: white;
-}
-
-// Footer styling
 .reveal .footer {
   font-size: 0.55em;
   color: #888;
 }
 
-// Callout blocks
 .reveal .callout {
   font-size: 0.85em;
 }
 
-// Table styling
 .reveal table {
   font-size: 0.8em;
 }
 
-// Slide numbers
 .reveal .slide-number {
   font-size: 0.55em;
   color: #888;
