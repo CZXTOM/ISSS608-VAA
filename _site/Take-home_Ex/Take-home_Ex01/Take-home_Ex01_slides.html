@@ -10,7 +10,7 @@
   <meta name="generator" content="quarto-1.9.37">
 
   <meta name="author" content="ZeXin Chen">
-  <meta name="dcterms.date" content="2026-05-24">
+  <meta name="dcterms.date" content="2026-05-14">
   <title>ISSS608-VAA – Motor Vehicle Insurance Portfolio</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -142,7 +142,7 @@ ZeXin Chen
 </div>
 </div>
 
-  <p class="date">2026-05-24</p>
+  <p class="date">2026-05-14</p>
 </section>
 <section id="contents" class="slide level2 smaller">
 <h2>Contents</h2>
@@ -171,7 +171,7 @@ ZeXin Chen
 </ul>
 </div></div>
 <aside class="notes">
-<p>Good morning everyone. Today I’ll be walking you through an exploratory visual analysis of a real motor insurance portfolio from Spain. The dataset covers three years of policy transactions and gives us a great opportunity to look at what actually drives profitability and claims volatility in a non-life insurance book. We’ll move through four parts: first some context on the data, then a look at the portfolio makeup, followed by profitability findings, and finally what’s driving volatility.</p>
+<p>Good morning everyone. Today I will be walking you through an exploratory visual analysis of a real motor insurance portfolio from Spain. The dataset covers three years of policy transactions and gives us a great opportunity to look at what actually drives profitability and claims volatility in a non-life insurance book. We will move through four parts: first some context on the data, then a look at the portfolio makeup, followed by profitability findings, and finally what is driving volatility.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -260,7 +260,7 @@ Loss Ratio &gt; 1 = <strong>Unprofitable</strong></p>
 <section id="data-quality" class="slide level2">
 <h2>Data Quality</h2>
 
-<img data-src="Take-home_Ex01_slides_files/figure-revealjs/unnamed-chunk-1-1.png" width="864" class="r-stretch"><aside class="notes">
+<img data-src="Take-home_Ex01_slides_files/figure-revealjs/unnamed-chunk-1-1.png" class="quarto-figure quarto-figure-center r-stretch" width="864"><aside class="notes">
 <p>Good news on data quality. Out of 47 variables, only two have any missing values at all. Fuel type is missing for less than half a percent of records, and vehicle value for just 0.1 percent. We handle these by simply filtering them out when those specific variables come up in our analysis. Everything else is complete and clean, which is quite rare for a real-world dataset of this size.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
@@ -279,11 +279,11 @@ Loss Ratio &gt; 1 = <strong>Unprofitable</strong></p>
 <h1>Part 2: Portfolio Composition</h1>
 
 </section>
-<section id="policy-type-status" class="slide level2">
-<h2>Policy Type &amp; Status</h2>
+<section id="policy-type-distribution" class="slide level2">
+<h2>Policy Type Distribution</h2>
 
-<img data-src="Take-home_Ex01_slides_files/figure-revealjs/unnamed-chunk-2-1.png" width="1056" class="r-stretch"><aside class="notes">
-<p>Looking at what the portfolio is made of, CC policies dominate at 62 percent. These are third-party liability combined with several add-ons like theft and glass. COMP_E at 22 percent is full comprehensive with an excess. What stands out is how rare basic TP policies are, under 1 percent. This tells us the insurer is largely serving customers who want broader protection. On the right, 85 percent of policies are active. The 15 percent cancellation rate is worth noting as mid-term cancellations reduce premium income and can sometimes signal customers cancelling after a claim.</p>
+<img data-src="Take-home_Ex01_slides_files/figure-revealjs/unnamed-chunk-2-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"><aside class="notes">
+<p>Looking at what the portfolio is made of, CC policies dominate at 62 percent. These are third-party liability combined with several add-ons like theft and glass. COMP_E at 22 percent is full comprehensive with an excess. What stands out is how rare basic TP policies are, under 1 percent. This tells us the insurer is largely serving customers who want broader protection. On the policy status side, 85 percent are active and 15 percent cancelled.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -296,11 +296,28 @@ Loss Ratio &gt; 1 = <strong>Unprofitable</strong></p>
           display:block!important;
       }</style></aside>
 </section>
-<section id="driver-vehicle-profile" class="slide level2">
-<h2>Driver &amp; Vehicle Profile</h2>
+<section id="policy-status-bonus-score" class="slide level2">
+<h2>Policy Status &amp; Bonus Score</h2>
 
-<img data-src="Take-home_Ex01_slides_files/figure-revealjs/unnamed-chunk-3-1.png" width="1056" class="r-stretch"><aside class="notes">
-<p>Three things jump out from these charts. First, the typical driver here is in their mid-40s to mid-50s. Very few young drivers under 25 appear in this book, likely because premiums for that age group are too high. Second, the vehicles are quite old, with many in the 15 to 35 year range. Third, vehicle values are mostly in the 15 to 40 thousand euro range but there are some quite expensive vehicles in the tail. Those high-value vehicles matter a lot because when something goes wrong with them the claim can be substantial.</p>
+<img data-src="Take-home_Ex01_slides_files/figure-revealjs/unnamed-chunk-3-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1056"><aside class="notes">
+<p>On the left, 85 percent of policies are active and 15 percent cancelled. A 15 percent cancellation rate is worth noting as mid-term cancellations reduce premium income. On the right, the bonus score is striking. 98 percent of customers have a Good score, meaning they have had no recent claims. This is very positive for profitability but it also means the Bad and Neutral groups are so small we need to be careful drawing conclusions from them.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="driver-age-vehicle-profile" class="slide level2">
+<h2>Driver Age &amp; Vehicle Profile</h2>
+
+<img data-src="Take-home_Ex01_slides_files/figure-revealjs/unnamed-chunk-4-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1056"><aside class="notes">
+<p>Three things jump out from these charts. First, the typical driver here is in their mid-40s to mid-50s. Very few young drivers under 25 appear in this book, likely because premiums for that age group are too high. Second, the vehicles are quite old, with many in the 15 to 35 year range. Third, vehicle values mostly sit between 15 and 40 thousand euros, but there are expensive vehicles in the tail that can generate very large claims when something goes wrong.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -316,8 +333,8 @@ Loss Ratio &gt; 1 = <strong>Unprofitable</strong></p>
 <section id="geographic-distribution" class="slide level2">
 <h2>Geographic Distribution</h2>
 
-<img data-src="Take-home_Ex01_slides_files/figure-revealjs/unnamed-chunk-4-1.png" width="1056" class="r-stretch"><aside class="notes">
-<p>The geographic mix is reasonably well spread. Inland is the biggest segment at 54 percent, which makes sense for Spain. Urban and rural are almost perfectly split at 51 and 49 percent. The bonus score chart on the right is actually quite remarkable. 98 percent of customers have a Good score, meaning they have had no recent claims. On one hand this is great news for profitability. On the other hand it means the Bad and Neutral groups are so small we have to be careful about drawing conclusions from them statistically.</p>
+<img data-src="Take-home_Ex01_slides_files/figure-revealjs/unnamed-chunk-5-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1056"><aside class="notes">
+<p>The geographic mix is reasonably well spread. Inland is the biggest segment at 54 percent, which makes sense for Spain. Urban and rural are almost perfectly split at 51 and 49 percent. Diesel vehicles make up 62 percent of the fleet, though this may shift as newer petrol and electric vehicles gain market share in coming years.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -338,8 +355,8 @@ Loss Ratio &gt; 1 = <strong>Unprofitable</strong></p>
 <section id="loss-ratio-overview" class="slide level2">
 <h2>Loss Ratio Overview</h2>
 
-<img data-src="Take-home_Ex01_slides_files/figure-revealjs/unnamed-chunk-5-1.png" width="1056" class="r-stretch"><aside class="notes">
-<p>This chart shows the single most important characteristic of insurance data. The vast majority of policies sit at a loss ratio of zero because they never filed a claim. Over 88 percent of policies have LR equals zero. But then there is a long tail to the right with some policies having very high loss ratios. The mean is pulled well above the median by those expensive outliers. Only about 9 percent of policies breach the break-even line, but those are the ones that really matter for the portfolio’s bottom line.</p>
+<img data-src="Take-home_Ex01_slides_files/figure-revealjs/unnamed-chunk-6-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"><aside class="notes">
+<p>This chart shows the single most important characteristic of insurance data. The vast majority of policies sit at a loss ratio of zero because they never filed a claim. Over 88 percent of policies have LR equals zero. But then there is a long tail to the right with some policies having very high loss ratios. The mean is pulled well above the median by those expensive outliers. Only about 9 percent of policies breach the break-even line, but those are the ones that really matter for the portfolio bottom line.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -355,8 +372,8 @@ Loss Ratio &gt; 1 = <strong>Unprofitable</strong></p>
 <section id="loss-ratio-by-policy-type" class="slide level2">
 <h2>Loss Ratio by Policy Type</h2>
 
-<img data-src="Take-home_Ex01_slides_files/figure-revealjs/unnamed-chunk-6-1.png" width="1056" class="r-stretch"><aside class="notes">
-<p>Now we can see exactly how policy type shapes profitability. COMP_E and COMP_N sit at the top with the widest distributions and highest medians. That makes sense as they cover more risks so they pay out more claims. TP and TPG at the bottom barely move from zero because they only cover third-party liability which is a much narrower set of events. CC sits in the middle. The key takeaway is that policy type is one of the clearest drivers of loss ratio in this portfolio.</p>
+<img data-src="Take-home_Ex01_slides_files/figure-revealjs/unnamed-chunk-7-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"><aside class="notes">
+<p>Now we can see exactly how policy type shapes profitability. COMP_E and COMP_N sit at the top with the widest distributions and highest medians. That makes sense as they cover more risks so they pay out more claims. TP and TPG at the bottom barely move from zero because they only cover third-party liability which is a much narrower set of events. CC sits in the middle. Policy type is one of the clearest drivers of loss ratio in this portfolio.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -372,7 +389,7 @@ Loss Ratio &gt; 1 = <strong>Unprofitable</strong></p>
 <section id="loss-ratio-by-bonus-score" class="slide level2">
 <h2>Loss Ratio by Bonus Score</h2>
 
-<img data-src="Take-home_Ex01_slides_files/figure-revealjs/unnamed-chunk-7-1.png" width="960" class="r-stretch"><aside class="notes">
+<img data-src="Take-home_Ex01_slides_files/figure-revealjs/unnamed-chunk-8-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"><aside class="notes">
 <p>This is probably the most striking finding in the profitability section. Look at the red violin on the right for Bad-score policyholders. The median is noticeably higher and the whole distribution is much wider than the green Good group. This tells us the bonus-malus scoring system is actually working well. It correctly identifies the riskier customers. Even though the Bad group is less than 1 percent of the portfolio, they punch well above their weight in terms of losses generated.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
@@ -389,7 +406,7 @@ Loss Ratio &gt; 1 = <strong>Unprofitable</strong></p>
 <section id="claim-severity-by-policy-type" class="slide level2">
 <h2>Claim Severity by Policy Type</h2>
 
-<img data-src="Take-home_Ex01_slides_files/figure-revealjs/unnamed-chunk-8-1.png" width="1056" class="r-stretch"><aside class="notes">
+<img data-src="Take-home_Ex01_slides_files/figure-revealjs/unnamed-chunk-9-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"><aside class="notes">
 <p>Not only do comprehensive policies have more claims, but each claim also costs more. COMP_E and COMP_N show the highest severity distributions here. That is because they cover things like total vehicle loss and theft, which are expensive events. CC is in the middle. What is also notable is how wide the spread is within each policy type. The interquartile range is huge, which tells us that predicting how much any individual claim will cost is genuinely difficult regardless of policy type.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
@@ -411,7 +428,7 @@ Loss Ratio &gt; 1 = <strong>Unprofitable</strong></p>
 <section id="claim-frequency-by-driver-age" class="slide level2">
 <h2>Claim Frequency by Driver Age</h2>
 
-<img data-src="Take-home_Ex01_slides_files/figure-revealjs/unnamed-chunk-9-1.png" width="960" class="r-stretch"><aside class="notes">
+<img data-src="Take-home_Ex01_slides_files/figure-revealjs/unnamed-chunk-10-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"><aside class="notes">
 <p>This chart shows a pattern that actuaries know well. The youngest drivers from 19 to 25 have the highest claim frequency by a clear margin. Then it drops steadily through the middle age groups as drivers become more experienced. It ticks back up slightly for drivers over 65. The U-shape is very clear here. One thing worth noting is that we have very few under-25 drivers in this portfolio so the young driver bar is based on a relatively small sample compared to the other groups.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
@@ -428,7 +445,7 @@ Loss Ratio &gt; 1 = <strong>Unprofitable</strong></p>
 <section id="claim-frequency-by-geography" class="slide level2">
 <h2>Claim Frequency by Geography</h2>
 
-<img data-src="Take-home_Ex01_slides_files/figure-revealjs/unnamed-chunk-10-1.png" width="960" class="r-stretch"><aside class="notes">
+<img data-src="Take-home_Ex01_slides_files/figure-revealjs/unnamed-chunk-11-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"><aside class="notes">
 <p>Geography matters quite a bit for claim frequency. Urban drivers consistently file more claims than rural drivers across all three municipality types. That is not surprising given the higher traffic density in cities. What is interesting is that island municipalities show the highest urban claim frequency of all. Coastal urban areas also come in higher than inland urban. So when we combine municipality type and circulation area together we get a more nuanced picture of geographic risk than either variable gives us on its own.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
@@ -445,8 +462,8 @@ Loss Ratio &gt; 1 = <strong>Unprofitable</strong></p>
 <section id="loss-ratio-trend-over-time" class="slide level2">
 <h2>Loss Ratio Trend Over Time</h2>
 
-<img data-src="Take-home_Ex01_slides_files/figure-revealjs/unnamed-chunk-11-1.png" width="1056" class="r-stretch"><aside class="notes">
-<p>Looking at the trend over three years gives us a sense of whether profitability is improving or getting worse. Each line is a policy type. The red dashed line is break-even. Comprehensive policies sit higher than basic ones throughout, which is consistent with what we saw earlier. What we want to watch for is any lines moving upward over time, as that could point to rising repair or medical costs squeezing margins. The pattern here also shows that different policy types respond differently from year to year.</p>
+<img data-src="Take-home_Ex01_slides_files/figure-revealjs/unnamed-chunk-12-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"><aside class="notes">
+<p>Looking at the trend over three years gives us a sense of whether profitability is improving or getting worse. Each line is a policy type. The red dashed line is break-even. Comprehensive policies sit higher than basic ones throughout, which is consistent with what we saw earlier. What we want to watch for is any lines moving upward over time, as that could point to rising repair or medical costs squeezing margins. The data labels on each point make the exact values easy to compare across years.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -465,7 +482,7 @@ Loss Ratio &gt; 1 = <strong>Unprofitable</strong></p>
 <div class="column" style="width:50%;">
 <p><strong>Profitability Drivers</strong></p>
 <ul>
-<li>🔴 <strong>Bonus Score</strong>: Bad-score holders have significantly higher loss ratios</li>
+<li>🔴 <strong>Bonus Score</strong>: Bad-score holders have higher loss ratios</li>
 <li>🔴 <strong>Policy Type</strong>: COMP_E/COMP_N carry the highest loss ratios</li>
 <li>🟡 <strong>Vehicle Value</strong>: High-value vehicles generate higher severity</li>
 <li>🟢 <strong>Portfolio Policies</strong>: Lower loss ratios vs new business</li>
@@ -488,7 +505,7 @@ Loss Ratio &gt; 1 = <strong>Unprofitable</strong></p>
 <p><strong>Important</strong></p>
 </div>
 <div class="callout-content">
-<p>75%+ of policies have <strong>zero claims</strong>. Loss distribution is heavily right-skewed and a small fraction of policies drive the majority of portfolio losses.</p>
+<p>88%+ of policies have <strong>zero claims</strong>. A small fraction of policies drive the majority of portfolio losses.</p>
 </div>
 </div>
 </div>
@@ -520,7 +537,7 @@ Loss Ratio &gt; 1 = <strong>Unprofitable</strong></p>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">
-<p>ISSS608 Take-home Exercise 1 | ZeXin Chen</p>
+<p>ISSS608 Take-home Exercise 1 | ZeXin Chen | <a href="https://isss-608-vaa-eta.vercel.app">↩︎ Back to Site</a></p>
 </div>
 </div></div>
 
@@ -638,7 +655,7 @@ Loss Ratio &gt; 1 = <strong>Unprofitable</strong></p>
         pause: true,
 
         // Flags if speaker notes should be visible to all viewers
-        showNotes: false,
+        showNotes: true,
 
         // Global override for autoplaying embedded media (null/true/false)
         autoPlayMedia: null,
