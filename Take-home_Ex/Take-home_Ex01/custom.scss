@@ -1,0 +1,57 @@
+/*-- scss:defaults --*/
+
+// Colours
+$body-bg: #ffffff;
+$body-color: #2c2c2c;
+$link-color: #1976D2;
+$selection-bg: #BBDEFB;
+
+// Fonts
+$font-family-sans-serif: "Source Sans Pro", "Segoe UI", Helvetica, sans-serif;
+$presentation-font-size-root: 32px;
+$presentation-line-height: 1.4;
+
+// Headings
+$presentation-heading-font: "Source Sans Pro", Helvetica, sans-serif;
+$presentation-heading-color: #1565C0;
+$presentation-heading-font-weight: 600;
+$presentation-h1-font-size: 2.0em;
+$presentation-h2-font-size: 1.4em;
+
+// Code
+$code-block-font-size: 0.55em;
+
+/*-- scss:rules --*/
+
+// Section title slides
+.reveal .slide-background-content {
+  background-color: #1565C0;
+}
+
+.reveal section.has-dark-background h1,
+.reveal section.has-dark-background h2,
+.reveal section.has-dark-background p {
+  color: white;
+}
+
+// Footer styling
+.reveal .footer {
+  font-size: 0.55em;
+  color: #888;
+}
+
+// Callout blocks
+.reveal .callout {
+  font-size: 0.85em;
+}
+
+// Table styling
+.reveal table {
+  font-size: 0.8em;
+}
+
+// Slide numbers
+.reveal .slide-number {
+  font-size: 0.55em;
+  color: #888;
+}
