@@ -60,7 +60,7 @@ insurance <- read_delim(
 
 ## Contents {.smaller}
 
-:::: {.columns}
+::::: columns
 ::: {.column width="50%"}
 **Part 1: Dataset Overview**
 
@@ -72,6 +72,7 @@ insurance <- read_delim(
 - Policy & geographic breakdown
 - Driver & vehicle profile
 :::
+
 ::: {.column width="50%"}
 **Part 3: Profitability Analysis**
 
@@ -83,9 +84,9 @@ insurance <- read_delim(
 - Claim frequency patterns
 - Geographic and temporal effects
 :::
-::::
+:::::
 
-::: {.notes}
+::: notes
 Good morning everyone. Today I will be walking you through an exploratory visual analysis of a real motor insurance portfolio from Spain. The dataset covers three years of policy transactions and gives us a great opportunity to look at what actually drives profitability and claims volatility in a non-life insurance book. We will move through four parts: first some context on the data, then a look at the portfolio makeup, followed by profitability findings, and finally what is driving volatility.
 :::
 
@@ -93,22 +94,22 @@ Good morning everyone. Today I will be walking you through an exploratory visual
 
 ## About the Dataset
 
-:::: {.columns}
+:::::: columns
 ::: {.column width="55%"}
-**Source:** Spanish motor insurer microdata  
-**Period:** January 2022 – December 2024  
-**Records:** 354,140 policy transactions  
+**Source:** Spanish motor insurer microdata\
+**Period:** January 2022 – December 2024\
+**Records:** 354,140 policy transactions\
 **Variables:** 47 across 4 groups
 
-| Group | Variables |
-|---|---|
-| Policy & Insured | 8 |
-| Driver & Vehicle | 10 |
-| Premiums | 8 |
-| Claims & Incurred | 21 |
-
+| Group             | Variables |
+|-------------------|-----------|
+| Policy & Insured  | 8         |
+| Driver & Vehicle  | 10        |
+| Premiums          | 8         |
+| Claims & Incurred | 21        |
 :::
-::: {.column width="45%"}
+
+:::: {.column width="45%"}
 **Three derived metrics guide analysis:**
 
 $$\text{Loss Ratio} = \frac{\text{Incurred}}{\text{Premium}}$$
@@ -117,14 +118,14 @@ $$\text{Claim Freq} = \frac{\text{Claims}}{\text{Exposure}}$$
 
 $$\text{Severity} = \frac{\text{Incurred}}{\text{Claims}}$$
 
-::: {.callout-note}
-Loss Ratio < 1 = **Profitable**  
-Loss Ratio > 1 = **Unprofitable**
-:::
+::: callout-note
+Loss Ratio \< 1 = **Profitable**\
+Loss Ratio \> 1 = **Unprofitable**
 :::
 ::::
+::::::
 
-::: {.notes}
+::: notes
 So what are we working with? This is real anonymised data from a Spanish motor insurer, covering about 354,000 policy transactions over three years. Each row represents one policy in one year. The three metrics on the right are what we will use throughout the presentation. Loss ratio is our profitability measure. Anything below 1 means the insurer made money on that policy. Claim frequency tells us how often accidents happen per year of exposure. Severity tells us how costly each claim is when it does happen.
 :::
 
@@ -160,7 +161,7 @@ data.frame(
         plot.margin   = margin(10, 30, 20, 10))
 ```
 
-::: {.notes}
+::: notes
 Good news on data quality. Out of 47 variables, only two have any missing values at all. Fuel type is missing for less than half a percent of records, and vehicle value for just 0.14 percent. We handle these by simply filtering them out when those specific variables come up in our analysis. Everything else is complete and clean, which is quite rare for a real-world dataset of this size.
 :::
 
@@ -204,7 +205,7 @@ insurance |>
         plot.margin   = margin(10, 20, 15, 10))
 ```
 
-::: {.notes}
+::: notes
 Looking at what the portfolio is made of, CC policies dominate at 62 percent. These are third-party liability combined with several add-ons like theft and glass. COMP_E at 22 percent is full comprehensive with an excess. What stands out is how rare basic TP policies are, under 1 percent. This tells us the insurer is largely serving customers who want broader protection.
 :::
 
@@ -253,7 +254,7 @@ p_bonus <- insurance |>
 p_status | p_bonus
 ```
 
-::: {.notes}
+::: notes
 On the left, 85 percent of policies are active and 15 percent cancelled. A 15 percent cancellation rate is worth noting as mid-term cancellations reduce premium income. On the right, the bonus score is striking. 98 percent of customers have a Good score, meaning they have had no recent claims. This is very positive for profitability but it also means the Bad and Neutral groups are so small we need to be careful drawing conclusions from them.
 :::
 
@@ -299,7 +300,7 @@ p_val <- insurance |>
 p_age | p_vage | p_val
 ```
 
-::: {.notes}
+::: notes
 Three things jump out from these charts. First, the typical driver here is in their mid-40s to mid-50s. Very few young drivers under 25 appear in this book, likely because premiums for that age group are too high. Second, the vehicles are quite old, with many in the 15 to 35 year range. Third, vehicle values mostly sit between 15 and 40 thousand euros. We capped the vehicle value chart at 80k to show the actual shape of the distribution.
 :::
 
@@ -362,7 +363,7 @@ p_fuel <- insurance |>
 p_mun | p_circ | p_fuel
 ```
 
-::: {.notes}
+::: notes
 The geographic mix is reasonably well spread. Inland is the biggest segment at 54 percent, which makes sense for Spain. Urban and rural are almost perfectly split at 51 and 49 percent. Diesel vehicles make up 62 percent of the fleet, though this may shift as newer petrol and electric vehicles gain market share in coming years.
 :::
 
@@ -423,7 +424,7 @@ p_dist <- lr_data |>
 p_zero | p_dist
 ```
 
-::: {.notes}
+::: notes
 I have split this into two panels to make the story clearer. On the left, 88 percent of policies never filed a single claim. On the right, we look only at the claimants. Even among those who did claim, most had a loss ratio below 1, meaning premiums still covered the cost. But there is a meaningful tail beyond break-even. These are the policies driving all the losses. The chart is capped at 3 because the tiny number of extreme outliers beyond that just stretches the axis without adding insight.
 :::
 
@@ -443,8 +444,9 @@ insurance |>
     quantiles      = c(0.5),
     alpha          = 0.75,
     show.legend    = FALSE,
-    scale          = 0.6,
-    bandwidth      = 0.05,
+    scale          = 0.85,
+    bandwidth      = 0.08,
+    trim           = TRUE,
     rel_min_height = 0.01
   ) +
   geom_vline(xintercept = 1, colour = "#B71C1C",
@@ -462,7 +464,7 @@ insurance |>
         plot.subtitle = element_text(colour = "#555555"))
 ```
 
-::: {.notes}
+::: notes
 Now we can see exactly how policy type shapes profitability. With the x-axis capped at 2, the distributional differences are finally visible. COMP_E and COMP_N sit at the top with the widest and most spread-out distributions. TP and TPG at the bottom are almost entirely at zero because they only cover third-party liability. CC sits in the middle. The key takeaway is that policy type is one of the clearest drivers of loss ratio.
 :::
 
@@ -475,7 +477,7 @@ Now we can see exactly how policy type shapes profitability. With the x-axis cap
 
 insurance |>
   filter(!is.na(loss_ratio), total_premium > 0,
-         loss_ratio <= 1.5) |>
+         loss_ratio > 0, loss_ratio <= 1.5) |>
   ggplot(aes(x = bonus_score, y = loss_ratio, fill = bonus_score)) +
   geom_violin(alpha = 0.7, show.legend = FALSE, trim = TRUE,
               colour = NA) +
@@ -491,7 +493,7 @@ insurance |>
                                 "Neutral" = "#FFA726",
                                 "Bad"     = "#EF5350")) +
   labs(title = "Loss Ratio by Bonus Score",
-       subtitle = "Data filtered to LR ≤ 1.5 so KDE reflects actual distribution",
+       subtitle = "Among claimants only (LR > 0), capped at 1.5",
        x = "Bonus Score (Claims History)", y = "Loss Ratio",
        caption = "< 3% of policies exceed LR = 1.5 and are excluded from this view") +
   theme_minimal(base_size = 14) +
@@ -501,7 +503,7 @@ insurance |>
         plot.margin   = margin(10, 10, 20, 10))
 ```
 
-::: {.notes}
+::: notes
 This is probably the most striking finding in the profitability section. With the y-axis capped at 1.5, we can now actually see the differences between groups. The Bad-score violin on the right is noticeably wider and taller than the Good group on the left. This confirms the bonus-malus system is working. It correctly identifies the riskier customers. Even though the Bad group is less than 1 percent of the portfolio, they contribute disproportionately to aggregate losses.
 :::
 
@@ -534,7 +536,7 @@ insurance |>
         axis.text.x   = element_text(size = 12, margin = margin(t = 5)))
 ```
 
-::: {.notes}
+::: notes
 Not only do comprehensive policies have more claims, but each claim also costs more. COMP_E and COMP_N show the highest severity distributions. That is because they cover events like total vehicle loss and theft, which are expensive. CC sits in the middle. What is also notable is how wide the spread is within each policy type. The interquartile range is huge across all types, which tells us that predicting how much any individual claim will cost is genuinely difficult.
 :::
 
@@ -574,7 +576,7 @@ insurance |>
         axis.title.x  = element_text(margin = margin(t = 8)))
 ```
 
-::: {.notes}
+::: notes
 This chart shows a pattern that actuaries know well. The youngest drivers from 19 to 25 have the highest claim frequency by a clear margin. Then it drops steadily through the middle age groups as drivers gain experience. It ticks back up slightly for drivers over 65. The U-shape is now clearly visible since we filtered out the NA group and scaled the y-axis appropriately. One note: the 19-25 bar is based on a small sample as very few young drivers appear in this portfolio.
 :::
 
@@ -610,7 +612,7 @@ insurance |>
         legend.position = "top")
 ```
 
-::: {.notes}
+::: notes
 Geography matters quite a bit for claim frequency. Urban drivers consistently file more claims than rural drivers across all three municipality types. That is not surprising given higher traffic density in cities. What is interesting is that island municipalities show the highest urban claim frequency of all. Coastal urban areas also come in elevated. So combining municipality type and circulation area together gives a more nuanced picture of geographic risk than either variable alone.
 :::
 
@@ -661,13 +663,13 @@ ggplot(trend_data,
         axis.title.x  = element_text(margin = margin(t = 8)))
 ```
 
-::: {.notes}
+::: notes
 Looking at the trend over three years gives us a sense of whether profitability is improving or getting worse. With the repelled labels on the left, we can now clearly read which line belongs to which policy type without the overlap. Comprehensive policies sit higher than basic ones throughout. What we want to watch for is any lines moving upward over time, as that could point to rising repair or medical costs squeezing margins.
 :::
 
 ## Key Findings Summary
 
-:::: {.columns}
+::::: columns
 ::: {.column width="50%"}
 **Profitability Drivers**
 
@@ -676,6 +678,7 @@ Looking at the trend over three years gives us a sense of whether profitability 
 - 🟡 **Vehicle Value**: High-value vehicles generate higher severity
 - 🟢 **Portfolio Policies**: Lower loss ratios vs new business
 :::
+
 ::: {.column width="50%"}
 **Volatility Drivers**
 
@@ -684,13 +687,13 @@ Looking at the trend over three years gives us a sense of whether profitability 
 - 🟡 **Islands**: Elevated urban claim frequency
 - 🟢 **Good Bonus Score**: Lowest frequency and variance
 :::
-::::
+:::::
 
-::: {.callout-important}
+::: callout-important
 88%+ of policies have **zero claims**. A small fraction of policies drive the majority of portfolio losses.
 :::
 
-::: {.notes}
+::: notes
 So to wrap up. On the profitability side, the two biggest signals we found are bonus score and policy type. Bad-score customers and comprehensive policy holders both show clearly elevated loss ratios. On the volatility side, urban drivers and young drivers stand out as the highest-frequency segments. The really important overall finding is that over 88 percent of policies never generate a single claim. The entire profitability challenge comes down to managing a small number of high-cost policies effectively.
 :::
 
