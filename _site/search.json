@@ -18,7 +18,7 @@
     "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#data-quality",
     "title": "Motor Vehicle Insurance Portfolio",
     "section": "Data Quality",
-    "text": "Data Quality\n\n\nGood news on data quality. Out of 47 variables, only two have any missing values at all. Fuel type is missing for less than half a percent of records, and vehicle value for just 0.1 percent. We handle these by simply filtering them out when those specific variables come up in our analysis. Everything else is complete and clean, which is quite rare for a real-world dataset of this size."
+    "text": "Data Quality\n\n\nGood news on data quality. Out of 47 variables, only two have any missing values at all. Fuel type is missing for less than half a percent of records, and vehicle value for just 0.14 percent. We handle these by simply filtering them out when those specific variables come up in our analysis. Everything else is complete and clean, which is quite rare for a real-world dataset of this size."
   },
   {
     "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#policy-type-status",
@@ -46,56 +46,56 @@
     "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#loss-ratio-overview",
     "title": "Motor Vehicle Insurance Portfolio",
     "section": "Loss Ratio Overview",
-    "text": "Loss Ratio Overview\n\n\nThis chart shows the single most important characteristic of insurance data. The vast majority of policies sit at a loss ratio of zero because they never filed a claim. Over 88 percent of policies have LR equals zero. But then there is a long tail to the right with some policies having very high loss ratios. The mean is pulled well above the median by those expensive outliers. Only about 9 percent of policies breach the break-even line, but those are the ones that really matter for the portfolio bottom line."
+    "text": "Loss Ratio Overview\n\n\nI have split this into two panels to make the story clearer. On the left, 88 percent of policies never filed a single claim. On the right, we look only at the claimants. Even among those who did claim, most had a loss ratio below 1, meaning premiums still covered the cost. But there is a meaningful tail beyond break-even. These are the policies driving all the losses. The chart is capped at 3 because the tiny number of extreme outliers beyond that just stretches the axis without adding insight."
   },
   {
     "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#loss-ratio-by-policy-type",
     "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#loss-ratio-by-policy-type",
     "title": "Motor Vehicle Insurance Portfolio",
     "section": "Loss Ratio by Policy Type",
-    "text": "Loss Ratio by Policy Type\n\n\nNow we can see exactly how policy type shapes profitability. COMP_E and COMP_N sit at the top with the widest distributions and highest medians. That makes sense as they cover more risks so they pay out more claims. TP and TPG at the bottom barely move from zero because they only cover third-party liability which is a much narrower set of events. CC sits in the middle. Policy type is one of the clearest drivers of loss ratio in this portfolio."
+    "text": "Loss Ratio by Policy Type\n\n\nNow we can see exactly how policy type shapes profitability. With the x-axis capped at 2, the distributional differences are finally visible. COMP_E and COMP_N sit at the top with the widest and most spread-out distributions. TP and TPG at the bottom are almost entirely at zero because they only cover third-party liability. CC sits in the middle. The key takeaway is that policy type is one of the clearest drivers of loss ratio."
   },
   {
     "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#loss-ratio-by-bonus-score",
     "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#loss-ratio-by-bonus-score",
     "title": "Motor Vehicle Insurance Portfolio",
     "section": "Loss Ratio by Bonus Score",
-    "text": "Loss Ratio by Bonus Score\n\n\nThis is probably the most striking finding in the profitability section. Look at the red violin on the right for Bad-score policyholders. The median is noticeably higher and the whole distribution is much wider than the green Good group. This tells us the bonus-malus scoring system is actually working well. It correctly identifies the riskier customers. Even though the Bad group is less than 1 percent of the portfolio, they punch well above their weight in terms of losses generated."
+    "text": "Loss Ratio by Bonus Score\n\n\nThis is probably the most striking finding in the profitability section. With the y-axis capped at 1.5, we can now actually see the differences between groups. The Bad-score violin on the right is noticeably wider and taller than the Good group on the left. This confirms the bonus-malus system is working. It correctly identifies the riskier customers. Even though the Bad group is less than 1 percent of the portfolio, they contribute disproportionately to aggregate losses."
   },
   {
     "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#claim-severity-by-policy-type",
     "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#claim-severity-by-policy-type",
     "title": "Motor Vehicle Insurance Portfolio",
     "section": "Claim Severity by Policy Type",
-    "text": "Claim Severity by Policy Type\n\n\nNot only do comprehensive policies have more claims, but each claim also costs more. COMP_E and COMP_N show the highest severity distributions here. That is because they cover things like total vehicle loss and theft, which are expensive events. CC is in the middle. What is also notable is how wide the spread is within each policy type. The interquartile range is huge, which tells us that predicting how much any individual claim will cost is genuinely difficult regardless of policy type."
+    "text": "Claim Severity by Policy Type\n\n\nNot only do comprehensive policies have more claims, but each claim also costs more. COMP_E and COMP_N show the highest severity distributions. That is because they cover events like total vehicle loss and theft, which are expensive. CC sits in the middle. What is also notable is how wide the spread is within each policy type. The interquartile range is huge across all types, which tells us that predicting how much any individual claim will cost is genuinely difficult."
   },
   {
     "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#claim-frequency-by-driver-age",
     "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#claim-frequency-by-driver-age",
     "title": "Motor Vehicle Insurance Portfolio",
     "section": "Claim Frequency by Driver Age",
-    "text": "Claim Frequency by Driver Age\n\n\nThis chart shows a pattern that actuaries know well. The youngest drivers from 19 to 25 have the highest claim frequency by a clear margin. Then it drops steadily through the middle age groups as drivers become more experienced. It ticks back up slightly for drivers over 65. The U-shape is very clear here. One thing worth noting is that we have very few under-25 drivers in this portfolio so the young driver bar is based on a relatively small sample compared to the other groups."
+    "text": "Claim Frequency by Driver Age\n\n\nThis chart shows a pattern that actuaries know well. The youngest drivers from 19 to 25 have the highest claim frequency by a clear margin. Then it drops steadily through the middle age groups as drivers gain experience. It ticks back up slightly for drivers over 65. The U-shape is now clearly visible since we filtered out the NA group and scaled the y-axis appropriately. One note: the 19-25 bar is based on a small sample as very few young drivers appear in this portfolio."
   },
   {
     "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#claim-frequency-by-geography",
     "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#claim-frequency-by-geography",
     "title": "Motor Vehicle Insurance Portfolio",
     "section": "Claim Frequency by Geography",
-    "text": "Claim Frequency by Geography\n\n\nGeography matters quite a bit for claim frequency. Urban drivers consistently file more claims than rural drivers across all three municipality types. That is not surprising given the higher traffic density in cities. What is interesting is that island municipalities show the highest urban claim frequency of all. Coastal urban areas also come in higher than inland urban. So when we combine municipality type and circulation area together we get a more nuanced picture of geographic risk than either variable gives us on its own."
+    "text": "Claim Frequency by Geography\n\n\nGeography matters quite a bit for claim frequency. Urban drivers consistently file more claims than rural drivers across all three municipality types. That is not surprising given higher traffic density in cities. What is interesting is that island municipalities show the highest urban claim frequency of all. Coastal urban areas also come in elevated. So combining municipality type and circulation area together gives a more nuanced picture of geographic risk than either variable alone."
   },
   {
     "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#loss-ratio-trend-over-time",
     "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#loss-ratio-trend-over-time",
     "title": "Motor Vehicle Insurance Portfolio",
     "section": "Loss Ratio Trend Over Time",
-    "text": "Loss Ratio Trend Over Time\n\n\nLooking at the trend over three years gives us a sense of whether profitability is improving or getting worse. Each line is a policy type. The red dashed line is break-even. Comprehensive policies sit higher than basic ones throughout, which is consistent with what we saw earlier. What we want to watch for is any lines moving upward over time, as that could point to rising repair or medical costs squeezing margins. The data labels on each point make the exact values easy to compare across years."
+    "text": "Loss Ratio Trend Over Time\n\n\nLooking at the trend over three years gives us a sense of whether profitability is improving or getting worse. With the repelled labels on the left, we can now clearly read which line belongs to which policy type without the overlap. Comprehensive policies sit higher than basic ones throughout. What we want to watch for is any lines moving upward over time, as that could point to rising repair or medical costs squeezing margins."
   },
   {
     "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#key-findings-summary",
     "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#key-findings-summary",
     "title": "Motor Vehicle Insurance Portfolio",
     "section": "Key Findings Summary",
-    "text": "Key Findings Summary\n\n\nProfitability Drivers\n\n🔴 Bonus Score: Bad-score holders have higher loss ratios\n🔴 Policy Type: COMP_E/COMP_N carry the highest loss ratios\n🟡 Vehicle Value: High-value vehicles generate higher severity\n🟢 Portfolio Policies: Lower loss ratios vs new business\n\n\nVolatility Drivers\n\n🔴 Urban Circulation: Consistently higher claim frequency\n🔴 Young Drivers: Highest frequency in 19-25 group\n🟡 Islands: Elevated urban claim frequency\n🟢 Good Bonus Score: Lowest frequency and variance\n\n\n\n\n\n\n\n\nImportant\n\n\n88%+ of policies have zero claims. A small fraction of policies drive the majority of portfolio losses.\n\n\n\n\nSo to wrap up. On the profitability side, the two biggest signals we found are bonus score and policy type. Bad-score customers and comprehensive policy holders both show clearly elevated loss ratios. On the volatility side, urban drivers and young drivers stand out as the highest-frequency segments. The really important overall finding though is that over 88 percent of policies never generate a single claim. The entire profitability challenge for this insurer comes down to managing a relatively small number of high-cost policies effectively."
+    "text": "Key Findings Summary\n\n\nProfitability Drivers\n\n🔴 Bonus Score: Bad-score holders have higher loss ratios\n🔴 Policy Type: COMP_E/COMP_N carry the highest loss ratios\n🟡 Vehicle Value: High-value vehicles generate higher severity\n🟢 Portfolio Policies: Lower loss ratios vs new business\n\n\nVolatility Drivers\n\n🔴 Urban Circulation: Consistently higher claim frequency\n🔴 Young Drivers: Highest frequency in 19-25 group\n🟡 Islands: Elevated urban claim frequency\n🟢 Good Bonus Score: Lowest frequency and variance\n\n\n\n\n\n\n\n\nImportant\n\n\n88%+ of policies have zero claims. A small fraction of policies drive the majority of portfolio losses.\n\n\n\n\nSo to wrap up. On the profitability side, the two biggest signals we found are bonus score and policy type. Bad-score customers and comprehensive policy holders both show clearly elevated loss ratios. On the volatility side, urban drivers and young drivers stand out as the highest-frequency segments. The really important overall finding is that over 88 percent of policies never generate a single claim. The entire profitability challenge comes down to managing a small number of high-cost policies effectively."
   },
   {
     "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#references",
@@ -627,7 +627,7 @@
     "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#policy-type-distribution",
     "title": "Motor Vehicle Insurance Portfolio",
     "section": "Policy Type Distribution",
-    "text": "Policy Type Distribution\n\n\nLooking at what the portfolio is made of, CC policies dominate at 62 percent. These are third-party liability combined with several add-ons like theft and glass. COMP_E at 22 percent is full comprehensive with an excess. What stands out is how rare basic TP policies are, under 1 percent. This tells us the insurer is largely serving customers who want broader protection. On the policy status side, 85 percent are active and 15 percent cancelled."
+    "text": "Policy Type Distribution\n\n\nLooking at what the portfolio is made of, CC policies dominate at 62 percent. These are third-party liability combined with several add-ons like theft and glass. COMP_E at 22 percent is full comprehensive with an excess. What stands out is how rare basic TP policies are, under 1 percent. This tells us the insurer is largely serving customers who want broader protection."
   },
   {
     "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#policy-status-bonus-score",
@@ -641,6 +641,6 @@
     "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#driver-age-vehicle-profile",
     "title": "Motor Vehicle Insurance Portfolio",
     "section": "Driver Age & Vehicle Profile",
-    "text": "Driver Age & Vehicle Profile\n\n\nThree things jump out from these charts. First, the typical driver here is in their mid-40s to mid-50s. Very few young drivers under 25 appear in this book, likely because premiums for that age group are too high. Second, the vehicles are quite old, with many in the 15 to 35 year range. Third, vehicle values mostly sit between 15 and 40 thousand euros, but there are expensive vehicles in the tail that can generate very large claims when something goes wrong."
+    "text": "Driver Age & Vehicle Profile\n\n\nThree things jump out from these charts. First, the typical driver here is in their mid-40s to mid-50s. Very few young drivers under 25 appear in this book, likely because premiums for that age group are too high. Second, the vehicles are quite old, with many in the 15 to 35 year range. Third, vehicle values mostly sit between 15 and 40 thousand euros. We capped the vehicle value chart at 80k to show the actual shape of the distribution."
   }
 ]
