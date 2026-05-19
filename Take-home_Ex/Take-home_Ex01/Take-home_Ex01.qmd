@@ -104,7 +104,7 @@ kable(missing_summary,
 ```
 
 ::: callout-note
-Only two variables have missing values: `fuel_type` (\~0.4%) and `vehicle_value` (\~0.1%). Both are minimal and will be excluded during analysis of those specific variables rather than imputed.
+Four variables have missing values. `fuel_type` (\~0.4%) and `vehicle_value` (\~0.1%) have minor missingness and will be excluded during analysis of those specific variables. `vehicle_age` and `age_driving_licence` each have only 2 missing rows and are negligible. No imputation is performed.
 :::
 
 #### Convert Data Types
@@ -143,7 +143,7 @@ insurance <- insurance |>
                              total_claims / total_exposure, NA),
     claim_severity = ifelse(total_claims > 0,
                             total_incurred / total_claims, NA),
-    driving_experience = year - age_driving_licence
+    driving_experience = driver_age - age_driving_licence
   )
 ```
 

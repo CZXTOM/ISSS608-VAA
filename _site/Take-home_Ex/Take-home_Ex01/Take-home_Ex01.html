@@ -488,7 +488,7 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Only two variables have missing values: <code>fuel_type</code> (~0.4%) and <code>vehicle_value</code> (~0.1%). Both are minimal and will be excluded during analysis of those specific variables rather than imputed.</p>
+<p>Four variables have missing values. <code>fuel_type</code> (~0.4%) and <code>vehicle_value</code> (~0.1%) have minor missingness and will be excluded during analysis of those specific variables. <code>vehicle_age</code> and <code>age_driving_licence</code> each have only 2 missing rows and are negligible. No imputation is performed.</p>
 </div>
 </div>
 </section>
@@ -533,7 +533,7 @@ Note
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>                             total_claims <span class="sc">/</span> total_exposure, <span class="cn">NA</span>),</span>
 <span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">claim_severity =</span> <span class="fu">ifelse</span>(total_claims <span class="sc">&gt;</span> <span class="dv">0</span>,</span>
 <span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>                            total_incurred <span class="sc">/</span> total_claims, <span class="cn">NA</span>),</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">driving_experience =</span> year <span class="sc">-</span> age_driving_licence</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">driving_experience =</span> driver_age <span class="sc">-</span> age_driving_licence</span>
 <span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
