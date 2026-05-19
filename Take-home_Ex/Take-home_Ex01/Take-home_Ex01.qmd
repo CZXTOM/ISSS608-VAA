@@ -33,16 +33,16 @@ This exercise analyses a detailed microdata portfolio from a Spanish motor insur
 
 Using Exploratory Data Analysis (EDA) methods and `ggplot2` visualisations, this exercise explores:
 
-1. **Univariate distributions** of all numerical and categorical variables
-2. **Bivariate relationships** to statistically identify factors influencing profitability and volatility
+1.  **Univariate distributions** of all numerical and categorical variables
+2.  **Bivariate relationships** to statistically identify factors influencing profitability and volatility
 
 ### Key Concepts
 
 Two derived metrics guide the analysis throughout:
 
-- **Loss Ratio** = `total_incurred / total_premium` — the primary measure of profitability. A loss ratio below 1 indicates the insurer collected more in premiums than it paid in claims.
-- **Claim Frequency** = `total_claims / total_exposure` — measures how often claims occur per policy year, a key driver of volatility.
-- **Claim Severity** = `total_incurred / total_claims` (where claims > 0) — the average cost per claim.
+- **Loss Ratio** = `total_incurred / total_premium`: the primary measure of profitability. A loss ratio below 1 indicates the insurer collected more in premiums than it paid in claims.
+- **Claim Frequency** = `total_claims / total_exposure`: measures how often claims occur per policy year, a key driver of volatility.
+- **Claim Severity** = `total_incurred / total_claims` (where claims \> 0): the average cost per claim.
 
 ## Getting Started
 
@@ -103,8 +103,8 @@ kable(missing_summary,
   kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
 ```
 
-::: {.callout-note}
-Only two variables have missing values: `fuel_type` (~0.4%) and `vehicle_value` (~0.1%). Both are minimal and will be excluded during analysis of those specific variables rather than imputed.
+::: callout-note
+Only two variables have missing values: `fuel_type` (\~0.4%) and `vehicle_value` (\~0.1%). Both are minimal and will be excluded during analysis of those specific variables rather than imputed.
 :::
 
 #### Convert Data Types
@@ -143,7 +143,6 @@ insurance <- insurance |>
                              total_claims / total_exposure, NA),
     claim_severity = ifelse(total_claims > 0,
                             total_incurred / total_claims, NA),
-    had_claim = ifelse(total_claims > 0, "Claim", "No Claim"),
     driving_experience = year - age_driving_licence
   )
 ```
@@ -190,7 +189,7 @@ insurance |>
 
 **Observation:** The CC policy type dominates the portfolio at over 62%, followed by COMP_E at around 22%. The basic TP policies are rare at under 1%, suggesting this portfolio skews toward customers who elect broader coverage. The near-absence of basic TP policies may indicate a deliberate underwriting strategy targeting higher-coverage segments.
 
----
+------------------------------------------------------------------------
 
 ### Distribution of Policy Status
 
@@ -214,9 +213,9 @@ insurance |>
   theme(panel.grid.major.x = element_blank())
 ```
 
-**Observation:** Approximately 85% of policies are active and 15% cancelled. The cancellation rate of 15% is not negligible — policies cancelled mid-term reduce premium income and may signal adverse selection if higher-risk customers are disproportionately cancelling after claims.
+**Observation:** Approximately 85% of policies are active and 15% cancelled. The cancellation rate of 15% is not negligible. Policies cancelled mid-term reduce premium income and may signal adverse selection if higher-risk customers are disproportionately cancelling after claims.
 
----
+------------------------------------------------------------------------
 
 ### Distribution of Business Type, Payment Frequency, and Bonus Score
 
@@ -251,7 +250,7 @@ p3 | p4 | p5
 
 **Observation:** Portfolio renewals (62%) substantially outnumber new business (38%), consistent with a stable, mature book. Annual payment is overwhelmingly preferred (78%), likely reflecting discounts offered for upfront payment. The bonus score distribution is highly skewed toward "Good" (98%), indicating the portfolio is dominated by low-risk, experienced drivers with no recent claims history.
 
----
+------------------------------------------------------------------------
 
 ### Distribution of Geographic Variables
 
@@ -308,9 +307,9 @@ p11 <- insurance |>
 p9 | p10 | p11
 ```
 
-**Observation:** Driver age follows a roughly bell-shaped distribution centred around 45–55 years, with very few young drivers under 25 — consistent with a portfolio biased toward experienced drivers. Vehicle age is right-skewed with a concentration of older vehicles (15–35 years). Vehicle values are capped at €80k to show the true distribution shape — the majority cluster between €15,000–€40,000 with a small tail of high-value vehicles that could significantly impact claim severity.
+**Observation:** Driver age follows a roughly bell-shaped distribution centred around 45–55 years, with very few young drivers under 25, consistent with a portfolio biased toward experienced drivers. Vehicle age is right-skewed with a concentration of older vehicles (15–35 years). Vehicle values are capped at €80k to show the true distribution shape. The majority cluster between €15,000–€40,000 with a small tail of high-value vehicles that could significantly impact claim severity.
 
----
+------------------------------------------------------------------------
 
 ### Premium Distribution
 
@@ -339,9 +338,9 @@ p13 <- insurance |>
 p12 | p13
 ```
 
-**Observation:** Total premiums are right-skewed with most policies priced between €200–€600. On the log scale, the distribution becomes more symmetric, centred around €300–€400, typical for Spanish motor insurance. The small number of very high premiums (>€2,000) likely correspond to comprehensive policies on high-value vehicles.
+**Observation:** Total premiums are right-skewed with most policies priced between €200–€600. On the log scale, the distribution becomes more symmetric, centred around €300–€400, typical for Spanish motor insurance. The small number of very high premiums (\>€2,000) likely correspond to comprehensive policies on high-value vehicles.
 
----
+------------------------------------------------------------------------
 
 ### Claims and Incurred Cost Distribution
 
@@ -378,16 +377,16 @@ p16 <- insurance |>
   geom_histogram(bins = 60, fill = "#EF5350", colour = "white") +
   scale_x_continuous(trans = "log10", labels = comma) +
   scale_y_continuous(labels = comma) +
-  labs(title = "Total Incurred Cost — log10 scale",
+  labs(title = "Total Incurred Cost (log10 scale)",
        x = "Total Incurred (EUR, log scale)", y = "Count") +
   theme_minimal()
 
 p14 / (p15 | p16)
 ```
 
-**Observation:** The claims distribution is extremely sparse — approximately 88% of policies have zero claims, consistent with low-frequency, high-severity insurance loss patterns. Among policies with claims, the incurred cost distribution is heavily right-skewed with most losses below €5,000 but a long tail. On the log scale, incurred costs appear roughly log-normal, which is characteristic of motor insurance loss distributions.
+**Observation:** The claims distribution is extremely sparse. Approximately 88% of policies have zero claims, consistent with low-frequency, high-severity insurance loss patterns. Among policies with claims, the incurred cost distribution is heavily right-skewed with most losses below €5,000 but a long tail. On the log scale, incurred costs appear roughly log-normal, which is characteristic of motor insurance loss distributions.
 
----
+------------------------------------------------------------------------
 
 ### Exposure Distribution
 
@@ -405,6 +404,82 @@ insurance |>
 ```
 
 **Observation:** The exposure distribution is strongly bimodal. The large spike near 1.0 represents policies active for a full year. A secondary mode near 0.1 represents short-term or recently cancelled policies. Very small exposure values correspond to policies with minimal time on risk.
+
+------------------------------------------------------------------------
+
+### Vehicle Brand Distribution (Top 15)
+
+```{r}
+#| fig-width: 10
+#| fig-height: 5
+
+insurance |>
+  count(vehicle_brand) |>
+  mutate(pct = n / sum(n)) |>
+  slice_max(n, n = 15) |>
+  mutate(vehicle_brand = fct_reorder(vehicle_brand, n)) |>
+  ggplot(aes(x = vehicle_brand, y = n, fill = n)) +
+  geom_col(show.legend = FALSE) +
+  geom_text(aes(label = paste0(round(pct*100, 1), "%")),
+            hjust = -0.1, size = 3.2) +
+  coord_flip() +
+  scale_y_continuous(labels = comma,
+                     expand = expansion(mult = c(0, 0.18))) +
+  scale_fill_gradient(low = "#BBDEFB", high = "#1565C0") +
+  labs(title = "Top 15 Vehicle Brands by Policy Count",
+       x = NULL, y = "Number of Policies") +
+  theme_minimal() +
+  theme(panel.grid.major.y = element_blank())
+```
+
+**Observation:** The portfolio is dominated by mainstream European brands, with Volkswagen, Peugeot and Renault accounting for the largest shares. This brand distribution reflects the broader Spanish vehicle market. The concentration in mass-market brands suggests relatively homogeneous vehicle values and repair costs across the portfolio, though premium brands in the tail can generate disproportionately large claims.
+
+------------------------------------------------------------------------
+
+### Driving Experience Distribution
+
+```{r}
+#| fig-width: 9
+#| fig-height: 4
+
+insurance |>
+  filter(!is.na(driving_experience),
+         driving_experience >= 0,
+         driving_experience <= 60) |>
+  ggplot(aes(x = driving_experience)) +
+  geom_histogram(binwidth = 3, fill = "#7E57C2", colour = "white") +
+  scale_y_continuous(labels = comma) +
+  labs(title = "Distribution of Driving Experience (Years Since Licence)",
+       subtitle = "Capped at 60 years for clarity",
+       x = "Years of Driving Experience", y = "Count") +
+  theme_minimal()
+```
+
+**Observation:** Driving experience follows a right-skewed distribution with most policyholders having between 10 and 40 years of experience, consistent with the middle-aged driver profile seen in the driver age distribution. Very few policyholders have less than 5 years of experience, confirming that novice drivers are largely absent from this portfolio.
+
+------------------------------------------------------------------------
+
+### Power-to-Weight Ratio Distribution
+
+```{r}
+#| fig-width: 9
+#| fig-height: 4
+
+insurance |>
+  filter(!is.na(power_to_weight_ratio),
+         power_to_weight_ratio > 0,
+         power_to_weight_ratio <= quantile(power_to_weight_ratio,
+                                            0.99, na.rm = TRUE)) |>
+  ggplot(aes(x = power_to_weight_ratio)) +
+  geom_histogram(bins = 50, fill = "#EF5350", colour = "white") +
+  scale_y_continuous(labels = comma) +
+  labs(title = "Distribution of Power-to-Weight Ratio",
+       subtitle = "Capped at 99th percentile",
+       x = "Power-to-Weight Ratio (kg/hp)", y = "Count") +
+  theme_minimal()
+```
+
+**Observation:** The power-to-weight ratio distribution is right-skewed with most vehicles clustering in the lower range, reflecting the dominance of standard passenger vehicles. A smaller tail of high-performance vehicles with elevated ratios represents a potential risk segment, as higher-powered vehicles are associated with greater accident severity.
 
 ## EDA 3: Univariate Analysis — Derived Profitability Metrics
 
@@ -475,7 +550,7 @@ lr_data |>
 
 **Observation:** The two-panel chart reveals the key structural feature of this insurance portfolio. Over 88% of policies never generate a claim. Among the 12% that do claim, most have loss ratios below 1, meaning premiums still covered the cost. The right panel shows a peak near 0.1–0.3 that decays toward 3, consistent with a log-normal claim severity distribution. A small fraction of policies breach the break-even line and disproportionately drive aggregate losses.
 
----
+------------------------------------------------------------------------
 
 ### Claim Frequency Distribution
 
@@ -495,7 +570,7 @@ insurance |>
   theme_minimal()
 ```
 
-**Observation:** Among policies that filed claims, most had a frequency near 0.1–0.5 claims per year, consistent with a single claim on a full-year policy. The rare policies with high claim frequencies (>2 per year) represent a significant volatility risk, indicating accident-prone drivers.
+**Observation:** Among policies that filed claims, most had a frequency near 0.1–0.5 claims per year, consistent with a single claim on a full-year policy. The rare policies with high claim frequencies (\>2 per year) represent a significant volatility risk, indicating accident-prone drivers.
 
 ## EDA 4: Bivariate Analysis — Factors Affecting Profitability
 
@@ -534,7 +609,7 @@ insurance |>
 
 **Observation:** Loss ratio distributions vary markedly across policy types. Comprehensive policies (COMP_E and COMP_N) show the widest distributions and highest medians, reflecting the broader coverage they provide. The TP and TPG policies are concentrated near zero as their coverage is limited to third-party liability only.
 
----
+------------------------------------------------------------------------
 
 ### Loss Ratio by Bonus Score
 
@@ -568,7 +643,7 @@ insurance |>
 
 **Observation:** Policyholders with a "Bad" bonus score exhibit substantially higher median loss ratios and greater distributional spread compared to "Good" policyholders, confirming that the bonus-malus system successfully identifies high-risk customers. The "Bad" group contributes disproportionately to portfolio volatility despite representing less than 1% of policies.
 
----
+------------------------------------------------------------------------
 
 ### Claim Frequency by Driver Age Group
 
@@ -600,7 +675,39 @@ insurance |>
 
 **Observation:** Claim frequency is highest for the youngest driver age group (19–25), consistent with actuarial research on inexperienced drivers. Frequency gradually decreases for middle-aged drivers (35–55) and slightly increases again for older drivers (65+), forming a characteristic U-shape. This pattern justifies age-based premium differentiation.
 
----
+------------------------------------------------------------------------
+
+### Claim Frequency by Driving Experience Group
+
+```{r}
+#| fig-width: 10
+#| fig-height: 5
+
+insurance |>
+  filter(!is.na(claim_frequency), total_exposure > 0,
+         driving_experience >= 0, driving_experience <= 60) |>
+  mutate(exp_group = cut(driving_experience,
+                          breaks = c(-1, 5, 10, 20, 30, 40, 60),
+                          labels = c("0-5", "6-10", "11-20",
+                                     "21-30", "31-40", "41+"))) |>
+  filter(!is.na(exp_group)) |>
+  group_by(exp_group) |>
+  summarise(mean_freq = mean(claim_frequency), .groups = "drop") |>
+  ggplot(aes(x = exp_group, y = mean_freq)) +
+  geom_col(fill = "#7E57C2", width = 0.65) +
+  geom_text(aes(label = round(mean_freq, 3)),
+            vjust = -0.4, size = 3.5) +
+  coord_cartesian(ylim = c(0, 0.5)) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+  labs(title = "Mean Claim Frequency by Driving Experience Group",
+       x = "Years of Driving Experience", y = "Mean Claim Frequency (claims/policy year)") +
+  theme_minimal() +
+  theme(panel.grid.major.x = element_blank())
+```
+
+**Observation:** Claim frequency decreases consistently as driving experience increases, with the least experienced drivers (0–5 years) showing the highest frequency. This pattern reinforces the driver age findings and confirms that experience, independent of age, is a meaningful risk predictor. The most experienced drivers (41+ years) show the lowest claim frequency, though this group also tends to be older.
+
+------------------------------------------------------------------------
 
 ### Loss Ratio by Vehicle Age Group
 
@@ -634,7 +741,7 @@ insurance |>
 
 **Observation:** Newer vehicles (0–5 years) show wider loss ratio distributions, possibly driven by higher repair costs or declared values. Very old vehicles (31+ years) show lower and more concentrated loss ratios, likely because they carry lower insured values resulting in smaller absolute claim amounts.
 
----
+------------------------------------------------------------------------
 
 ### Claim Severity by Policy Type
 
@@ -690,7 +797,42 @@ insurance |>
 
 **Observation:** Urban circulation consistently shows higher claim frequencies than rural across all municipality types, consistent with greater traffic density and accident risk in urban environments. Island municipalities exhibit the highest urban claim frequencies. This geographic segmentation demonstrates that both location type and circulation environment are meaningful predictors of claim volatility.
 
----
+------------------------------------------------------------------------
+
+### Claim Frequency by Vehicle Brand (Top 12)
+
+```{r}
+#| fig-width: 10
+#| fig-height: 5
+
+insurance |>
+  filter(!is.na(claim_frequency), total_exposure > 0) |>
+  group_by(vehicle_brand) |>
+  summarise(
+    mean_freq = mean(claim_frequency),
+    n = n(),
+    .groups = "drop"
+  ) |>
+  filter(n >= 500) |>
+  slice_max(mean_freq, n = 12) |>
+  mutate(vehicle_brand = fct_reorder(vehicle_brand, mean_freq)) |>
+  ggplot(aes(x = vehicle_brand, y = mean_freq, fill = mean_freq)) +
+  geom_col(show.legend = FALSE) +
+  geom_text(aes(label = round(mean_freq, 3)),
+            hjust = -0.1, size = 3.2) +
+  coord_flip() +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.18))) +
+  scale_fill_gradient(low = "#90CAF9", high = "#1565C0") +
+  labs(title = "Mean Claim Frequency by Vehicle Brand (Top 12)",
+       subtitle = "Brands with at least 500 policies only",
+       x = NULL, y = "Mean Claim Frequency (claims/policy year)") +
+  theme_minimal() +
+  theme(panel.grid.major.y = element_blank())
+```
+
+**Observation:** Claim frequency varies meaningfully across vehicle brands, indicating that brand is a relevant risk factor beyond what is captured by vehicle age and value alone. This variation may reflect differences in driver demographics, vehicle use patterns, or inherent vehicle safety characteristics across brands.
+
+------------------------------------------------------------------------
 
 ### Loss Ratio Over Time (Year)
 
@@ -730,7 +872,7 @@ ggplot(trend_data,
 
 **Observation:** Loss ratios vary across years and policy types. Comprehensive policies consistently sit above basic coverage types throughout the three-year period. Any upward trend could indicate inflationary pressure on claims costs such as rising repair or medical expenses.
 
----
+------------------------------------------------------------------------
 
 ### Relationship Between Premium and Incurred Cost
 
@@ -758,25 +900,26 @@ insurance |>
   guides(colour = guide_legend(override.aes = list(alpha = 1, size = 2)))
 ```
 
-**Observation:** Most policies with claims fall below the break-even line (incurred < premium), indicating individual profitability. However, a notable cluster of policies exceed the break-even line, representing loss-making contracts. These tend to be clustered among comprehensive policies, confirming that wider coverage generates both higher revenue and higher claims exposure.
+**Observation:** Most policies with claims fall below the break-even line (incurred \< premium), indicating individual profitability. However, a notable cluster of policies exceed the break-even line, representing loss-making contracts. These tend to be clustered among comprehensive policies, confirming that wider coverage generates both higher revenue and higher claims exposure.
 
 ## Summary and Conclusion
 
-This analysis explored the motor vehicle insurance portfolio across 354,140 policies spanning 2022–2024 using univariate and bivariate EDA methods.
+This analysis explored the motor vehicle insurance portfolio across 354,140 policies spanning 2022–2024 using univariate and bivariate EDA methods. All 47 variables were examined across 5 EDA sections.
 
 **Key findings on profitability:**
 
 - The portfolio is dominated by CC and COMP_E policy types which carry the highest claim severity
-- Bonus score (claims history) is a strong predictor of loss ratio — "Bad" policyholders show markedly higher and more variable loss ratios
+- Bonus score (claims history) is a strong predictor of loss ratio. "Bad" policyholders show markedly higher and more variable loss ratios
 - Comprehensive policies (COMP_E, COMP_N) consistently exhibit higher loss ratios than basic coverage types
 - Over 88% of policies generate zero claims, creating a highly skewed loss distribution that drives average loss ratios
 
 **Key findings on volatility:**
 
-- Young drivers (19–25) and urban circulation show the highest claim frequencies
+- Young drivers (19–25) and drivers with less than 5 years of experience show the highest claim frequencies
+- Urban circulation and island municipalities show the highest claim frequencies across all regions
 - Vehicle age, municipality type and circulation area all contribute to claim frequency variation
+- Vehicle brand shows meaningful variation in claim frequency, indicating that brand is a risk factor beyond age and value alone
 - The heavy right tail in both claim frequency and severity distributions is the primary source of portfolio volatility
-- Island municipalities with urban circulation show the highest volatility signal
 
 ## References
 
