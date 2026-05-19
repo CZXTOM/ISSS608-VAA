@@ -16,7 +16,7 @@ execute:
   eval: true
   warning: false
   message: false
-  freeze: true
+  freeze: false
 ---
 
 ```{r}
