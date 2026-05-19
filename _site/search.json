@@ -21,18 +21,25 @@
     "text": "Data Quality\n\n\nGood news on data quality. Out of 47 variables, only two have any missing values at all. Fuel type is missing for less than half a percent of records, and vehicle value for just 0.14 percent. We handle these by simply filtering them out when those specific variables come up in our analysis. Everything else is complete and clean, which is quite rare for a real-world dataset of this size."
   },
   {
-    "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#policy-type-status",
-    "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#policy-type-status",
+    "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#policy-type-distribution",
+    "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#policy-type-distribution",
     "title": "Motor Vehicle Insurance Portfolio",
-    "section": "Policy Type & Status",
-    "text": "Policy Type & Status\n\n\nLooking at what the portfolio is made of, CC policies dominate at 62 percent. These are third-party liability combined with several add-ons like theft and glass. COMP_E at 22 percent is full comprehensive with an excess. What stands out is how rare basic TP policies are, under 1 percent. This tells us the insurer is largely serving customers who want broader protection. On the right, 85 percent of policies are active. The 15 percent cancellation rate is worth noting as mid-term cancellations reduce premium income and can sometimes signal customers cancelling after a claim."
+    "section": "Policy Type Distribution",
+    "text": "Policy Type Distribution\n\n\nLooking at what the portfolio is made of, CC policies dominate at 58 percent. These are third-party liability combined with several add-ons like theft and glass. COMP_E at 26 percent is full comprehensive with an excess. TPG comes in at 10 percent. What stands out is how rare basic TP policies are at just 1.6 percent. This tells us the insurer is largely serving customers who want broader protection."
   },
   {
-    "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#driver-vehicle-profile",
-    "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#driver-vehicle-profile",
+    "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#policy-status-bonus-score",
+    "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#policy-status-bonus-score",
     "title": "Motor Vehicle Insurance Portfolio",
-    "section": "Driver & Vehicle Profile",
-    "text": "Driver & Vehicle Profile\n\n\nThree things jump out from these charts. First, the typical driver here is in their mid-40s to mid-50s. Very few young drivers under 25 appear in this book, likely because premiums for that age group are too high. Second, the vehicles are quite old, with many in the 15 to 35 year range. Third, vehicle values are mostly in the 15 to 40 thousand euro range but there are some quite expensive vehicles in the tail. Those high-value vehicles matter a lot because when something goes wrong with them the claim can be substantial."
+    "section": "Policy Status & Bonus Score",
+    "text": "Policy Status & Bonus Score\n\n\nOn the left, 89 percent of policies are active and 11 percent cancelled. That cancellation rate is worth noting as mid-term cancellations reduce premium income. On the right, the bonus score breakdown shows 96 percent of customers have a Good score, meaning they have had no recent claims. This is very positive for profitability but it also means the Bad group at just 1.3 percent and Neutral at 2.2 percent are so small we need to be careful drawing conclusions from them."
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#driver-age-vehicle-profile",
+    "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#driver-age-vehicle-profile",
+    "title": "Motor Vehicle Insurance Portfolio",
+    "section": "Driver Age & Vehicle Profile",
+    "text": "Driver Age & Vehicle Profile\n\n\nThree things jump out from these charts. First, the typical driver here is in their mid-40s to mid-50s. Very few young drivers under 25 appear in this book, likely because premiums for that age group are too high. Second, the vehicles are quite old, with many in the 15 to 35 year range. Third, vehicle values mostly sit between 15 and 40 thousand euros. We capped the vehicle value chart at 80k to show the actual shape of the distribution."
   },
   {
     "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#geographic-distribution",
@@ -621,26 +628,5 @@
     "title": "Take-home Exercise 1: Visual Analytics of Motor Vehicle Insurance Portfolio",
     "section": "9 References",
     "text": "9 References\n\nEspinosa, P., Lledó, J., & Atance, D. (2026). A detailed dataset of motor insurance policies with coverage-specific financial information. Mendeley Data. https://doi.org/10.17632/sw4jmdb2sm.1\nSwiss Re Institute. (2019). sigma 4/2019: World insurance: the great pivot east continues. Swiss Re.\nWickham, H. (2016). ggplot2: Elegant Graphics for Data Analysis. Springer-Verlag New York.\nWilke, C. O. (2019). Fundamentals of Data Visualization. O’Reilly Media."
-  },
-  {
-    "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#policy-type-distribution",
-    "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#policy-type-distribution",
-    "title": "Motor Vehicle Insurance Portfolio",
-    "section": "Policy Type Distribution",
-    "text": "Policy Type Distribution\n\n\nLooking at what the portfolio is made of, CC policies dominate at 58 percent. These are third-party liability combined with several add-ons like theft and glass. COMP_E at 26 percent is full comprehensive with an excess. TPG comes in at 10 percent. What stands out is how rare basic TP policies are at just 1.6 percent. This tells us the insurer is largely serving customers who want broader protection."
-  },
-  {
-    "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#policy-status-bonus-score",
-    "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#policy-status-bonus-score",
-    "title": "Motor Vehicle Insurance Portfolio",
-    "section": "Policy Status & Bonus Score",
-    "text": "Policy Status & Bonus Score\n\n\nOn the left, 89 percent of policies are active and 11 percent cancelled. That cancellation rate is worth noting as mid-term cancellations reduce premium income. On the right, the bonus score breakdown shows 96 percent of customers have a Good score, meaning they have had no recent claims. This is very positive for profitability but it also means the Bad group at just 1.3 percent and Neutral at 2.2 percent are so small we need to be careful drawing conclusions from them."
-  },
-  {
-    "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#driver-age-vehicle-profile",
-    "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#driver-age-vehicle-profile",
-    "title": "Motor Vehicle Insurance Portfolio",
-    "section": "Driver Age & Vehicle Profile",
-    "text": "Driver Age & Vehicle Profile\n\n\nThree things jump out from these charts. First, the typical driver here is in their mid-40s to mid-50s. Very few young drivers under 25 appear in this book, likely because premiums for that age group are too high. Second, the vehicles are quite old, with many in the 15 to 35 year range. Third, vehicle values mostly sit between 15 and 40 thousand euros. We capped the vehicle value chart at 80k to show the actual shape of the distribution."
   }
 ]
