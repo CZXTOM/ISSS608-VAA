@@ -206,7 +206,7 @@ insurance |>
 ```
 
 ::: notes
-Looking at what the portfolio is made of, CC policies dominate at 62 percent. These are third-party liability combined with several add-ons like theft and glass. COMP_E at 22 percent is full comprehensive with an excess. What stands out is how rare basic TP policies are, under 1 percent. This tells us the insurer is largely serving customers who want broader protection.
+Looking at what the portfolio is made of, CC policies dominate at 58 percent. These are third-party liability combined with several add-ons like theft and glass. COMP_E at 26 percent is full comprehensive with an excess. TPG comes in at 10 percent. What stands out is how rare basic TP policies are at just 1.6 percent. This tells us the insurer is largely serving customers who want broader protection.
 :::
 
 ## Policy Status & Bonus Score
@@ -255,7 +255,7 @@ p_status | p_bonus
 ```
 
 ::: notes
-On the left, 85 percent of policies are active and 15 percent cancelled. A 15 percent cancellation rate is worth noting as mid-term cancellations reduce premium income. On the right, the bonus score is striking. 98 percent of customers have a Good score, meaning they have had no recent claims. This is very positive for profitability but it also means the Bad and Neutral groups are so small we need to be careful drawing conclusions from them.
+On the left, 89 percent of policies are active and 11 percent cancelled. That cancellation rate is worth noting as mid-term cancellations reduce premium income. On the right, the bonus score breakdown shows 96 percent of customers have a Good score, meaning they have had no recent claims. This is very positive for profitability but it also means the Bad group at just 1.3 percent and Neutral at 2.2 percent are so small we need to be careful drawing conclusions from them.
 :::
 
 ## Driver Age & Vehicle Profile
@@ -364,7 +364,7 @@ p_mun | p_circ | p_fuel
 ```
 
 ::: notes
-The geographic mix is reasonably well spread. Inland is the biggest segment at 54 percent, which makes sense for Spain. Urban and rural are almost perfectly split at 51 and 49 percent. Diesel vehicles make up 62 percent of the fleet, though this may shift as newer petrol and electric vehicles gain market share in coming years.
+The geographic mix shows inland as the dominant segment at 65 percent, coastal at 29 percent and islands at 7 percent. Urban circulation edges ahead of rural at 54 versus 46 percent. Diesel vehicles make up 64 percent of the fleet, though this may shift as newer petrol and electric vehicles gain market share in coming years.
 :::
 
 # Part 3: Profitability Analysis
