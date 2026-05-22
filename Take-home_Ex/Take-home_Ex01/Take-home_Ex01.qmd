@@ -584,30 +584,25 @@ insurance |>
 insurance |>
   filter(!is.na(loss_ratio), total_premium > 0,
          loss_ratio > 0, loss_ratio <= 2) |>
-  ggplot(aes(x = loss_ratio, y = policy_type, fill = policy_type)) +
-  stat_density_ridges(
-    quantile_lines = TRUE,
-    quantiles      = c(0.5),
-    alpha          = 0.75,
-    show.legend    = FALSE,
-    scale          = 0.85,
-    bandwidth      = 0.08,
-    trim           = TRUE,
-    rel_min_height = 0.01
-  ) +
-  geom_vline(xintercept = 1, colour = "#B71C1C",
+  mutate(fill_col = ifelse(policy_type %in% c("COMP/E: +Excess","COMP/N: Full"),
+                            "#2166AC", "#BABABA")) |>
+  ggplot(aes(x = policy_type, y = loss_ratio, fill = fill_col)) +
+  stat_halfeye(adjust = 0.5, justification = -0.15,
+               .width = 0, point_colour = NA, show.legend = FALSE) +
+  geom_boxplot(width = 0.15, outlier.shape = NA,
+               show.legend = FALSE, colour = "#444444", linewidth = 0.5) +
+  stat_summary(fun = mean, geom = "point",
+               shape = 18, size = 3, colour = "black") +
+  geom_hline(yintercept = 1, colour = "#D6604D",
              linetype = "dashed", linewidth = 0.8) +
-  annotate("text", x = 1.03, y = 0.55,
+  annotate("text", x = 0.6, y = 1.05,
            label = "Break-even", hjust = 0,
-           colour = "#B71C1C", size = 3.5) +
-  scale_x_continuous(limits = c(0, 2)) +
-  scale_fill_manual(values = c(
-    "TP: Basic" = "#BABABA", "TPG: +Glass" = "#BABABA",
-    "CC: +Add-ons" = "#BABABA", "COMP/E: +Excess" = "#2166AC",
-    "COMP/N: Full" = "#2166AC")) +
-  labs(title = "Loss Ratio Distribution by Policy Type",
-       subtitle = "Claimants only, capped at LR = 2  |  Line = median",
-       x = "Loss Ratio", y = NULL) +
+           colour = "#D6604D", size = 3.5) +
+  coord_cartesian(ylim = c(0, 2)) +
+  scale_fill_identity() +
+  labs(title = "Loss Ratio by Policy Type — Raincloud Plot",
+       subtitle = "Claimants only (LR > 0), capped at 2 | Highlighted: COMP/E and COMP/N | Diamond = mean",
+       x = "Policy Type", y = "Loss Ratio") +
   theme_minimal()
 ```
 
@@ -624,22 +619,27 @@ insurance |>
 insurance |>
   filter(!is.na(loss_ratio), total_premium > 0,
          loss_ratio > 0, loss_ratio <= 1.5) |>
-  ggplot(aes(x = bonus_score, y = loss_ratio, fill = bonus_score)) +
-  geom_violin(alpha = 0.7, show.legend = FALSE, trim = TRUE,
-              colour = NA) +
-  geom_boxplot(width = 0.12, outlier.shape = NA,
+  mutate(fill_col = case_when(
+    bonus_score == "Bad"     ~ "#2166AC",
+    bonus_score == "Neutral" ~ "#878787",
+    bonus_score == "Good"    ~ "#BABABA"
+  )) |>
+  ggplot(aes(x = bonus_score, y = loss_ratio, fill = fill_col)) +
+  stat_halfeye(adjust = 0.5, justification = -0.15,
+               .width = 0, point_colour = NA, show.legend = FALSE) +
+  geom_boxplot(width = 0.15, outlier.shape = NA,
                show.legend = FALSE, fill = "white",
                colour = "#444444", linewidth = 0.6) +
-  geom_hline(yintercept = 1, colour = "#B71C1C",
+  stat_summary(fun = mean, geom = "point",
+               shape = 18, size = 3, colour = "black") +
+  geom_hline(yintercept = 1, colour = "#D6604D",
              linetype = "dashed", linewidth = 0.8) +
   annotate("text", x = 0.6, y = 1.05,
            label = "Break-even (LR = 1)", hjust = 0,
-           colour = "#B71C1C", size = 3.5) +
-  scale_fill_manual(values = c("Good"    = "#BABABA",
-                                "Neutral" = "#878787",
-                                "Bad"     = "#2166AC")) +
-  labs(title = "Loss Ratio by Bonus Score",
-       subtitle = "Claimants only (LR > 0), capped at 1.5",
+           colour = "#D6604D", size = 3.5) +
+  scale_fill_identity() +
+  labs(title = "Loss Ratio by Bonus Score — Raincloud Plot",
+       subtitle = "Claimants only (LR > 0), capped at 1.5 | Highlighted: Bad-score policyholders | Diamond = mean",
        x = "Bonus Score", y = "Loss Ratio",
        caption = "< 3% of claimants exceed LR = 1.5 and are excluded") +
   theme_minimal()
@@ -665,13 +665,17 @@ insurance |>
   filter(!is.na(age_group)) |>
   group_by(age_group) |>
   summarise(mean_freq = mean(claim_frequency), .groups = "drop") |>
+  mutate(dot_col = ifelse(age_group == "19-25", "#2166AC", "#BABABA")) |>
   ggplot(aes(x = age_group, y = mean_freq)) +
-  geom_col(fill = "#42A5F5") +
+  geom_segment(aes(xend = age_group, yend = 0.22),
+               colour = "#BABABA", linewidth = 0.8) +
+  geom_point(aes(colour = dot_col), size = 6, show.legend = FALSE) +
   geom_text(aes(label = round(mean_freq, 3)),
-            vjust = -0.3, size = 3.5) +
-  coord_cartesian(ylim = c(0, 0.85)) +
-  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+            vjust = -1.0, size = 3.8, fontface = "bold") +
+  scale_colour_identity() +
+  scale_y_continuous(limits = c(0.22, 0.85)) +
   labs(title = "Mean Claim Frequency by Driver Age Group",
+       subtitle = "Highlighted: 19-25 group (0.716) files 2.5x more claims than safest 56-65 group (0.289)",
        x = "Driver Age Group", y = "Mean Claim Frequency (claims/policy year)") +
   theme_minimal() +
   theme(panel.grid.major.x = element_blank())
@@ -725,22 +729,27 @@ insurance |>
   mutate(veh_age_group = cut(vehicle_age,
                               breaks = c(-1, 5, 10, 15, 20, 30, 60),
                               labels = c("0-5", "6-10", "11-15",
-                                         "16-20", "21-30", "31+"))) |>
+                                         "16-20", "21-30", "31+")),
+         fill_col = case_when(
+           veh_age_group == "0-5"   ~ "#2166AC",
+           veh_age_group == "6-10"  ~ "#4393C3",
+           veh_age_group == "11-15" ~ "#74ADD1",
+           TRUE ~ "#BABABA"
+         )) |>
   filter(!is.na(veh_age_group)) |>
-  ggplot(aes(x = veh_age_group, y = loss_ratio, fill = veh_age_group)) +
-  geom_violin(alpha = 0.7, show.legend = FALSE, trim = TRUE,
-              colour = NA) +
-  geom_boxplot(width = 0.12, outlier.shape = NA,
+  ggplot(aes(x = veh_age_group, y = loss_ratio, fill = fill_col)) +
+  stat_halfeye(adjust = 0.5, justification = -0.15,
+               .width = 0, point_colour = NA, show.legend = FALSE) +
+  geom_boxplot(width = 0.15, outlier.shape = NA,
                show.legend = FALSE, fill = "white",
                colour = "#444444", linewidth = 0.6) +
-  geom_hline(yintercept = 1, colour = "#B71C1C",
+  stat_summary(fun = mean, geom = "point",
+               shape = 18, size = 3, colour = "black") +
+  geom_hline(yintercept = 1, colour = "#D6604D",
              linetype = "dashed", linewidth = 0.8) +
-  scale_fill_manual(values = c(
-    "0-5" = "#2166AC", "6-10" = "#4393C3",
-    "11-15" = "#74ADD1", "16-20" = "#BABABA",
-    "21-30" = "#BABABA", "31+" = "#BABABA")) +
-  labs(title = "Loss Ratio by Vehicle Age Group",
-       subtitle = "Claimants only (LR > 0), capped at 1.5",
+  scale_fill_identity() +
+  labs(title = "Loss Ratio by Vehicle Age Group — Raincloud Plot",
+       subtitle = "Claimants only (LR > 0), capped at 1.5 | Highlighted: newer vehicles (0-15 yrs) | Diamond = mean",
        x = "Vehicle Age Group (years)", y = "Loss Ratio",
        caption = "< 3% of claimants exceed LR = 1.5 and are excluded") +
   theme_minimal()
@@ -759,19 +768,21 @@ insurance |>
 insurance |>
   filter(!is.na(claim_severity), total_claims > 0) |>
   filter(claim_severity <= quantile(claim_severity, 0.99, na.rm = TRUE)) |>
-  ggplot(aes(x = policy_type, y = claim_severity, fill = policy_type)) +
-  geom_violin(alpha = 0.7, show.legend = FALSE, trim = TRUE,
-              colour = NA) +
-  geom_boxplot(width = 0.12, outlier.shape = NA,
+  mutate(fill_col = ifelse(policy_type %in% c("COMP/E: +Excess","COMP/N: Full"),
+                            "#2166AC", "#BABABA")) |>
+  ggplot(aes(x = policy_type, y = claim_severity, fill = fill_col)) +
+  stat_halfeye(adjust = 0.5, justification = -0.15,
+               .width = 0, point_colour = NA, show.legend = FALSE) +
+  geom_boxplot(width = 0.15, outlier.shape = NA,
                show.legend = FALSE, fill = "white",
                colour = "#444444", linewidth = 0.6) +
+  stat_summary(fun = mean, geom = "point",
+               shape = 18, size = 3, colour = "black") +
+  coord_cartesian(ylim = c(0, 3000)) +
   scale_y_continuous(labels = comma) +
-  scale_fill_manual(values = c(
-    "TP: Basic" = "#BABABA", "TPG: +Glass" = "#BABABA",
-    "CC: +Add-ons" = "#BABABA", "COMP/E: +Excess" = "#2166AC",
-    "COMP/N: Full" = "#2166AC")) +
-  labs(title = "Claim Severity by Policy Type",
-       subtitle = "Capped at 99th percentile  |  Policies with claims only",
+  scale_fill_identity() +
+  labs(title = "Claim Severity by Policy Type — Raincloud Plot",
+       subtitle = "Capped at 99th percentile | Policies with claims only | Highlighted: COMP/E and COMP/N | Diamond = mean",
        x = "Policy Type", y = "Claim Severity (EUR per claim)") +
   theme_minimal()
 ```
@@ -783,26 +794,24 @@ insurance |>
 ### Claim Frequency by Circulation Area and Municipality Type
 
 ```{r}
-#| fig-width: 10
-#| fig-height: 5
+#| fig-width: 9
+#| fig-height: 4
 
 insurance |>
   filter(!is.na(claim_frequency), total_exposure > 0) |>
   group_by(municipality_type, circulation_area) |>
   summarise(mean_freq = mean(claim_frequency), .groups = "drop") |>
-  ggplot(aes(x = municipality_type, y = mean_freq,
-             fill = circulation_area)) +
-  geom_col(position = position_dodge(0.75), width = 0.65) +
+  ggplot(aes(x = municipality_type, y = circulation_area, fill = mean_freq)) +
+  geom_tile(colour = "white", linewidth = 1.5) +
   geom_text(aes(label = round(mean_freq, 3)),
-            position = position_dodge(0.75),
-            vjust = -0.3, size = 3.2) +
-  scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
-  scale_fill_manual(values = c("Urban" = "#2166AC", "Rural" = "#BABABA")) +
-  labs(title = "Mean Claim Frequency by Municipality Type and Circulation Area",
-       x = "Municipality Type", y = "Mean Claim Frequency",
-       fill = "Circulation Area") +
+            size = 5, fontface = "bold", colour = "white") +
+  scale_fill_gradient(low = "#BABABA", high = "#2166AC",
+                      name = "Mean Claim\nFrequency") +
+  labs(title = "Mean Claim Frequency by Municipality & Circulation Area — Heatmap",
+       subtitle = "Darker blue = higher claim frequency | Inland Urban (0.371) is highest risk combination",
+       x = "Municipality Type", y = "Circulation Area") +
   theme_minimal() +
-  theme(panel.grid.major.x = element_blank())
+  theme(panel.grid = element_blank())
 ```
 
 **Observation:** Urban circulation consistently shows higher claim frequencies than rural across all municipality types, consistent with greater traffic density and accident risk in urban environments. Island municipalities exhibit the highest urban claim frequencies. This geographic segmentation demonstrates that both location type and circulation environment are meaningful predictors of claim volatility.
@@ -857,30 +866,34 @@ trend_data <- insurance |>
 
 ggplot(trend_data,
        aes(x = year, y = mean_lr,
-           colour = policy_type, group = policy_type)) +
-  geom_line(linewidth = 1) +
+           colour = policy_type, group = policy_type,
+           linewidth = ifelse(policy_type %in% c("COMP/E: +Excess","COMP/N: Full"), 1.3, 0.7))) +
+  geom_line() +
   geom_point(size = 3) +
   geom_hline(yintercept = 1, linetype = "dashed",
-             colour = "#B71C1C", linewidth = 0.8) +
+             colour = "#D6604D", linewidth = 0.8) +
   geom_text_repel(
-    data = filter(trend_data, year == 2022),
-    aes(label = paste0(policy_type, " ", round(mean_lr, 2))),
+    data = filter(trend_data, year == 2024),
+    aes(label = paste0(policy_type, ": ", round(mean_lr, 2))),
     direction   = "y",
-    nudge_x     = -0.3,
+    nudge_x     = 0.12,
     size        = 3,
     show.legend = FALSE,
     segment.color = "grey70",
     segment.size  = 0.3
   ) +
   scale_x_continuous(breaks = c(2022, 2023, 2024),
-                     expand = expansion(add = c(0.6, 0.3))) +
+                     expand = expansion(add = c(0.2, 0.9))) +
+  scale_linewidth_identity() +
   scale_colour_manual(values = c(
     "TP: Basic" = "#BABABA", "TPG: +Glass" = "#BABABA",
     "CC: +Add-ons" = "#BABABA", "COMP/E: +Excess" = "#2166AC",
     "COMP/N: Full" = "#2166AC")) +
   labs(title = "Mean Loss Ratio by Policy Type Over Time (2022-2024)",
+       subtitle = "COMP/E and COMP/N crossed break-even in 2024",
        x = "Year", y = "Mean Loss Ratio", colour = "Policy Type") +
-  theme_minimal()
+  theme_minimal() +
+  theme(legend.position = "none")
 ```
 
 **Observation:** Loss ratios vary across years and policy types. Comprehensive policies consistently sit above basic coverage types throughout the three-year period. Any upward trend could indicate inflationary pressure on claims costs such as rising repair or medical expenses.
