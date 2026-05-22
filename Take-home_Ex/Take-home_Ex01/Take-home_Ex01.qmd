@@ -208,14 +208,14 @@ insurance |>
             vjust = -0.3, size = 3.5) +
   scale_y_continuous(labels = comma,
                      expand = expansion(mult = c(0, 0.12))) +
-  scale_fill_manual(values = c("Active" = "#42A5F5", "Cancelled" = "#EF5350")) +
+  scale_fill_manual(values = c("Active" = "#2166AC", "Cancelled" = "#BABABA")) +
   labs(title = "Distribution of Policy Status",
        x = NULL, y = "Number of Policies") +
   theme_minimal() +
   theme(panel.grid.major.x = element_blank())
 ```
 
-**Observation:** Approximately 85% of policies are active and 15% cancelled. The cancellation rate of 15% is not negligible. Policies cancelled mid-term reduce premium income and may signal adverse selection if higher-risk customers are disproportionately cancelling after claims.
+**Observation:** Approximately 89.2% of policies are active and 10.8% cancelled. The cancellation rate is not negligible. Policies cancelled mid-term reduce premium income and may signal adverse selection if higher-risk customers are disproportionately cancelling after claims.
 
 ------------------------------------------------------------------------
 
@@ -225,19 +225,18 @@ insurance |>
 #| fig-width: 12
 #| fig-height: 4
 
-plot_cat <- function(data, var, title, palette = "Set2") {
+plot_cat <- function(data, var, title) {
   data |>
     count({{ var }}) |>
     mutate(pct = n / sum(n),
            var_col = fct_reorder({{ var }}, n)) |>
-    ggplot(aes(x = var_col, y = n, fill = var_col)) +
-    geom_col(show.legend = FALSE) +
+    ggplot(aes(x = var_col, y = n)) +
+    geom_col(fill = "#2166AC", show.legend = FALSE) +
     geom_text(aes(label = paste0(round(pct * 100, 1), "%")),
               hjust = -0.1, size = 3.2) +
     coord_flip() +
     scale_y_continuous(labels = comma,
                        expand = expansion(mult = c(0, 0.2))) +
-    scale_fill_brewer(palette = palette) +
     labs(title = title, x = NULL, y = "Count") +
     theme_minimal() +
     theme(panel.grid.major.y = element_blank())
@@ -250,7 +249,7 @@ p5 <- plot_cat(insurance, bonus_score, "Bonus Score")
 p3 | p4 | p5
 ```
 
-**Observation:** Portfolio renewals (62%) substantially outnumber new business (38%), consistent with a stable, mature book. Annual payment is overwhelmingly preferred (78%), likely reflecting discounts offered for upfront payment. The bonus score distribution is highly skewed toward "Good" (98%), indicating the portfolio is dominated by low-risk, experienced drivers with no recent claims history.
+**Observation:** Portfolio renewals (62%) substantially outnumber new business (38%), consistent with a stable, mature book. Annual payment is overwhelmingly preferred (78%), likely reflecting discounts offered for upfront payment. The bonus score distribution is highly skewed toward "Good" (96.4%), indicating the portfolio is dominated by low-risk, experienced drivers with no recent claims history.
 
 ------------------------------------------------------------------------
 
@@ -260,15 +259,15 @@ p3 | p4 | p5
 #| fig-width: 10
 #| fig-height: 4
 
-p6 <- plot_cat(insurance, municipality_type, "Municipality Type", "Pastel1")
-p7 <- plot_cat(insurance, circulation_area, "Circulation Area", "Pastel2")
+p6 <- plot_cat(insurance, municipality_type, "Municipality Type")
+p7 <- plot_cat(insurance, circulation_area, "Circulation Area")
 p8 <- plot_cat(insurance |> filter(!is.na(fuel_type)),
-               fuel_type, "Fuel Type", "Set1")
+               fuel_type, "Fuel Type")
 
 p6 | p7 | p8
 ```
 
-**Observation:** Inland municipalities account for the majority (54%) with coastal at 36% and island at 10%, broadly reflecting Spain's population distribution. Urban and rural circulation areas are nearly evenly split (51% vs 49%). Diesel vehicles dominate at 62%, though this may shift as newer petrol and electric vehicles gain market share.
+**Observation:** Inland municipalities account for the majority (64.6%) with coastal at 28.6% and island at 6.8%, broadly reflecting Spain's population distribution. Urban circulation edges ahead of rural at 53.8% vs 46.2%. Diesel vehicles dominate at 64.2%, though this may shift as newer petrol and electric vehicles gain market share.
 
 ## EDA 2: Univariate Analysis — Numerical Variables
 
@@ -288,7 +287,7 @@ p9 <- insurance |>
 
 p10 <- insurance |>
   ggplot(aes(x = vehicle_age)) +
-  geom_histogram(binwidth = 3, fill = "#66BB6A", colour = "white") +
+  geom_histogram(binwidth = 3, fill = "#2166AC", colour = "white") +
   scale_y_continuous(labels = comma) +
   labs(title = "Vehicle Age Distribution",
        x = "Vehicle Age (years)", y = "Count") +
@@ -297,7 +296,7 @@ p10 <- insurance |>
 p11 <- insurance |>
   filter(!is.na(vehicle_value)) |>
   ggplot(aes(x = vehicle_value)) +
-  geom_histogram(bins = 50, fill = "#FFA726", colour = "white") +
+  geom_histogram(bins = 50, fill = "#2166AC", colour = "white") +
   coord_cartesian(xlim = c(0, 80000)) +
   scale_x_continuous(labels = label_number(scale = 1e-3, suffix = "k")) +
   scale_y_continuous(labels = comma) +
@@ -321,7 +320,7 @@ p9 | p10 | p11
 
 p12 <- insurance |>
   ggplot(aes(x = total_premium)) +
-  geom_histogram(bins = 60, fill = "#AB47BC", colour = "white") +
+  geom_histogram(bins = 60, fill = "#2166AC", colour = "white") +
   scale_x_continuous(labels = comma) +
   scale_y_continuous(labels = comma) +
   labs(title = "Total Premium Distribution",
@@ -330,7 +329,7 @@ p12 <- insurance |>
 
 p13 <- insurance |>
   ggplot(aes(x = total_premium)) +
-  geom_histogram(bins = 60, fill = "#AB47BC", colour = "white") +
+  geom_histogram(bins = 60, fill = "#2166AC", colour = "white") +
   scale_x_continuous(trans = "log10", labels = comma) +
   scale_y_continuous(labels = comma) +
   labs(title = "Total Premium (log10 scale)",
@@ -354,7 +353,7 @@ p14 <- insurance |>
   count(total_claims) |>
   mutate(pct = n / sum(n)) |>
   ggplot(aes(x = factor(total_claims), y = n)) +
-  geom_col(fill = "#EF5350") +
+  geom_col(fill = "#2166AC") +
   geom_text(aes(label = paste0(round(pct * 100, 1), "%")),
             vjust = -0.3, size = 3) +
   scale_y_continuous(labels = comma) +
@@ -376,7 +375,7 @@ p15 <- insurance |>
 p16 <- insurance |>
   filter(total_incurred > 0) |>
   ggplot(aes(x = total_incurred)) +
-  geom_histogram(bins = 60, fill = "#EF5350", colour = "white") +
+  geom_histogram(bins = 60, fill = "#2166AC", colour = "white") +
   scale_x_continuous(trans = "log10", labels = comma) +
   scale_y_continuous(labels = comma) +
   labs(title = "Total Incurred Cost (log10 scale)",
@@ -398,7 +397,7 @@ p14 / (p15 | p16)
 
 insurance |>
   ggplot(aes(x = total_exposure)) +
-  geom_histogram(bins = 50, fill = "#26A69A", colour = "white") +
+  geom_histogram(bins = 50, fill = "#2166AC", colour = "white") +
   scale_y_continuous(labels = comma) +
   labs(title = "Distribution of Total Exposure (Policy Years)",
        x = "Exposure (policy years)", y = "Count") +
@@ -449,7 +448,7 @@ insurance |>
          driving_experience >= 0,
          driving_experience <= 60) |>
   ggplot(aes(x = driving_experience)) +
-  geom_histogram(binwidth = 3, fill = "#7E57C2", colour = "white") +
+  geom_histogram(binwidth = 3, fill = "#2166AC", colour = "white") +
   scale_y_continuous(labels = comma) +
   labs(title = "Distribution of Driving Experience (Years Since Licence)",
        subtitle = "Capped at 60 years for clarity",
@@ -473,7 +472,7 @@ insurance |>
          power_to_weight_ratio <= quantile(power_to_weight_ratio,
                                             0.99, na.rm = TRUE)) |>
   ggplot(aes(x = power_to_weight_ratio)) +
-  geom_histogram(bins = 50, fill = "#EF5350", colour = "white") +
+  geom_histogram(bins = 50, fill = "#2166AC", colour = "white") +
   scale_y_continuous(labels = comma) +
   labs(title = "Distribution of Power-to-Weight Ratio",
        subtitle = "Capped at 99th percentile",
@@ -509,7 +508,7 @@ p17a <- lr_data |>
   scale_y_continuous(labels = percent,
                      expand = expansion(mult = c(0, 0.12))) +
   scale_fill_manual(values = c("No Claims (LR = 0)"  = "#90CAF9",
-                                "Had Claims (LR > 0)" = "#EF5350")) +
+                                "Had Claims (LR > 0)" = "#2166AC")) +
   labs(title = "Claim Incidence",
        x = NULL, y = "% of Policies") +
   theme_minimal() +
@@ -519,7 +518,7 @@ p17a <- lr_data |>
 p17b <- lr_data |>
   filter(loss_ratio > 0, loss_ratio <= 3) |>
   ggplot(aes(x = loss_ratio)) +
-  geom_histogram(binwidth = 0.05, fill = "#EF5350",
+  geom_histogram(binwidth = 0.05, fill = "#2166AC",
                  colour = "white", linewidth = 0.2) +
   geom_vline(xintercept = 1, colour = "#B71C1C",
              linetype = "dashed", linewidth = 0.8) +
@@ -602,7 +601,10 @@ insurance |>
            label = "Break-even", hjust = 0,
            colour = "#B71C1C", size = 3.5) +
   scale_x_continuous(limits = c(0, 2)) +
-  scale_fill_brewer(palette = "Set2") +
+  scale_fill_manual(values = c(
+    "TP: Basic" = "#BABABA", "TPG: +Glass" = "#BABABA",
+    "CC: +Add-ons" = "#BABABA", "COMP/E: +Excess" = "#2166AC",
+    "COMP/N: Full" = "#2166AC")) +
   labs(title = "Loss Ratio Distribution by Policy Type",
        subtitle = "Claimants only, capped at LR = 2  |  Line = median",
        x = "Loss Ratio", y = NULL) +
@@ -633,9 +635,9 @@ insurance |>
   annotate("text", x = 0.6, y = 1.05,
            label = "Break-even (LR = 1)", hjust = 0,
            colour = "#B71C1C", size = 3.5) +
-  scale_fill_manual(values = c("Good"    = "#66BB6A",
-                                "Neutral" = "#FFA726",
-                                "Bad"     = "#EF5350")) +
+  scale_fill_manual(values = c("Good"    = "#BABABA",
+                                "Neutral" = "#878787",
+                                "Bad"     = "#2166AC")) +
   labs(title = "Loss Ratio by Bonus Score",
        subtitle = "Claimants only (LR > 0), capped at 1.5",
        x = "Bonus Score", y = "Loss Ratio",
@@ -696,7 +698,7 @@ insurance |>
   group_by(exp_group) |>
   summarise(mean_freq = mean(claim_frequency), .groups = "drop") |>
   ggplot(aes(x = exp_group, y = mean_freq)) +
-  geom_col(fill = "#7E57C2", width = 0.65) +
+  geom_col(fill = "#2166AC", width = 0.65) +
   geom_text(aes(label = round(mean_freq, 3)),
             vjust = -0.4, size = 3.5) +
   coord_cartesian(ylim = c(0, 0.5)) +
@@ -733,7 +735,10 @@ insurance |>
                colour = "#444444", linewidth = 0.6) +
   geom_hline(yintercept = 1, colour = "#B71C1C",
              linetype = "dashed", linewidth = 0.8) +
-  scale_fill_brewer(palette = "Blues") +
+  scale_fill_manual(values = c(
+    "0-5" = "#2166AC", "6-10" = "#4393C3",
+    "11-15" = "#74ADD1", "16-20" = "#BABABA",
+    "21-30" = "#BABABA", "31+" = "#BABABA")) +
   labs(title = "Loss Ratio by Vehicle Age Group",
        subtitle = "Claimants only (LR > 0), capped at 1.5",
        x = "Vehicle Age Group (years)", y = "Loss Ratio",
@@ -761,7 +766,10 @@ insurance |>
                show.legend = FALSE, fill = "white",
                colour = "#444444", linewidth = 0.6) +
   scale_y_continuous(labels = comma) +
-  scale_fill_brewer(palette = "Set2") +
+  scale_fill_manual(values = c(
+    "TP: Basic" = "#BABABA", "TPG: +Glass" = "#BABABA",
+    "CC: +Add-ons" = "#BABABA", "COMP/E: +Excess" = "#2166AC",
+    "COMP/N: Full" = "#2166AC")) +
   labs(title = "Claim Severity by Policy Type",
        subtitle = "Capped at 99th percentile  |  Policies with claims only",
        x = "Policy Type", y = "Claim Severity (EUR per claim)") +
@@ -789,7 +797,7 @@ insurance |>
             position = position_dodge(0.75),
             vjust = -0.3, size = 3.2) +
   scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
-  scale_fill_manual(values = c("Urban" = "#42A5F5", "Rural" = "#66BB6A")) +
+  scale_fill_manual(values = c("Urban" = "#2166AC", "Rural" = "#BABABA")) +
   labs(title = "Mean Claim Frequency by Municipality Type and Circulation Area",
        x = "Municipality Type", y = "Mean Claim Frequency",
        fill = "Circulation Area") +
@@ -866,7 +874,10 @@ ggplot(trend_data,
   ) +
   scale_x_continuous(breaks = c(2022, 2023, 2024),
                      expand = expansion(add = c(0.6, 0.3))) +
-  scale_colour_brewer(palette = "Set2") +
+  scale_colour_manual(values = c(
+    "TP: Basic" = "#BABABA", "TPG: +Glass" = "#BABABA",
+    "CC: +Add-ons" = "#BABABA", "COMP/E: +Excess" = "#2166AC",
+    "COMP/N: Full" = "#2166AC")) +
   labs(title = "Mean Loss Ratio by Policy Type Over Time (2022-2024)",
        x = "Year", y = "Mean Loss Ratio", colour = "Policy Type") +
   theme_minimal()
@@ -893,7 +904,10 @@ insurance |>
               linetype = "dashed", linewidth = 0.8) +
   scale_x_continuous(labels = comma) +
   scale_y_continuous(labels = comma) +
-  scale_colour_brewer(palette = "Set2") +
+  scale_colour_manual(values = c(
+    "TP: Basic" = "#BABABA", "TPG: +Glass" = "#BABABA",
+    "CC: +Add-ons" = "#BABABA", "COMP/E: +Excess" = "#2166AC",
+    "COMP/N: Full" = "#2166AC")) +
   labs(title = "Premium vs Incurred Cost (Policies with Claims)",
        subtitle = "Red dashed line = break-even (premium = incurred cost)",
        x = "Total Premium (EUR)", y = "Total Incurred (EUR)",
