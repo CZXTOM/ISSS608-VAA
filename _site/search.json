@@ -4,21 +4,21 @@
     "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#contents",
     "title": "Motor Vehicle Insurance Portfolio",
     "section": "Contents",
-    "text": "Contents\n\n\nPart 1: Dataset Overview\n\nAbout the data\nKey variables & derived metrics\n\nPart 2: Portfolio Composition\n\nPolicy & geographic breakdown\nDriver & vehicle profile\n\n\nPart 3: Profitability Analysis\n\nLoss ratio distributions\nKey drivers of profitability\n\nPart 4: Volatility Analysis\n\nClaim frequency patterns\nGeographic and temporal effects\n\n\n\nGood morning everyone. Today I will be walking you through an exploratory visual analysis of a real motor insurance portfolio from Spain. The dataset covers three years of policy transactions and gives us a great opportunity to look at what actually drives profitability and claims volatility in a non-life insurance book. We will move through four parts: first some context on the data, then a look at the portfolio makeup, followed by profitability findings, and finally what is driving volatility."
+    "text": "Contents\n\n\nPart 1: Dataset Overview\n\nAbout the data\nKey variables and derived metrics\n\nPart 2: Portfolio Composition\n\nPolicy and geographic breakdown\nDriver and vehicle profile\n\n\nPart 3: Profitability Analysis\n\nLoss ratio distributions\nKey drivers of profitability\n\nPart 4: Volatility Analysis\n\nClaim frequency patterns\nGeographic and temporal effects\n\n\n\nGood morning everyone. Today I will be walking you through an exploratory visual analysis of a real motor insurance portfolio from Spain. The dataset covers three years of policy transactions and gives us a great opportunity to look at what actually drives profitability and claims volatility. We will move through four parts: dataset overview, portfolio composition, profitability analysis, and volatility analysis."
   },
   {
     "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#about-the-dataset",
     "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#about-the-dataset",
     "title": "Motor Vehicle Insurance Portfolio",
     "section": "About the Dataset",
-    "text": "About the Dataset\n\n\nSource: Spanish motor insurer microdata\nPeriod: January 2022 – December 2024\nRecords: 354,140 policy transactions\nVariables: 47 across 4 groups\n\n\n\nGroup\nVariables\n\n\n\n\nPolicy & Insured\n8\n\n\nDriver & Vehicle\n10\n\n\nPremiums\n8\n\n\nClaims & Incurred\n21\n\n\n\n\nThree derived metrics guide analysis:\n\\[\\text{Loss Ratio} = \\frac{\\text{Incurred}}{\\text{Premium}}\\]\n\\[\\text{Claim Freq} = \\frac{\\text{Claims}}{\\text{Exposure}}\\]\n\\[\\text{Severity} = \\frac{\\text{Incurred}}{\\text{Claims}}\\]\n\n\n\n\n\n\nNote\n\n\nLoss Ratio &lt; 1 = Profitable\nLoss Ratio &gt; 1 = Unprofitable\n\n\n\n\n\nSo what are we working with? This is real anonymised data from a Spanish motor insurer, covering about 354,000 policy transactions over three years. Each row represents one policy in one year. The three metrics on the right are what we will use throughout the presentation. Loss ratio is our profitability measure. Anything below 1 means the insurer made money on that policy. Claim frequency tells us how often accidents happen per year of exposure. Severity tells us how costly each claim is when it does happen."
+    "text": "About the Dataset\n\n\nSource: Spanish motor insurer microdata\nPeriod: January 2022 – December 2024\nRecords: 354,140 policy transactions\nVariables: 47 across 4 groups\n\n\n\nGroup\nVariables\n\n\n\n\nPolicy & Insured\n8\n\n\nDriver & Vehicle\n10\n\n\nPremiums\n8\n\n\nClaims & Incurred\n21\n\n\n\n\nThree derived metrics guide analysis:\n\\[\\text{Loss Ratio} = \\frac{\\text{Incurred}}{\\text{Premium}}\\]\n\\[\\text{Claim Freq} = \\frac{\\text{Claims}}{\\text{Exposure}}\\]\n\\[\\text{Severity} = \\frac{\\text{Incurred}}{\\text{Claims}}\\]\n\n\n\n\n\n\nNote\n\n\nLoss Ratio &lt; 1 = Profitable\nLoss Ratio &gt; 1 = Unprofitable\n\n\n\n\n\nThis is real anonymised data from a Spanish motor insurer. Each row is one policy in one year. Loss ratio is our profitability measure — below 1 means profitable. Claim frequency tells us how often accidents happen per year of exposure. Severity tells us the average cost per claim when one does occur."
   },
   {
     "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#data-quality",
     "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#data-quality",
     "title": "Motor Vehicle Insurance Portfolio",
     "section": "Data Quality",
-    "text": "Data Quality\n\n\nfuel_type: 0.37% missing (1,311 records) — excluded when fuel type is analysed\nvehicle_value: 0.14% missing (500 records) — excluded when vehicle value is analysed\nAll other 45 variables are 100% complete\n\n\nGood news on data quality. Out of 47 variables, only two have any missing values at all. Fuel type is missing for less than half a percent of records, and vehicle value for just 0.14 percent. Everything else is complete and clean, which is quite rare for a real-world dataset of this size."
+    "text": "Data Quality\n\n\nfuel_type: 0.37% missing — excluded when fuel type is analysed\nvehicle_value: 0.14% missing — excluded when vehicle value is analysed\nAll remaining 45 variables are 100% complete\n\n\nOnly two of 47 variables have any missing values at all. Fuel type is missing for 0.37 percent and vehicle value for 0.14 percent. Both are handled by exclusion. Everything else is complete, which is exceptional for a real-world dataset of this size."
   },
   {
     "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#policy-type-distribution",
@@ -102,14 +102,14 @@
     "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#key-findings-summary",
     "title": "Motor Vehicle Insurance Portfolio",
     "section": "Key Findings Summary",
-    "text": "Key Findings Summary\n\n\nProfitability Drivers\n\n🔵 Policy Type: COMP_E/COMP_N crossed break-even in 2024\n🔵 Trend: COMP_N LR rose from 0.71 to 1.17 (2022-2024)\n⬜ Bonus Score: Bad-score holders have wider loss distributions\n⬜ 88.1% of policies have zero claims\n\n\nVolatility Drivers\n\n🔵 Young Drivers: 19-25 group has 2.7x higher claim frequency\n🔵 Urban Circulation: Inland Urban frequency = 0.371 (highest)\n⬜ Geography: Urban always higher than rural in all regions\n⬜ Claim severity highly variable within each policy type\n\n\n\n\n\n\n\n\nImportant\n\n\nCore finding: 88.1% of policies have zero claims. The portfolio’s entire profitability challenge comes from 9% of policies that exceed break-even — and comprehensive policies are now crossing that line.\n\n\n\n\nTo wrap up. COMP_E and COMP_N have crossed break-even in 2024 — this is the most actionable finding. On volatility, young drivers file claims 2.7 times more than the safest group. Urban circulation consistently drives higher frequencies. The overarching finding is that 88 percent of policies never generate a claim. The challenge is managing the small but growing share of loss-making comprehensive policies."
+    "text": "Key Findings Summary\n\n\nProfitability\n\n🔵 COMP_N LR: 0.71 → 1.17 (2022-2024)\n🔵 COMP_E LR: 0.64 → 1.11 (2022-2024)\n⬜ Bad-score policyholders: IQR 0.31-1.05\n⬜ 88.1% of policies have zero claims\n\n\nVolatility\n\n🔵 19-25 drivers: 0.716 claims/yr (2.5x vs safest group)\n🔵 Inland Urban: 0.371 claims/yr (highest region)\n⬜ Urban always &gt; Rural across all municipality types\n⬜ Wide severity IQR across all policy types\n\n\n\n\n\n\n\n\nImportant\n\n\nCore finding: 88.1% of policies have zero claims. The portfolio’s challenge is that COMP_N and COMP_E have now crossed break-even — the insurer is losing money on its largest coverage segments.\n\n\n\n\nTo summarise. The biggest story is the trend: COMP_N rose from 0.71 to 1.17 and COMP_E from 0.64 to 1.11 over three years. Both are now loss-making. On the volatility side, young drivers at 0.716 and inland urban areas at 0.371 are the highest-frequency segments. Young drivers file claims 2.5 times more than the 56-65 group. The overarching finding is that 88 percent of policies are fine. The challenge is managing the small but growing share of loss-making comprehensive policies."
   },
   {
     "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#references",
     "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#references",
     "title": "Motor Vehicle Insurance Portfolio",
     "section": "References",
-    "text": "References\n\nEspinosa, P., Lledó, J., & Atance, D. (2026). A detailed dataset of motor insurance policies with coverage-specific financial information. Mendeley Data. https://doi.org/10.17632/sw4jmdb2sm.1\nSwiss Re Institute. (2019). sigma 4/2019: World insurance: the great pivot east continues. Swiss Re.\nWickham, H. (2016). ggplot2: Elegant Graphics for Data Analysis. Springer-Verlag New York.\nWilke, C. O. (2019). Fundamentals of Data Visualization. O’Reilly Media."
+    "text": "References\n\nEspinosa, P., Lledó, J., & Atance, D. (2026). A detailed dataset of motor insurance policies with coverage-specific financial information. Mendeley Data. https://doi.org/10.17632/sw4jmdb2sm.1\nSwiss Re Institute. (2019). sigma 4/2019: World insurance: the great pivot east continues. Swiss Re.\nWickham, H. (2016). ggplot2: Elegant Graphics for Data Analysis. Springer-Verlag New York.\nWilke, C. O. (2019). Fundamentals of Data Visualization. O’Reilly Media.\nKay, M. (2024). ggdist: Visualizations of Distributions and Uncertainty. R package. https://mjskay.github.io/ggdist/"
   },
   {
     "objectID": "about.html",
@@ -669,28 +669,28 @@
     "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#insight-6-comprehensive-policies-have-higher-loss-ratios",
     "title": "Motor Vehicle Insurance Portfolio",
     "section": "Insight 6: Comprehensive Policies Have Higher Loss Ratios",
-    "text": "Insight 6: Comprehensive Policies Have Higher Loss Ratios\n\n\nCOMP_E median LR = 0.92; COMP_N median LR = 0.90 — highest among all types\nCC median LR = 0.91; TPG = 0.98; TP = 0.68 — basic coverage has lower loss ratios\nComprehensive policies show the widest IQR, indicating greater profitability volatility\n\n\nWith the axis capped at 2 and using boxplots, the differences are clearly visible. COMP_E and COMP_N sit higher than TP and basic coverage types. The boxplot shows that comprehensive policies not only have higher medians but also much wider spreads, confirming they are the main source of profitability uncertainty."
+    "text": "Insight 6: Comprehensive Policies Have Higher Loss Ratios\n\n\nCOMP_N mean LR = 0.950, median = 0.897 — highest among all policy types\nCOMP_E mean LR = 0.942, median = 0.915 — second highest\nTP mean LR = 0.864, median = 0.676 — basic coverage, lower and narrower distribution\n\n\nThis raincloud plot from Chapter 9 combines a half-density curve, boxplot, and mean diamond marker in one chart. The blue half-densities for COMP_E and COMP_N are visibly wider and taller than the grey ones. The mean diamond sits above the median box line for all types, showing the right-skew of insurance losses. Comprehensive policies have both higher medians and wider spreads."
   },
   {
     "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#insight-7-bad-claims-history-predicts-higher-loss-ratios",
     "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#insight-7-bad-claims-history-predicts-higher-loss-ratios",
     "title": "Motor Vehicle Insurance Portfolio",
     "section": "Insight 7: Bad Claims History Predicts Higher Loss Ratios",
-    "text": "Insight 7: Bad Claims History Predicts Higher Loss Ratios\n\n\nBad-score median LR = 0.67; IQR = 0.31-1.05 — wider and higher than Good\nGood-score median LR = 0.72; IQR = 0.35-1.10 — tighter distribution\nBad-score policyholders represent only 1.3% of portfolio but show greater loss volatility\n\n\nThe Bad-score violin highlighted in blue is noticeably wider than the grey Good group. This confirms the bonus-malus system is working correctly. It identifies riskier customers. Even though the Bad group is only 1.3 percent of the portfolio, their loss distribution is more spread out, contributing disproportionately to aggregate volatility."
+    "text": "Insight 7: Bad Claims History Predicts Higher Loss Ratios\n\n\nBad-score median LR = 0.668, IQR = 0.31–1.05 — wide spread crossing break-even\nGood-score median LR = 0.724, IQR = 0.35–1.10 — both groups show high variance\nBad policyholders are only 1.3% of portfolio (n=433) — the half-density shape shows heavier tail risk\n\n\nThe raincloud plot highlights the Bad group in blue. The median difference between Bad and Good is actually modest. What the raincloud reveals is the distribution shape — the half-density for Bad policyholders is wider with a heavier upper tail, meaning more of them have high loss ratios. Both groups have similarly wide IQRs crossing break-even. The bonus-malus system identifies customers who are more likely to generate large claims, even if the average difference is not dramatic."
   },
   {
     "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#insight-8-comprehensive-policies-cost-more-per-claim",
     "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#insight-8-comprehensive-policies-cost-more-per-claim",
     "title": "Motor Vehicle Insurance Portfolio",
     "section": "Insight 8: Comprehensive Policies Cost More Per Claim",
-    "text": "Insight 8: Comprehensive Policies Cost More Per Claim\n\n\nCOMP_E mean severity = €891 per claim; COMP_N = €793\nCC mean severity = €821; TP = €928 (high due to small sample)\nWide IQR across all types confirms individual claim costs are highly unpredictable\n\n\nNot only do comprehensive policies have more claims, but each claim also costs more. COMP_E and COMP_N show the highest and most variable severity distributions. The wide interquartile range across all policy types tells us that predicting how much any individual claim will cost is genuinely difficult regardless of policy type."
+    "text": "Insight 8: Comprehensive Policies Cost More Per Claim\n\n\nCOMP_E mean severity = €753 per claim; median = €547 — highest among all types\nCC mean = €651, median = €437 — moderate severity\nWide gap between mean and median across ALL types confirms heavily right-skewed distributions\n\n\nComprehensive policies generate not only more claims but also more expensive ones. COMP_E and COMP_N show wider half-density curves at higher severity levels. The large gap between the mean diamond and the median box line across all policy types confirms that a small number of very large claims drive average severity up. This unpredictability is the core source of underwriting risk."
   },
   {
     "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#insight-9-young-drivers-file-claims-2.7x-more-often",
     "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#insight-9-young-drivers-file-claims-2.7x-more-often",
     "title": "Motor Vehicle Insurance Portfolio",
     "section": "Insight 9: Young Drivers File Claims 2.7x More Often",
-    "text": "Insight 9: Young Drivers File Claims 2.7x More Often\n\n\nDrivers aged 19-25 have mean claim frequency of 0.716 — highest of all groups\nDrivers aged 56-65 average only 0.289 — the safest segment\nThe 19-25 group files claims 2.7x more often than the 56-65 group\n\n\nThis chart shows a pattern actuaries know well. The youngest drivers from 19 to 25 have the highest claim frequency at 0.716 by a clear margin. Then it drops steadily through the middle age groups. The 19-25 group files claims 2.7 times more often than the safest group. One note: the 19-25 bar is based on a relatively small sample as very few young drivers appear in this portfolio."
+    "text": "Insight 9: Young Drivers File Claims 2.7x More Often\n\n\n19-25 group: mean frequency = 0.716 — highest of all age groups\n56-65 group: mean frequency = 0.289 — safest segment\nYoung drivers file claims 2.5x more often than the 56-65 group (0.716 / 0.289 = 2.48x)\n\n\nA lollipop chart is cleaner than a bar chart for showing this comparison — less ink, same information, the dot draws the eye straight to the value. The 19-25 group highlighted in blue stands out clearly at 0.716. Then frequency drops steadily through middle age. Young drivers file claims 2.5 times more often than the safest group. Note the 19-25 sample is relatively small as very few young drivers appear in this portfolio."
   },
   {
     "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#insight-10-urban-inland-drivers-have-highest-claim-rates",
@@ -705,5 +705,54 @@
     "title": "Motor Vehicle Insurance Portfolio",
     "section": "Insight 11: COMP_N Loss Ratio Rose to 1.17 by 2024",
     "text": "Insight 11: COMP_N Loss Ratio Rose to 1.17 by 2024\n\n\nCOMP_N rose from 0.71 (2022) to 1.17 (2024) — crossed break-even in 2024\nCOMP_E rose from 0.64 (2022) to 1.11 (2024) — also crossed break-even\nTP, TPG, CC remain below break-even — basic coverage types remain profitable\n\n\nThis is arguably the most alarming finding. COMP_N and COMP_E both crossed the break-even line in 2024. COMP_N went from 0.71 in 2022 to 1.17 in 2024. This means the insurer is now paying out more in claims than it collects in premiums for these policy types. This could indicate rising repair costs or medical inflation. Basic coverage types remain comfortably below break-even throughout the period."
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#insight-1-cc-policies-dominate-at-57.8",
+    "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#insight-1-cc-policies-dominate-at-57.8",
+    "title": "Motor Vehicle Insurance Portfolio",
+    "section": "Insight 1: CC Policies Dominate at 57.8%",
+    "text": "Insight 1: CC Policies Dominate at 57.8%\n\n\nCC (third-party + add-ons) dominates at 57.8% of all policies\nCOMP_E (comprehensive with excess) is second at 25.8%\nBasic TP (third-party only) is rare at just 1.6% — most customers prefer broader coverage\n\n\nCC policies dominate at 57.8 percent. These combine third-party liability with add-ons like theft and glass cover. COMP_E at 25.8 percent is full comprehensive with an excess. What stands out is how rare basic TP policies are at just 1.6 percent. This tells us the insurer is largely serving customers who want broader protection."
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#insight-2-89.2-active-policies-96.4-good-bonus-score",
+    "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#insight-2-89.2-active-policies-96.4-good-bonus-score",
+    "title": "Motor Vehicle Insurance Portfolio",
+    "section": "Insight 2: 89.2% Active Policies, 96.4% Good Bonus Score",
+    "text": "Insight 2: 89.2% Active Policies, 96.4% Good Bonus Score\n\n\n89.2% active; cancellation rate of 10.8% warrants monitoring\n96.4% of customers have a Good bonus score — excellent claims history\nBad-score customers are only 1.3% but represent elevated risk\n\n\n89 percent of policies are active and 11 percent cancelled. The bonus score on the right is very positive. 96 percent of customers have a Good score meaning no recent claims. This is great for profitability. The Bad group at 1.3 percent is small but important as a risk segment."
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#insight-3-middle-aged-drivers-older-vehicles",
+    "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#insight-3-middle-aged-drivers-older-vehicles",
+    "title": "Motor Vehicle Insurance Portfolio",
+    "section": "Insight 3: Middle-Aged Drivers, Older Vehicles",
+    "text": "Insight 3: Middle-Aged Drivers, Older Vehicles\n\n\nDriver age peaks at 40-60 years (mean: 49, median: 48) — experienced, low-risk segment\nVehicle age median is 25 years — an older fleet than typical\nVehicle value median is €24,730; 75th percentile at €32,252\n\n\nUsing density curves with annotated peaks makes the distributions much clearer than histograms. The driver age peaks sharply at 40 to 60 years. Very few young drivers under 25 appear. The vehicle age median is 25 years which is quite old. Vehicle values are mostly in the 15 to 35 thousand euro range, with a long tail of high-value vehicles that can generate very large claims."
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#insight-4-inland-dominant-balanced-urban-rural",
+    "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#insight-4-inland-dominant-balanced-urban-rural",
+    "title": "Motor Vehicle Insurance Portfolio",
+    "section": "Insight 4: Inland-Dominant, Balanced Urban-Rural",
+    "text": "Insight 4: Inland-Dominant, Balanced Urban-Rural\n\n\n64.6% inland, 28.6% coastal, 6.8% islands — reflects Spain’s geography\nUrban vs rural split is nearly equal at 53.8% vs 46.2%\n64.2% diesel vehicles — relevant for repair cost patterns\n\n\nThe geographic breakdown shows inland dominance at 64.6 percent. Urban and rural circulation are fairly balanced at 54 and 46 percent. Diesel vehicles make up 64 percent of the fleet. These splits matter because urban and rural drivers have very different claim frequencies as we will see in Part 4."
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#insight-5-88.1-of-policies-have-zero-claims",
+    "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#insight-5-88.1-of-policies-have-zero-claims",
+    "title": "Motor Vehicle Insurance Portfolio",
+    "section": "Insight 5: 88.1% of Policies Have Zero Claims",
+    "text": "Insight 5: 88.1% of Policies Have Zero Claims\n\n\n88.1% of policies never file a claim; only 11.9% generate any loss\nAmong claimants, distribution peaks at LR = 0.1-0.3 and decays toward break-even\n9.0% of ALL policies exceed break-even (LR &gt; 1) — these drive total portfolio losses\n\n\nTwo panels tell the full story. On the left, 88.1 percent of policies never filed a single claim. On the right, we see only claimants. The distribution peaks near 0.1 to 0.3 and decays toward break-even. Just 9 percent of all policies exceed LR equals 1. These are the policies that really matter for the portfolio bottom line."
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#insight-10-urban-areas-drive-higher-claim-frequency",
+    "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#insight-10-urban-areas-drive-higher-claim-frequency",
+    "title": "Motor Vehicle Insurance Portfolio",
+    "section": "Insight 10: Urban Areas Drive Higher Claim Frequency",
+    "text": "Insight 10: Urban Areas Drive Higher Claim Frequency\n\n\nInland Urban = 0.371 — highest claim frequency of all 6 combinations\nUrban always exceeds rural within each municipality type — traffic density effect\nIsland Rural = 0.246 — lowest frequency, well-insulated from traffic risk\n\n\nA heatmap from Chapter 14 is ideal here — it shows all 6 municipality-circulation combinations in one clean grid. Darker blue means higher claim frequency. Inland Urban at 0.371 is the darkest cell and the highest risk combination. Island Rural at 0.246 is the lightest. The pattern is clear: urban always exceeds rural in every row, and inland urban poses the greatest volatility risk."
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#insight-11-comp_n-and-comp_e-crossed-break-even-in-2024",
+    "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html#insight-11-comp_n-and-comp_e-crossed-break-even-in-2024",
+    "title": "Motor Vehicle Insurance Portfolio",
+    "section": "Insight 11: COMP_N and COMP_E Crossed Break-Even in 2024",
+    "text": "Insight 11: COMP_N and COMP_E Crossed Break-Even in 2024\n\n\nCOMP_N: LR rose from 0.706 (2022) → 0.944 (2023) → 1.171 (2024) — crossed break-even\nCOMP_E: LR rose from 0.641 (2022) → 0.783 (2023) → 1.106 (2024) — also crossed\nCC, TP, TPG remain below break-even throughout — basic coverage types stay profitable\n\n\nThis is the most alarming finding in the analysis. COMP_N went from 0.706 in 2022 all the way to 1.171 in 2024. COMP_E similarly crossed from 0.641 to 1.106. Both comprehensive policy types are now paying out more in claims than they collect in premiums. This could be claims inflation from rising repair or medical costs. Basic coverage types CC, TP and TPG remain comfortably below break-even throughout."
   }
 ]
