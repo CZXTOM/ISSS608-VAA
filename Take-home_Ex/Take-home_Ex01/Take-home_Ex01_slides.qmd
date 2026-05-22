@@ -209,7 +209,10 @@ insurance |>
   count(policy_type) |>
   mutate(pct = n / sum(n),
          policy_type = fct_reorder(policy_type, n),
-         fill_col = ifelse(policy_type == "CC", clr_blue, clr_grey2)) |>
+         fill_col = ifelse(policy_type %in% c("CC: +Add-ons",
+                                               "COMP/E: +Excess",
+                                               "COMP/N: Full"),
+                            clr_blue, clr_grey2)) |>
   ggplot(aes(x = policy_type, y = n, fill = fill_col)) +
   geom_col(show.legend = FALSE, width = 0.65) +
   geom_text(aes(label = paste0(round(pct*100,1), "%")),
@@ -219,10 +222,12 @@ insurance |>
                      expand = expansion(mult = c(0, 0.25))) +
   scale_fill_identity() +
   labs(title = "Policy Type Distribution (n = 354,140)",
+       subtitle = "Blue: three broadest coverage types (88.2% of portfolio)",
        x = NULL, y = "Number of Policies") +
   theme_minimal(base_size = 14) +
   theme(panel.grid.major.y = element_blank(),
-        plot.title = element_text(face = "bold"))
+        plot.title = element_text(face = "bold"),
+        plot.subtitle = element_text(colour = "#555555"))
 ```
 
 - **CC: +Add-ons** (third-party + theft, fire, glass) dominates at **57.8%** of all policies
@@ -636,7 +641,7 @@ insurance |>
   filter(!is.na(age_group)) |>
   group_by(age_group) |>
   summarise(mean_freq = mean(claim_frequency), .groups = "drop") |>
-  mutate(fill_col = ifelse(age_group == "19-25", clr_blue, clr_grey1)) |>
+  mutate(fill_col = ifelse(age_group == "19-25", clr_blue, clr_grey2)) |>
   ggplot(aes(x = age_group, y = mean_freq)) +
   geom_segment(aes(xend = age_group, yend = 0.22),
                colour = clr_grey2, linewidth = 0.8) +
