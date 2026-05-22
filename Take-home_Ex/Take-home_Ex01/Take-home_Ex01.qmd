@@ -249,7 +249,7 @@ p5 <- plot_cat(insurance, bonus_score, "Bonus Score")
 p3 | p4 | p5
 ```
 
-**Observation:** Portfolio renewals (62%) substantially outnumber new business (38%), consistent with a stable, mature book. Annual payment is overwhelmingly preferred (78%), likely reflecting discounts offered for upfront payment. The bonus score distribution is highly skewed toward "Good" (96.4%), indicating the portfolio is dominated by low-risk, experienced drivers with no recent claims history.
+**Observation:** New business policies (69.3%) substantially outnumber portfolio renewals (30.7%), suggesting the insurer is actively growing its book. Annual payment is overwhelmingly preferred (81.3%), likely reflecting discounts offered for upfront payment. The bonus score distribution is highly skewed toward "Good" (96.4%), indicating the portfolio is dominated by low-risk, experienced drivers with no recent claims history.
 
 ------------------------------------------------------------------------
 
@@ -279,7 +279,7 @@ p6 | p7 | p8
 
 p9 <- insurance |>
   ggplot(aes(x = driver_age)) +
-  geom_histogram(binwidth = 5, fill = "#42A5F5", colour = "white") +
+  geom_histogram(binwidth = 5, fill = "#2166AC", colour = "white") +
   scale_y_continuous(labels = comma) +
   labs(title = "Driver Age Distribution",
        x = "Driver Age (years)", y = "Count") +
@@ -364,7 +364,7 @@ p14 <- insurance |>
 p15 <- insurance |>
   filter(total_incurred > 0, total_incurred <= 50000) |>
   ggplot(aes(x = total_incurred)) +
-  geom_histogram(bins = 60, fill = "#EF5350", colour = "white") +
+  geom_histogram(bins = 60, fill = "#2166AC", colour = "white") +
   scale_x_continuous(labels = comma) +
   scale_y_continuous(labels = comma) +
   labs(title = "Total Incurred Cost (Claimants Only)",
@@ -433,7 +433,7 @@ insurance |>
   theme(panel.grid.major.y = element_blank())
 ```
 
-**Observation:** The portfolio is dominated by mainstream European brands, with Volkswagen, Peugeot and Renault accounting for the largest shares. This brand distribution reflects the broader Spanish vehicle market. The concentration in mass-market brands suggests relatively homogeneous vehicle values and repair costs across the portfolio, though premium brands in the tail can generate disproportionately large claims.
+**Observation:** The portfolio is dominated by mainstream European brands, with Renault, Citroen and Peugeot accounting for the top three positions. Volkswagen and Ford follow closely. This brand distribution reflects the broader Spanish vehicle market. The concentration in mass-market brands suggests relatively homogeneous vehicle values and repair costs across the portfolio, though premium brands in the tail can generate disproportionately large claims.
 
 ------------------------------------------------------------------------
 

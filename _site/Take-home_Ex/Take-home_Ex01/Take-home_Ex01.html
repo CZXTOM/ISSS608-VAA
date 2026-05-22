@@ -760,7 +760,7 @@ Note
 </div>
 </div>
 </div>
-<p><strong>Observation:</strong> Portfolio renewals (62%) substantially outnumber new business (38%), consistent with a stable, mature book. Annual payment is overwhelmingly preferred (78%), likely reflecting discounts offered for upfront payment. The bonus score distribution is highly skewed toward “Good” (96.4%), indicating the portfolio is dominated by low-risk, experienced drivers with no recent claims history.</p>
+<p><strong>Observation:</strong> New business policies (69.3%) substantially outnumber portfolio renewals (30.7%), suggesting the insurer is actively growing its book. Annual payment is overwhelmingly preferred (81.3%), likely reflecting discounts offered for upfront payment. The bonus score distribution is highly skewed toward “Good” (96.4%), indicating the portfolio is dominated by low-risk, experienced drivers with no recent claims history.</p>
 <hr>
 </section>
 <section id="distribution-of-geographic-variables" class="level3" data-number="3.4">
@@ -795,7 +795,7 @@ Note
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>p9 <span class="ot">&lt;-</span> insurance <span class="sc">|&gt;</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> driver_age)) <span class="sc">+</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">5</span>, <span class="at">fill =</span> <span class="st">"#42A5F5"</span>, <span class="at">colour =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">5</span>, <span class="at">fill =</span> <span class="st">"#2166AC"</span>, <span class="at">colour =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> comma) <span class="sc">+</span></span>
 <span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Driver Age Distribution"</span>,</span>
 <span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Driver Age (years)"</span>, <span class="at">y =</span> <span class="st">"Count"</span>) <span class="sc">+</span></span>
@@ -890,7 +890,7 @@ Note
 <span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>p15 <span class="ot">&lt;-</span> insurance <span class="sc">|&gt;</span></span>
 <span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(total_incurred <span class="sc">&gt;</span> <span class="dv">0</span>, total_incurred <span class="sc">&lt;=</span> <span class="dv">50000</span>) <span class="sc">|&gt;</span></span>
 <span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> total_incurred)) <span class="sc">+</span></span>
-<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">60</span>, <span class="at">fill =</span> <span class="st">"#EF5350"</span>, <span class="at">colour =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">60</span>, <span class="at">fill =</span> <span class="st">"#2166AC"</span>, <span class="at">colour =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
 <span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> comma) <span class="sc">+</span></span>
 <span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> comma) <span class="sc">+</span></span>
 <span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Total Incurred Cost (Claimants Only)"</span>,</span>
@@ -976,7 +976,7 @@ Note
 </div>
 </div>
 </div>
-<p><strong>Observation:</strong> The portfolio is dominated by mainstream European brands, with Volkswagen, Peugeot and Renault accounting for the largest shares. This brand distribution reflects the broader Spanish vehicle market. The concentration in mass-market brands suggests relatively homogeneous vehicle values and repair costs across the portfolio, though premium brands in the tail can generate disproportionately large claims.</p>
+<p><strong>Observation:</strong> The portfolio is dominated by mainstream European brands, with Renault, Citroen and Peugeot accounting for the top three positions. Volkswagen and Ford follow closely. This brand distribution reflects the broader Spanish vehicle market. The concentration in mass-market brands suggests relatively homogeneous vehicle values and repair costs across the portfolio, though premium brands in the tail can generate disproportionately large claims.</p>
 <hr>
 </section>
 <section id="driving-experience-distribution" class="level3" data-number="4.6">
