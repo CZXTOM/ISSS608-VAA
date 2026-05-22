@@ -113,7 +113,9 @@ Four variables have missing values. `fuel_type` (\~0.4%) and `vehicle_value` (\~
 insurance <- insurance |>
   mutate(
     policy_type = factor(policy_type,
-                         levels = c("TP", "TPG", "CC", "COMP_E", "COMP_N")),
+                         levels = c("TP", "TPG", "CC", "COMP_E", "COMP_N"),
+                         labels = c("TP: Basic", "TPG: +Glass", "CC: +Add-ons",
+                                    "COMP/E: +Excess", "COMP/N: Full")),
     policy_status = factor(policy_status, levels = c("A", "C"),
                            labels = c("Active", "Cancelled")),
     business_type = factor(business_type, levels = c("NB", "P"),
@@ -178,16 +180,16 @@ insurance |>
   scale_y_continuous(labels = comma,
                      expand = expansion(mult = c(0, 0.18))) +
   scale_fill_manual(values = c(
-    "TP"     = "#BBDEFB", "TPG" = "#90CAF9",
-    "CC"     = "#42A5F5", "COMP_E" = "#1976D2",
-    "COMP_N" = "#0D47A1")) +
+    "TP: Basic"      = "#BBDEFB", "TPG: +Glass"    = "#90CAF9",
+    "CC: +Add-ons"   = "#42A5F5", "COMP/E: +Excess" = "#1976D2",
+    "COMP/N: Full"   = "#0D47A1")) +
   labs(title = "Distribution of Policy Type",
        x = NULL, y = "Number of Policies") +
   theme_minimal() +
   theme(panel.grid.major.y = element_blank())
 ```
 
-**Observation:** The CC policy type dominates the portfolio at over 62%, followed by COMP_E at around 22%. The basic TP policies are rare at under 1%, suggesting this portfolio skews toward customers who elect broader coverage. The near-absence of basic TP policies may indicate a deliberate underwriting strategy targeting higher-coverage segments.
+**Observation:** The CC: +Add-ons policy type dominates the portfolio at 57.8%, followed by COMP/E: +Excess at 25.8%. Basic TP: Basic policies are rare at just 1.6%, suggesting this portfolio skews toward customers who elect broader coverage. The near-absence of basic TP policies may indicate a deliberate underwriting strategy targeting higher-coverage segments.
 
 ------------------------------------------------------------------------
 
@@ -607,7 +609,7 @@ insurance |>
   theme_minimal()
 ```
 
-**Observation:** Loss ratio distributions vary markedly across policy types. Comprehensive policies (COMP_E and COMP_N) show the widest distributions and highest medians, reflecting the broader coverage they provide. The TP and TPG policies are concentrated near zero as their coverage is limited to third-party liability only.
+**Observation:** Loss ratio distributions vary markedly across policy types. Comprehensive policies (COMP/E: +Excess and COMP/N: Full) show the widest distributions and highest medians, reflecting the broader coverage they provide. The TP: Basic and TPG: +Glass policies are concentrated near zero as their coverage is limited to third-party liability only.
 
 ------------------------------------------------------------------------
 
@@ -766,7 +768,7 @@ insurance |>
   theme_minimal()
 ```
 
-**Observation:** Comprehensive policies (COMP_E and COMP_N) show substantially higher claim severity compared to basic coverage types, reflecting their broader protection against costly events like theft and total loss. High variance within each policy type highlights the difficulty of predicting individual claim costs.
+**Observation:** Comprehensive policies (COMP/E: +Excess and COMP/N: Full) show substantially higher claim severity compared to basic coverage types, reflecting their broader protection against costly events like theft and total loss. High variance within each policy type highlights the difficulty of predicting individual claim costs.
 
 ## EDA 5: Bivariate Analysis — Factors Affecting Volatility
 
@@ -908,9 +910,9 @@ This analysis explored the motor vehicle insurance portfolio across 354,140 poli
 
 **Key findings on profitability:**
 
-- The portfolio is dominated by CC and COMP_E policy types which carry the highest claim severity
+- The portfolio is dominated by CC: +Add-ons and COMP/E: +Excess policy types which carry the highest claim severity
 - Bonus score (claims history) is a strong predictor of loss ratio. "Bad" policyholders show markedly higher and more variable loss ratios
-- Comprehensive policies (COMP_E, COMP_N) consistently exhibit higher loss ratios than basic coverage types
+- Comprehensive policies (COMP/E: +Excess, COMP/N: Full) consistently exhibit higher loss ratios than basic coverage types, and both crossed break-even in 2024
 - Over 88% of policies generate zero claims, creating a highly skewed loss distribution that drives average loss ratios
 
 **Key findings on volatility:**

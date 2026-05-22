@@ -283,7 +283,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">May 19, 2026</p>
+      <p class="date-modified">May 22, 2026</p>
     </div>
   </div>
     
@@ -500,23 +500,25 @@ Note
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>insurance <span class="ot">&lt;-</span> insurance <span class="sc">|&gt;</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">policy_type =</span> <span class="fu">factor</span>(policy_type,</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"TP"</span>, <span class="st">"TPG"</span>, <span class="st">"CC"</span>, <span class="st">"COMP_E"</span>, <span class="st">"COMP_N"</span>)),</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">policy_status =</span> <span class="fu">factor</span>(policy_status, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"C"</span>),</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>                           <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Active"</span>, <span class="st">"Cancelled"</span>)),</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">business_type =</span> <span class="fu">factor</span>(business_type, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"NB"</span>, <span class="st">"P"</span>),</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>                           <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"New Business"</span>, <span class="st">"Portfolio"</span>)),</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">payment_frequency =</span> <span class="fu">factor</span>(payment_frequency, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"S"</span>, <span class="st">"Q"</span>),</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>                               <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Annual"</span>, <span class="st">"Semiannual"</span>, <span class="st">"Quarterly"</span>)),</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">bonus_score =</span> <span class="fu">factor</span>(bonus_score, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"G"</span>, <span class="st">"N"</span>, <span class="st">"B"</span>),</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>                         <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Good"</span>, <span class="st">"Neutral"</span>, <span class="st">"Bad"</span>)),</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">fuel_type =</span> <span class="fu">factor</span>(fuel_type, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"D"</span>, <span class="st">"G"</span>),</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>                       <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Diesel"</span>, <span class="st">"Gasoline"</span>)),</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">municipality_type =</span> <span class="fu">factor</span>(municipality_type, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"I"</span>, <span class="st">"C"</span>, <span class="st">"IS"</span>),</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>                               <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Inland"</span>, <span class="st">"Coastal"</span>, <span class="st">"Islands"</span>)),</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">circulation_area =</span> <span class="fu">factor</span>(circulation_area, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"U"</span>, <span class="st">"R"</span>),</span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>                              <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Urban"</span>, <span class="st">"Rural"</span>)),</span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">year =</span> <span class="fu">as.integer</span>(year)</span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"TP"</span>, <span class="st">"TPG"</span>, <span class="st">"CC"</span>, <span class="st">"COMP_E"</span>, <span class="st">"COMP_N"</span>),</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>                         <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"TP: Basic"</span>, <span class="st">"TPG: +Glass"</span>, <span class="st">"CC: +Add-ons"</span>,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>                                    <span class="st">"COMP/E: +Excess"</span>, <span class="st">"COMP/N: Full"</span>)),</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">policy_status =</span> <span class="fu">factor</span>(policy_status, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"C"</span>),</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>                           <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Active"</span>, <span class="st">"Cancelled"</span>)),</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">business_type =</span> <span class="fu">factor</span>(business_type, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"NB"</span>, <span class="st">"P"</span>),</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>                           <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"New Business"</span>, <span class="st">"Portfolio"</span>)),</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">payment_frequency =</span> <span class="fu">factor</span>(payment_frequency, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"S"</span>, <span class="st">"Q"</span>),</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>                               <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Annual"</span>, <span class="st">"Semiannual"</span>, <span class="st">"Quarterly"</span>)),</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">bonus_score =</span> <span class="fu">factor</span>(bonus_score, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"G"</span>, <span class="st">"N"</span>, <span class="st">"B"</span>),</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>                         <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Good"</span>, <span class="st">"Neutral"</span>, <span class="st">"Bad"</span>)),</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">fuel_type =</span> <span class="fu">factor</span>(fuel_type, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"D"</span>, <span class="st">"G"</span>),</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>                       <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Diesel"</span>, <span class="st">"Gasoline"</span>)),</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">municipality_type =</span> <span class="fu">factor</span>(municipality_type, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"I"</span>, <span class="st">"C"</span>, <span class="st">"IS"</span>),</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>                               <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Inland"</span>, <span class="st">"Coastal"</span>, <span class="st">"Islands"</span>)),</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">circulation_area =</span> <span class="fu">factor</span>(circulation_area, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"U"</span>, <span class="st">"R"</span>),</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>                              <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Urban"</span>, <span class="st">"Rural"</span>)),</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">year =</span> <span class="fu">as.integer</span>(year)</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 </section>
@@ -569,7 +571,7 @@ Note
 <tr class="odd">
 <td style="text-align: right;">1</td>
 <td style="text-align: right;">2022</td>
-<td style="text-align: left;">COMP_E</td>
+<td style="text-align: left;">COMP/E: +Excess</td>
 <td style="text-align: right;">48</td>
 <td style="text-align: right;">279.558</td>
 <td style="text-align: right;">0.000</td>
@@ -579,7 +581,7 @@ Note
 <tr class="even">
 <td style="text-align: right;">2</td>
 <td style="text-align: right;">2022</td>
-<td style="text-align: left;">COMP_E</td>
+<td style="text-align: left;">COMP/E: +Excess</td>
 <td style="text-align: right;">43</td>
 <td style="text-align: right;">546.623</td>
 <td style="text-align: right;">0.000</td>
@@ -589,7 +591,7 @@ Note
 <tr class="odd">
 <td style="text-align: right;">2</td>
 <td style="text-align: right;">2023</td>
-<td style="text-align: left;">COMP_E</td>
+<td style="text-align: left;">COMP/E: +Excess</td>
 <td style="text-align: right;">44</td>
 <td style="text-align: right;">548.753</td>
 <td style="text-align: right;">233.013</td>
@@ -599,7 +601,7 @@ Note
 <tr class="even">
 <td style="text-align: right;">2</td>
 <td style="text-align: right;">2024</td>
-<td style="text-align: left;">COMP_E</td>
+<td style="text-align: left;">COMP/E: +Excess</td>
 <td style="text-align: right;">45</td>
 <td style="text-align: right;">584.632</td>
 <td style="text-align: right;">2586.362</td>
@@ -609,7 +611,7 @@ Note
 <tr class="odd">
 <td style="text-align: right;">3</td>
 <td style="text-align: right;">2022</td>
-<td style="text-align: left;">COMP_E</td>
+<td style="text-align: left;">COMP/E: +Excess</td>
 <td style="text-align: right;">45</td>
 <td style="text-align: right;">687.491</td>
 <td style="text-align: right;">0.000</td>
@@ -619,7 +621,7 @@ Note
 <tr class="even">
 <td style="text-align: right;">3</td>
 <td style="text-align: right;">2023</td>
-<td style="text-align: left;">COMP_E</td>
+<td style="text-align: left;">COMP/E: +Excess</td>
 <td style="text-align: right;">46</td>
 <td style="text-align: right;">693.670</td>
 <td style="text-align: right;">0.000</td>
@@ -629,7 +631,7 @@ Note
 <tr class="odd">
 <td style="text-align: right;">3</td>
 <td style="text-align: right;">2024</td>
-<td style="text-align: left;">COMP_E</td>
+<td style="text-align: left;">COMP/E: +Excess</td>
 <td style="text-align: right;">47</td>
 <td style="text-align: right;">742.413</td>
 <td style="text-align: right;">0.000</td>
@@ -639,7 +641,7 @@ Note
 <tr class="even">
 <td style="text-align: right;">4</td>
 <td style="text-align: right;">2022</td>
-<td style="text-align: left;">CC</td>
+<td style="text-align: left;">CC: +Add-ons</td>
 <td style="text-align: right;">32</td>
 <td style="text-align: right;">384.920</td>
 <td style="text-align: right;">0.000</td>
@@ -672,9 +674,9 @@ Note
 <span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> comma,</span>
 <span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>                     <span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.18</span>))) <span class="sc">+</span></span>
 <span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(</span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"TP"</span>     <span class="ot">=</span> <span class="st">"#BBDEFB"</span>, <span class="st">"TPG"</span> <span class="ot">=</span> <span class="st">"#90CAF9"</span>,</span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">"CC"</span>     <span class="ot">=</span> <span class="st">"#42A5F5"</span>, <span class="st">"COMP_E"</span> <span class="ot">=</span> <span class="st">"#1976D2"</span>,</span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">"COMP_N"</span> <span class="ot">=</span> <span class="st">"#0D47A1"</span>)) <span class="sc">+</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"TP: Basic"</span>      <span class="ot">=</span> <span class="st">"#BBDEFB"</span>, <span class="st">"TPG: +Glass"</span>    <span class="ot">=</span> <span class="st">"#90CAF9"</span>,</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">"CC: +Add-ons"</span>   <span class="ot">=</span> <span class="st">"#42A5F5"</span>, <span class="st">"COMP/E: +Excess"</span> <span class="ot">=</span> <span class="st">"#1976D2"</span>,</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">"COMP/N: Full"</span>   <span class="ot">=</span> <span class="st">"#0D47A1"</span>)) <span class="sc">+</span></span>
 <span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Distribution of Policy Type"</span>,</span>
 <span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Number of Policies"</span>) <span class="sc">+</span></span>
 <span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
@@ -688,7 +690,7 @@ Note
 </div>
 </div>
 </div>
-<p><strong>Observation:</strong> The CC policy type dominates the portfolio at over 62%, followed by COMP_E at around 22%. The basic TP policies are rare at under 1%, suggesting this portfolio skews toward customers who elect broader coverage. The near-absence of basic TP policies may indicate a deliberate underwriting strategy targeting higher-coverage segments.</p>
+<p><strong>Observation:</strong> The CC: +Add-ons policy type dominates the portfolio at 57.8%, followed by COMP/E: +Excess at 25.8%. Basic TP: Basic policies are rare at just 1.6%, suggesting this portfolio skews toward customers who elect broader coverage. The near-absence of basic TP policies may indicate a deliberate underwriting strategy targeting higher-coverage segments.</p>
 <hr>
 </section>
 <section id="distribution-of-policy-status" class="level3" data-number="3.2">
@@ -1214,7 +1216,7 @@ Note
 </div>
 </div>
 </div>
-<p><strong>Observation:</strong> Loss ratio distributions vary markedly across policy types. Comprehensive policies (COMP_E and COMP_N) show the widest distributions and highest medians, reflecting the broader coverage they provide. The TP and TPG policies are concentrated near zero as their coverage is limited to third-party liability only.</p>
+<p><strong>Observation:</strong> Loss ratio distributions vary markedly across policy types. Comprehensive policies (COMP/E: +Excess and COMP/N: Full) show the widest distributions and highest medians, reflecting the broader coverage they provide. The TP: Basic and TPG: +Glass policies are concentrated near zero as their coverage is limited to third-party liability only.</p>
 <hr>
 </section>
 <section id="loss-ratio-by-bonus-score" class="level3" data-number="6.2">
@@ -1398,7 +1400,7 @@ Note
 </div>
 </div>
 </div>
-<p><strong>Observation:</strong> Comprehensive policies (COMP_E and COMP_N) show substantially higher claim severity compared to basic coverage types, reflecting their broader protection against costly events like theft and total loss. High variance within each policy type highlights the difficulty of predicting individual claim costs.</p>
+<p><strong>Observation:</strong> Comprehensive policies (COMP/E: +Excess and COMP/N: Full) show substantially higher claim severity compared to basic coverage types, reflecting their broader protection against costly events like theft and total loss. High variance within each policy type highlights the difficulty of predicting individual claim costs.</p>
 </section>
 </section>
 <section id="eda-5-bivariate-analysis-factors-affecting-volatility" class="level2" data-number="7">
@@ -1562,9 +1564,9 @@ Note
 <p>This analysis explored the motor vehicle insurance portfolio across 354,140 policies spanning 2022–2024 using univariate and bivariate EDA methods. All 47 variables were examined across 5 EDA sections.</p>
 <p><strong>Key findings on profitability:</strong></p>
 <ul>
-<li>The portfolio is dominated by CC and COMP_E policy types which carry the highest claim severity</li>
+<li>The portfolio is dominated by CC: +Add-ons and COMP/E: +Excess policy types which carry the highest claim severity</li>
 <li>Bonus score (claims history) is a strong predictor of loss ratio. “Bad” policyholders show markedly higher and more variable loss ratios</li>
-<li>Comprehensive policies (COMP_E, COMP_N) consistently exhibit higher loss ratios than basic coverage types</li>
+<li>Comprehensive policies (COMP/E: +Excess, COMP/N: Full) consistently exhibit higher loss ratios than basic coverage types, and both crossed break-even in 2024</li>
 <li>Over 88% of policies generate zero claims, creating a highly skewed loss distribution that drives average loss ratios</li>
 </ul>
 <p><strong>Key findings on volatility:</strong></p>
