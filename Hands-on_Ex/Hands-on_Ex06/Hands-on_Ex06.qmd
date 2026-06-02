@@ -442,7 +442,10 @@ raw_text %>%
   summarize(messages = n_distinct(id)) %>%
   ggplot(aes(messages, reorder(newsgroup, messages))) +
   geom_col(fill = "lightblue") +
-  labs(y = NULL)
+  labs(x = "Number of messages", y = NULL) +
+  theme_minimal() +
+  theme(axis.text.y = element_text(colour = "black", size = 9),
+        axis.text.x = element_text(colour = "black"))
 ```
 
 ## Introducing tidytext
