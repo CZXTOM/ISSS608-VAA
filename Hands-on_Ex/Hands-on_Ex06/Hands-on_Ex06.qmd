@@ -64,7 +64,7 @@ this before continuing.
 ```{r}
 GAStech_edges <- GAStech_edges %>%
   mutate(SendDate = dmy(SentDate)) %>%
-  mutate(Weekday = wday(SentDate,
+  mutate(Weekday = wday(SendDate,
                         label = TRUE,
                         abbr = FALSE))
 ```
@@ -331,12 +331,6 @@ GAStech_edges_aggregated <- GAStech_edges %>%
 
 ### Basic Interactive Network Graph
 
-The basic call has no layout specified, so visNetwork runs its live
-force-directed physics engine. With this many nodes and edges the simulation
-keeps the nodes moving, so we add `visPhysics(stabilization = TRUE)` to run the
-simulation once and let it settle into a stable position instead of jittering
-continuously.
-
 ```{r}
 visNetwork(GAStech_nodes,
            GAStech_edges_aggregated) %>%
@@ -344,10 +338,6 @@ visNetwork(GAStech_nodes,
 ```
 
 ### Working with Layout
-
-A cleaner approach is to pre-compute a fixed layout with igraph using
-`visIgraphLayout()`. This turns the live physics off entirely, so nodes only move
-when you drag them.
 
 ```{r}
 visNetwork(GAStech_nodes,
@@ -444,8 +434,7 @@ raw_text <- tibble(folder =
 
 ## Initial EDA
 
-The chart below shows the number of messages by newsgroup. The bars are sorted by
-count so the differences between newsgroups read clearly.
+The chart below shows the number of messages by newsgroup.
 
 ```{r}
 raw_text %>%
