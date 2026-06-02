@@ -479,16 +479,13 @@ who <- messages |>
   group_by(agent_id) |> mutate(tot = sum(n)) |> ungroup() |>
   mutate(agent_id = fct_reorder(agent_id, tot))
 
-who_tot <- who |> distinct(agent_id, tot)
-
 amber <- "#e8861a"; cyan <- "#1f9aa5"; grey <- "#8aa0ad"; alert <- "#d83a3a"
 
 ggplot(who, aes(x = n, y = agent_id, fill = channel)) +
   geom_col(width = 0.65) +
-  geom_text(data = who_tot,
-            aes(x = tot, y = agent_id, label = tot),
-            inherit.aes = FALSE,
-            hjust = -0.3, size = 3.2, fontface = "bold", colour = "grey30") +
+  geom_text(aes(x = tot, label = tot), hjust = -0.3, size = 3.2,
+            fontface = "bold", colour = "grey30",
+            data = ~distinct(.x, agent_id, tot)) +
   scale_fill_manual(values = c("side_huddle" = "#3c4a54",
                                "anonymous_post" = alert,
                                "personal_post" = amber),
