@@ -201,7 +201,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview"><span class="header-section-number">1</span> Overview</a></li>
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview"><span class="header-section-number">1</span> Overview</a>
+  <ul class="collapse">
+  <li><a href="#the-seven-agents" id="toc-the-seven-agents" class="nav-link" data-scroll-target="#the-seven-agents"><span class="header-section-number">1.1</span> The seven agents</a></li>
+  </ul></li>
   <li><a href="#setup" id="toc-setup" class="nav-link" data-scroll-target="#setup"><span class="header-section-number">2</span> Setup</a></li>
   <li><a href="#data-preparation" id="toc-data-preparation" class="nav-link" data-scroll-target="#data-preparation"><span class="header-section-number">3</span> Data Preparation</a></li>
   <li><a href="#question-1-what-happened-and-who-was-involved" id="toc-question-1-what-happened-and-who-was-involved" class="nav-link" data-scroll-target="#question-1-what-happened-and-who-was-involved"><span class="header-section-number">4</span> Question 1: What Happened and Who Was Involved</a>
@@ -261,7 +264,61 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h1 data-number="1"><span class="header-section-number">1</span> Overview</h1>
 <p>In the two weeks leading up to 5 June 2046, the corporate communications of TenantThread were run by seven AI agents. The company had quietly signed a merger with CivicLoom Realty Partners under a strict embargo until 6:00 PM on 5 June, and an automated compliance tool called the Judge was meant to keep the deal secret. The embargo broke anyway. This report reconstructs what happened from the agents’ messages, private deliberations, and public posts, and asks the central question: did the team deliberately leak the merger, or did the system break down under pressure?</p>
 <p>The report is organised around the three challenge questions. Question 1 reconstructs the sequence of events and the actors involved. Question 2 compares the breach behaviour to the team’s normal behaviour. Question 3 looks for earlier warning signs. Each section presents its figures, an observation under each, and a direct answer.</p>
-<p>Throughout, a consistent colour language is used: amber for the two agents at the centre of the breach (Legal and Social-Media), cyan for the compliant agents and the overseer, grey for the background agents, and red reserved for the breach itself.</p>
+<section id="the-seven-agents" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="the-seven-agents"><span class="header-section-number">1.1</span> The seven agents</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Agent</th>
+<th>Role</th>
+<th>In short</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>LEGAL</strong></td>
+<td>Legal counsel (senior)</td>
+<td>Handles legal risk and statements. Central to the breach.</td>
+</tr>
+<tr class="even">
+<td><strong>SOCIAL-MEDIA</strong></td>
+<td>Social manager (senior)</td>
+<td>Runs public messaging. Amplified the breach.</td>
+</tr>
+<tr class="odd">
+<td><strong>QUALITY</strong></td>
+<td>Platform trust and safety (senior)</td>
+<td>Reviews content for compliance and accuracy.</td>
+</tr>
+<tr class="even">
+<td><strong>PR</strong></td>
+<td>Public relations (senior)</td>
+<td>Owns press response and official statements.</td>
+</tr>
+<tr class="odd">
+<td><strong>PR-INTERN</strong></td>
+<td>PR intern (junior)</td>
+<td>Posts routine official updates.</td>
+</tr>
+<tr class="even">
+<td><strong>INTERN</strong></td>
+<td>General intern (junior)</td>
+<td>Junior support, light activity.</td>
+</tr>
+<tr class="odd">
+<td><strong>JUDGE</strong></td>
+<td>Compliance overseer</td>
+<td>Automated tool meant to enforce the embargo.</td>
+</tr>
+</tbody>
+</table>
+<p>Agents are referred to throughout by these short names. Amber marks the two agents at the centre of the breach (Legal and Social-Media), cyan marks the compliant agents and the overseer, grey marks the background agents, and red is reserved for the breach itself.</p>
+</section>
 </section>
 <section id="setup" class="level1" data-number="2">
 <h1 data-number="2"><span class="header-section-number">2</span> Setup</h1>
@@ -404,9 +461,9 @@ $ day           &lt;date&gt; 2046-05-17, 2046-05-17, 2046-05-17, 2046-05-17, 204
 </div>
 <section id="what-the-heatmap-shows" class="level3" data-number="4.1.1">
 <h3 data-number="4.1.1" class="anchored" data-anchor-id="what-the-heatmap-shows"><span class="header-section-number">4.1.1</span> What the heatmap shows</h3>
-<p>For most of the two weeks the team keeps a calm rhythm. Platform-Trust does the heavy lifting day to day and posts the most in the quiet period, while the two interns only appear from 24 May, which fits their “first week” messages.</p>
+<p>For most of the two weeks the team keeps a calm rhythm. Quality does the heavy lifting day to day and posts the most in the quiet period, while the two interns only appear from 24 May, which fits their “first week” messages.</p>
 <p>Then 5 June arrives and the grid turns from pale to red. Legal and Social-Media send 28 messages in a single hour, again and again, right through the afternoon and into the 17:00 and 18:00 slots when the merger is named.</p>
-<p>The more revealing pattern is who falls silent. Platform-Trust sends one last burst at noon, then drops off for the rest of the day. The Judge, the agent meant to keep everyone in line, barely registers at all on 5 June. So at the moment the crisis peaks, two agents are doing nearly all the talking and the agents responsible for oversight have gone quiet. Whether that silence was a cause or a symptom is a question the next figures take up.</p>
+<p>The more revealing pattern is who falls quiet. PR fires one big burst of 28 at 10:00 in the morning, then goes silent for the entire rest of the day. Quality peaks at 28 around noon and then fades out after 14:00. The Judge, the agent meant to keep everyone in line, barely registers at all on 5 June. So by late afternoon, when the crisis peaks, two agents are doing nearly all the talking while the others, including every agent with an oversight role, have dropped away. Whether that silence was a cause or a symptom is a question the next figures take up.</p>
 </section>
 </section>
 <section id="the-sequence-of-the-breach" class="level2" data-number="4.2">
