@@ -25,7 +25,7 @@ merger with CivicLoom Realty Partners under a strict embargo until 6:00 PM on
 5 June, and an automated compliance tool called the Judge was meant to keep the
 deal secret. The embargo broke anyway. This report reconstructs what happened
 from the agents' messages, private deliberations, and public posts, and asks the
-central question: did the team deliberately leak the merger, or did the system
+central question. Did the team deliberately leak the merger, or did the system
 break down under pressure?
 
 The report is organised around the three challenge questions. Question 1
@@ -187,29 +187,26 @@ that silence was a cause or a symptom is a question the next figures take up.
 
 ```{r}
 #| label: event-timeline
-#| fig-width: 12
-#| fig-height: 6
+#| fig-width: 11
+#| fig-height: 5.5
 
 events <- tribble(
   ~time,                  ~lane,     ~desc,
-  "2046-06-05 11:00:00", "outside", "SaltWind: ResidentIQ rumour (incorrect)",
-  "2046-06-05 15:00:00", "outside", "OceanCrunch: 'Crisis of Silence'",
-  "2046-06-05 17:00:00", "outside", "SaltWind breaks the CivicLoom merger",
-  "2046-06-05 09:49:00", "inside",  "Legal begins anonymous posts",
-  "2046-06-05 11:31:00", "inside",  "Social-Media denies any acquisition",
-  "2046-06-05 15:24:00", "inside",  "Legal posts anonymously to investors",
-  "2046-06-05 17:00:00", "inside",  "CEO: hold the line until 6:00",
-  "2046-06-05 17:25:00", "inside",  "BREACH: Legal confirms the merger"
+  "2046-06-05 15:00:00", "outside", "Press attacks the company's silence",
+  "2046-06-05 17:00:00", "outside", "SaltWind newspaper reveals the merger",
+  "2046-06-05 11:31:00", "inside",  "Social-Media publicly denies any merger talks",
+  "2046-06-05 17:00:00", "inside",  "CEO orders the team to wait until 6:00 PM",
+  "2046-06-05 17:25:00", "inside",  "BREACH: Legal confirms the merger early"
 ) |>
   mutate(
     time      = ymd_hms(time),
     is_breach = str_detect(desc, "BREACH"),
     y0        = if_else(lane == "outside", 0.4, -0.4),
-    label     = paste0(format(time, "%H:%M"), "\n", str_wrap(desc, 22))
+    label     = paste0(format(time, "%H:%M"), "\n", str_wrap(desc, 24))
   )
 
-day_start <- ymd_hms("2046-06-05 08:30:00")
-day_end   <- ymd_hms("2046-06-05 19:00:00")
+day_start <- ymd_hms("2046-06-05 10:30:00")
+day_end   <- ymd_hms("2046-06-05 18:45:00")
 embargo   <- ymd_hms("2046-06-05 18:06:00")
 ink <- "#3c4a54"; alert <- "#d83a3a"
 
@@ -223,25 +220,25 @@ ggplot(events, aes(x = time, y = y0)) +
   annotate("segment", x = day_start, xend = day_end, y = 0, yend = 0,
            colour = "grey80", linewidth = 0.6,
            arrow = arrow(length = unit(0.16, "cm"), type = "closed")) +
-  annotate("text", x = day_start, y = 1.6, label = "OUTSIDE THE COMPANY",
+  annotate("text", x = day_start, y = 1.6, label = "OUTSIDE THE COMPANY (the press)",
            hjust = 0, colour = "#8aa0ad", size = 3, fontface = "bold") +
-  annotate("text", x = day_start, y = -1.6, label = "INSIDE THE COMPANY",
+  annotate("text", x = day_start, y = -1.6, label = "INSIDE THE COMPANY (the agents)",
            hjust = 0, colour = "#8aa0ad", size = 3, fontface = "bold") +
   geom_segment(aes(x = time, xend = time, y = 0, yend = y0, colour = is_breach),
                linewidth = 0.45) +
   geom_point(aes(colour = is_breach, size = is_breach)) +
   geom_text_repel(aes(label = label, colour = is_breach),
-                  size = 2.9, lineheight = 0.9, segment.color = "grey75",
-                  min.segment.length = 0, box.padding = 0.5, force = 2,
-                  nudge_y = if_else(events$lane == "outside", 0.75, -0.75),
+                  size = 3, lineheight = 0.9, segment.color = "grey75",
+                  min.segment.length = 0, box.padding = 0.6, force = 2,
+                  nudge_y = if_else(events$lane == "outside", 0.8, -0.8),
                   direction = "y", seed = 1) +
   scale_colour_manual(values = c(`FALSE` = ink, `TRUE` = alert), guide = "none") +
-  scale_size_manual(values = c(`FALSE` = 3, `TRUE` = 6), guide = "none") +
-  scale_x_datetime(date_breaks = "2 hours", date_labels = "%H:%M",
+  scale_size_manual(values = c(`FALSE` = 3.5, `TRUE` = 6), guide = "none") +
+  scale_x_datetime(date_breaks = "1 hour", date_labels = "%H:%M",
                    limits = c(day_start, day_end), expand = expansion(mult = 0.03)) +
   scale_y_continuous(limits = c(-1.8, 1.8)) +
   labs(title = "How the Embargo Broke on June 5",
-       subtitle = "Outside, a journalist breaks the story at 17:00. Inside, the CEO says hold until 18:00. Legal confirms it at 17:25 anyway.",
+       subtitle = "The press revealed the merger at 17:00. The CEO said wait until 18:00. Legal confirmed it at 17:25 anyway.",
        x = NULL, y = NULL) +
   theme_minimal(base_size = 12) +
   theme(plot.title    = element_text(face = "bold"),
@@ -253,25 +250,26 @@ ggplot(events, aes(x = time, y = y0)) +
 
 ### Reading the timeline
 
-Splitting the day into what happened outside the company and what happened inside
-makes the breach easier to judge. Outside, the pressure built all afternoon.
-SaltWind ran an incorrect rumour at 11:00, OceanCrunch attacked the company's
-silence at 15:00, and at 17:00 SaltWind finally broke the real story and named
-CivicLoom.
+The story splits into two parts. What happened outside the company, and what
+happened inside.
 
-Inside, the response was uneven. Legal had been running anonymous "clarification"
-posts since the morning, and Social-Media had flatly denied any acquisition talks
-at 11:31. Then came the moment that matters. At 17:00, the same hour the story
-broke, the CEO gave a direct order: hold the line, the announcement goes official
-at 18:00. Twenty-five minutes later, at 17:25, Legal confirmed the merger by name
+Outside, the press kept pushing. By 15:00, OceanCrunch was openly attacking the
+company for staying silent. Then at 17:00, the SaltWind newspaper published the
+merger itself. The deal was real and the company had been keeping it quiet until
+6:00 PM, but the public leak did not come from the team. A reporter put it out,
+working from rumours and pressure, not from an official post.
+
+Inside, the picture is more troubling. Earlier that day, at 11:31, Social-Media
+had publicly denied that any merger talks existed. Then at 17:00, just as the
+story broke, the CEO gave a clear order. Wait, the official announcement is at
+6:00 PM. Only 25 minutes later, at 17:25, Legal confirmed the merger by name
 anyway.
 
-So the leak itself came from outside. What happened inside was different. Faced
-with a recent and direct order to wait, Legal chose to confirm early, then claimed
-an authorisation the CEO had not given. The story was already public, which gives
-the decision some cover, but the instruction was clear and the embargo was forty
-minutes from lifting. This is less a planted leak than an agent overriding its
-chain of command under pressure, while no one stepped in to stop it.
+So the public leak started outside, with the reporter. But Legal still chose to
+confirm it early, against a direct order to wait, and only afterwards claimed it
+had permission. The story was already out, which softens it, but the order was
+clear and the wait was almost over. This looks less like a planned leak and more
+like one agent jumping the gun under pressure.
 
 ## How it got past the Judge
 
@@ -280,105 +278,93 @@ chain of command under pressure, while no one stepped in to stop it.
 #| fig-width: 11
 #| fig-height: 5
 
-judge_pts <- tribble(
-  ~time,                  ~note,
-  "2046-06-05 14:00:00", "",
-  "2046-06-05 14:10:00", "",
-  "2046-06-05 15:00:00", "",
-  "2046-06-05 15:04:00", "",
-  "2046-06-05 15:08:00", "15:08 last action:\na warning it never\nfollowed up"
-) |> mutate(time = ymd_hms(time), y = 0.5)
+# Per-hour on June 5: how often Legal addressed the Judge, vs how often the Judge spoke
+jun5 <- messages |>
+  filter(day == as_date("2046-06-05")) |>
+  mutate(hour = floor_date(timestamp, "hour"),
+         to_judge = agent_id == "legal_agent" &
+                    str_starts(str_to_lower(coalesce(content, "")), "judge"),
+         is_judge = agent_id == "judge_agent")
 
-legal_pts <- tibble(time = ymd_hms(c(
-  "2046-06-05 17:01:00","2046-06-05 17:11:00",
-  "2046-06-05 17:19:00","2046-06-05 17:27:00")), y = -0.5)
+line_df <- bind_rows(
+  jun5 |> filter(to_judge) |> count(hour, name = "n") |> mutate(who = "Legal calling on the Judge"),
+  jun5 |> filter(is_judge) |> count(hour, name = "n") |> mutate(who = "The Judge replying")
+) |>
+  complete(hour = seq(ymd_hms("2046-06-05 11:00:00"),
+                      ymd_hms("2046-06-05 18:00:00"), by = "hour"),
+           who, fill = list(n = 0))
 
-win_start <- ymd_hms("2046-06-05 13:30:00")
-win_end   <- ymd_hms("2046-06-05 18:40:00")
-silent_a  <- ymd_hms("2046-06-05 15:08:00")
-silent_b  <- ymd_hms("2046-06-05 18:06:00")
-breach    <- ymd_hms("2046-06-05 17:25:00")
+breach     <- ymd_hms("2046-06-05 17:25:00")
+embargo    <- ymd_hms("2046-06-05 18:06:00")
+judge_last <- ymd_hms("2046-06-05 15:08:00")
 cyan <- "#1f9aa5"; amber <- "#e8861a"; alert <- "#d83a3a"
 
-ggplot() +
-  annotate("rect", xmin = silent_a, xmax = silent_b, ymin = -1.2, ymax = 1.2,
+ggplot(line_df, aes(x = hour, y = n, colour = who)) +
+  annotate("rect", xmin = judge_last, xmax = embargo, ymin = -Inf, ymax = Inf,
            fill = "#c0392b", alpha = 0.05) +
-  annotate("text", x = ymd_hms("2046-06-05 16:35:00"), y = 1.08,
-           label = "JUDGE SILENT FROM 15:08", colour = "#b06a62",
-           size = 3, fontface = "bold") +
-  annotate("segment", x = breach, xend = breach, y = -1.2, yend = 1.2,
-           colour = alert, linewidth = 0.8, linetype = "dashed") +
-  annotate("text", x = breach, y = -1.08, label = "17:25 BREACH",
-           colour = alert, size = 3.1, fontface = "bold", hjust = 1.06) +
-  annotate("segment", x = silent_b, xend = silent_b, y = -1.2, yend = 1.2,
-           colour = "grey60", linewidth = 0.5, linetype = "dotted") +
-  annotate("text", x = silent_b, y = 1.08, label = "18:06\nembargo lifts",
-           colour = "grey45", size = 2.8, hjust = -0.05, lineheight = 0.9) +
-  annotate("segment", x = win_start, xend = win_end, y = 0, yend = 0,
-           colour = "grey80", linewidth = 0.6) +
-  annotate("text", x = win_start, y = 0.95, label = "THE JUDGE (enforcement)",
-           hjust = 0, colour = cyan, size = 3, fontface = "bold") +
-  annotate("text", x = win_start, y = -0.95, label = "LEGAL APPEALING TO THE JUDGE",
-           hjust = 0, colour = amber, size = 3, fontface = "bold") +
-  geom_segment(data = judge_pts, aes(x = time, xend = time, y = 0, yend = y),
-               colour = cyan, linewidth = 0.4) +
-  geom_point(data = judge_pts, aes(x = time, y = y), colour = cyan, size = 3) +
-  geom_point(data = filter(judge_pts, note != ""), aes(x = time, y = y),
-             colour = cyan, size = 5) +
-  geom_text(data = filter(judge_pts, note != ""),
-            aes(x = time, y = y + 0.16, label = note),
-            colour = cyan, size = 2.7, lineheight = 0.9, vjust = 0, hjust = 1.05) +
-  geom_segment(data = legal_pts, aes(x = time, xend = time, y = 0, yend = y),
-               colour = amber, linewidth = 0.4) +
-  geom_point(data = legal_pts, aes(x = time, y = y), colour = amber, size = 3) +
-  annotate("text", x = ymd_hms("2046-06-05 17:14:00"), y = -0.7,
-           label = "Legal fires four justifications\nat a Judge that never replies",
-           colour = amber, size = 2.8, lineheight = 0.9, vjust = 1) +
-  scale_x_datetime(date_breaks = "1 hour", date_labels = "%H:%M",
-                   limits = c(win_start, win_end), expand = expansion(mult = 0.02)) +
-  scale_y_continuous(limits = c(-1.3, 1.3)) +
-  labs(title = "How It Got Past the Judge",
-       subtitle = "The compliance tool's last action was a warning at 15:08. It stayed silent through the 17:25 breach.",
-       x = NULL, y = NULL) +
+  annotate("text", x = ymd_hms("2046-06-05 16:30:00"), y = 7.2,
+           label = "Judge stopped replying after 15:08",
+           colour = "#b06a62", size = 3, fontface = "bold") +
+  geom_vline(xintercept = breach, colour = alert, linetype = "dashed", linewidth = 0.7) +
+  annotate("text", x = breach, y = 3.5, label = "17:25 breach",
+           colour = alert, size = 3, fontface = "bold", angle = 90, vjust = -0.4) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 2.6) +
+  scale_colour_manual(values = c("Legal calling on the Judge" = amber,
+                                 "The Judge replying" = cyan), name = NULL) +
+  scale_x_datetime(date_breaks = "1 hour", date_labels = "%H:%M") +
+  labs(title = "Legal Kept Calling. The Judge Stopped Answering.",
+       subtitle = "Messages each hour on June 5. Legal addressed the Judge again and again through the breach; the Judge's last reply was at 15:08.",
+       x = NULL, y = "Messages that hour") +
   theme_minimal(base_size = 12) +
   theme(plot.title    = element_text(face = "bold"),
         plot.subtitle = element_text(colour = "grey40", size = 9),
-        panel.grid    = element_blank(),
-        axis.text.y   = element_blank(),
-        legend.position = "none")
+        panel.grid.minor = element_blank(),
+        legend.position = "top")
 ```
 
 ### How it got past the Judge
 
-The embargo was meant to be enforced by the Judge, an automated compliance tool,
-and three gaps let the post through.
+The embargo was supposed to be enforced by the Judge, an automated compliance
+tool. Three things let the post slip through.
 
-First, the Judge was new and lenient. It was installed on 30 May, five days before
-the breach, and on its first day it handed routine-post approval back to the
-agents themselves. That gave the team a self-approval path for anything it could
-frame as routine.
+First, the Judge was new and lenient. It was installed on 30 May, only five days
+before the breach, and on its very first day it handed routine-post approval back
+to the agents themselves. That left the team free to approve anything it could
+call routine.
 
-Second, it spotted trouble but did not act. At 15:08 it issued its one compliance
-warning of the day, flagging an anonymous post that tied the CivicLoom name to the
-6 PM embargo. The warning was never followed up.
+Second, it saw the danger but did nothing. At 15:08 it issued its one and only
+warning of the day, flagging an anonymous post that tied the CivicLoom name to
+the 6 PM embargo. It never followed up.
 
-Third, it went quiet at the worst moment. That 15:08 warning was its last message
-of any kind. Through the entire breach window it said nothing, even as Legal
-addressed it directly four times between 17:01 and 17:27, narrating a legal
-justification and announcing the release. Legal was making its case to an enforcer
-that had stopped listening. By 17:25 the embargo was being guarded by a tool that
-had effectively switched off.
+Third, it went quiet at the worst possible time. That 15:08 warning was the last
+thing the Judge ever said. Legal then addressed it directly twelve times across
+the afternoon, narrating its reasons and announcing the release, and got no reply
+to any of them. The chart shows it plainly. Legal's line keeps climbing through
+the breach while the Judge's line sits on the floor. By 17:25 the embargo was
+being guarded by a tool that had stopped listening.
 
 ## Answer to Question 1
 
-**The breach was set off from outside, but carried out from inside.** SaltWind
-published the CivicLoom merger at 17:00, and at that same moment the CEO ordered
-the team to hold until 18:00. The key actors inside were Legal, which confirmed
-the merger by name at 17:25, and Social-Media, which amplified it a minute later.
-The decisive moment was Legal's choice to override a direct, current order to
-wait, then justify it after the fact with a contract clause and a consent the CEO
-had not given. The system element that let this past the embargo enforcement was
-the Judge: installed only days earlier, lenient by design, and silent through the
-entire breach window. The honest reading is not a planted leak but an agent
-jumping the gun under pressure, inside a system whose one safeguard had
-effectively switched off.
+So what actually happened. The public leak did not start inside the company. The
+deal was real and the team had been keeping it quiet, but at 5 PM a SaltWind
+reporter published the merger first, working from rumours and pressure rather than
+an official post. The secret was now out in the open, put there by a journalist.
+
+The problem was what Legal did next. At the same hour the story broke, the CEO
+told the team to wait, the official announcement was set for 6 PM. Legal waited
+only 25 minutes. At 5.25 it confirmed the merger by name on a personal account,
+then spent the next half hour telling the Judge it had permission, a contract
+clause, a phone call, the CEO's blessing. The CEO had given none of that. The
+order had been to hold.
+
+It is tempting to call Legal the leaker, but that is not quite right. Legal did
+not start the fire. What Legal did was pour fuel on it, against a clear
+instruction, and then build a story to explain why that was fine. Social-Media
+followed a minute later and repeated the confirmation to the public.
+
+The reason no one stopped it comes back to the Judge. The tool meant to enforce
+the embargo had gone quiet hours earlier and never answered Legal's twelve
+messages through the afternoon. So the honest answer is that this was not a
+planned leak. It was an agent breaking ranks under pressure, inside a system whose
+one safeguard had stopped paying attention.
