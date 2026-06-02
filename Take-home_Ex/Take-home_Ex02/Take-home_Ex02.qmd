@@ -190,19 +190,25 @@ that silence was a cause or a symptom is a question the next figures take up.
 #| fig-width: 11
 #| fig-height: 5.5
 
+# lab_level staggers labels: outside all at one height; inside split into
+# a near level and a far level so the 17:00 and 17:25 labels do not overlap.
 events <- tribble(
-  ~time,                  ~lane,     ~desc,
-  "2046-06-05 15:00:00", "outside", "Press attacks the company's silence",
-  "2046-06-05 17:00:00", "outside", "SaltWind newspaper reveals the merger",
-  "2046-06-05 11:31:00", "inside",  "Social-Media publicly denies any merger talks",
-  "2046-06-05 17:00:00", "inside",  "CEO orders the team to wait until 6:00 PM",
-  "2046-06-05 17:25:00", "inside",  "BREACH: Legal confirms the merger early"
+  ~time,                  ~lane,     ~lab_level, ~desc,
+  "2046-06-05 15:00:00", "outside", "near",     "Press attacks the company's silence",
+  "2046-06-05 17:00:00", "outside", "near",     "SaltWind newspaper reveals the merger",
+  "2046-06-05 11:31:00", "inside",  "near",     "Social-Media publicly denies any merger talks",
+  "2046-06-05 17:00:00", "inside",  "near",     "CEO orders the team to wait until 6:00 PM",
+  "2046-06-05 17:25:00", "inside",  "far",      "BREACH: Legal confirms the merger early"
 ) |>
   mutate(
     time      = ymd_hms(time),
     is_breach = str_detect(desc, "BREACH"),
     y0        = if_else(lane == "outside", 0.35, -0.35),
-    lab_y     = if_else(lane == "outside", 0.95, -0.95),
+    lab_y     = case_when(
+      lane == "outside"                    ~  1.0,
+      lane == "inside" & lab_level == "near" ~ -1.0,
+      lane == "inside" & lab_level == "far"  ~ -1.85
+    ),
     vjust_v   = if_else(lane == "outside", 0, 1),
     label     = paste0(format(time, "%H:%M"), "\n", str_wrap(desc, 22))
   )
@@ -215,17 +221,21 @@ ink <- "#3c4a54"; alert <- "#d83a3a"
 ggplot(events, aes(x = time, y = y0)) +
   annotate("rect", xmin = day_start, xmax = embargo, ymin = -Inf, ymax = Inf,
            fill = "#9aa7b1", alpha = 0.06) +
-  annotate("segment", x = embargo, xend = embargo, y = -1.55, yend = 1.55,
+  annotate("segment", x = embargo, xend = embargo, y = -1.6, yend = 1.6,
            colour = "grey60", linewidth = 0.5, linetype = "dotted") +
-  annotate("text", x = embargo, y = 1.7, label = "18:06 embargo lifts",
+  annotate("text", x = embargo, y = 1.75, label = "18:06 embargo lifts",
            colour = "grey45", size = 3) +
   annotate("segment", x = day_start, xend = day_end, y = 0, yend = 0,
            colour = "grey80", linewidth = 0.6,
            arrow = arrow(length = unit(0.16, "cm"), type = "closed")) +
-  annotate("text", x = day_start, y = 1.7, label = "OUTSIDE THE COMPANY (the press)",
+  annotate("text", x = day_start, y = 1.75, label = "OUTSIDE THE COMPANY (the press)",
            hjust = 0, colour = "#8aa0ad", size = 3, fontface = "bold") +
-  annotate("text", x = day_start, y = -1.7, label = "INSIDE THE COMPANY (the agents)",
+  annotate("text", x = day_start, y = -2.25, label = "INSIDE THE COMPANY (the agents)",
            hjust = 0, colour = "#8aa0ad", size = 3, fontface = "bold") +
+  # thin guide for the lower (breach) label so it stays linked to its dot
+  geom_segment(data = ~filter(.x, lab_level == "far"),
+               aes(x = time, xend = time, y = y0, yend = lab_y + 0.25),
+               colour = alert, linewidth = 0.3, linetype = "dotted") +
   geom_segment(aes(x = time, xend = time, y = 0, yend = y0, colour = is_breach),
                linewidth = 0.45) +
   geom_point(aes(colour = is_breach), size = 4) +
@@ -234,7 +244,7 @@ ggplot(events, aes(x = time, y = y0)) +
   scale_colour_manual(values = c(`FALSE` = ink, `TRUE` = alert), guide = "none") +
   scale_x_datetime(date_breaks = "1 hour", date_labels = "%H:%M",
                    limits = c(day_start, day_end), expand = expansion(mult = 0.03)) +
-  scale_y_continuous(limits = c(-1.9, 1.9)) +
+  scale_y_continuous(limits = c(-2.4, 1.95)) +
   labs(title = "How the Embargo Broke on June 5",
        subtitle = "The press revealed the merger at 17:00. The CEO said wait until 18:00. Legal confirmed it at 17:25 anyway.",
        x = NULL, y = NULL) +
@@ -288,13 +298,13 @@ hours_seq <- seq(ymd_hms("2046-06-05 11:00:00"),
                  ymd_hms("2046-06-05 18:00:00"), by = "hour")
 
 legal_row <- jun5 |> filter(to_judge) |> count(hour, name = "n") |>
-  complete(hour = hours_seq, fill = list(n = 0)) |> mutate(lane = "Legal calling on the Judge")
+  complete(hour = hours_seq, fill = list(n = 0))
 judge_row <- jun5 |> filter(is_judge) |> count(hour, name = "n") |>
-  complete(hour = hours_seq, fill = list(n = 0)) |> mutate(lane = "The Judge replying")
+  complete(hour = hours_seq, fill = list(n = 0))
 
 amber <- "#e8861a"; cyan <- "#1f9aa5"; alert <- "#d83a3a"
-breach     <- ymd_hms("2046-06-05 17:25:00")
-embargo    <- ymd_hms("2046-06-05 18:06:00")
+breach  <- ymd_hms("2046-06-05 17:25:00")
+xlims   <- c(ymd_hms("2046-06-05 10:30:00"), ymd_hms("2046-06-05 18:30:00"))
 
 # Top panel: Legal calling on the Judge
 p_legal <- ggplot(legal_row, aes(x = hour, y = n)) +
@@ -303,11 +313,9 @@ p_legal <- ggplot(legal_row, aes(x = hour, y = n)) +
   geom_point(colour = amber, size = 5) +
   geom_text(data = ~filter(.x, n > 0), aes(label = n),
             colour = "white", fontface = "bold", size = 3) +
-  annotate("text", x = breach, y = 7.4, label = "17:25 breach",
+  annotate("text", x = breach, y = 7.5, label = "17:25 breach",
            colour = alert, size = 3, fontface = "bold", hjust = 1.05) +
-  scale_x_datetime(date_breaks = "1 hour", date_labels = "%H:%M",
-                   limits = c(ymd_hms("2046-06-05 10:30:00"),
-                              ymd_hms("2046-06-05 18:30:00"))) +
+  scale_x_datetime(date_breaks = "1 hour", date_labels = "%H:%M", limits = xlims) +
   scale_y_continuous(limits = c(0, 8)) +
   labs(title = "Legal kept calling on the Judge", x = NULL, y = "Times per hour") +
   theme_minimal(base_size = 12) +
@@ -322,13 +330,11 @@ p_judge <- ggplot(judge_row, aes(x = hour, y = n)) +
   geom_point(colour = cyan, size = 5) +
   geom_text(data = ~filter(.x, n > 0), aes(label = n),
             colour = "white", fontface = "bold", size = 3) +
-  annotate("text", x = ymd_hms("2046-06-05 15:00:00"), y = 5.6,
+  annotate("text", x = ymd_hms("2046-06-05 15:00:00"), y = 5.8,
            label = "Last reply 15:08", colour = cyan, size = 3, fontface = "bold") +
-  annotate("text", x = ymd_hms("2046-06-05 17:00:00"), y = 2.2,
+  annotate("text", x = ymd_hms("2046-06-05 17:00:00"), y = 2.3,
            label = "nothing after 15:08", colour = "grey55", size = 3, fontface = "italic") +
-  scale_x_datetime(date_breaks = "1 hour", date_labels = "%H:%M",
-                   limits = c(ymd_hms("2046-06-05 10:30:00"),
-                              ymd_hms("2046-06-05 18:30:00"))) +
+  scale_x_datetime(date_breaks = "1 hour", date_labels = "%H:%M", limits = xlims) +
   scale_y_continuous(limits = c(0, 7)) +
   labs(title = "The Judge stopped replying", x = NULL, y = "Times per hour") +
   theme_minimal(base_size = 12) +
