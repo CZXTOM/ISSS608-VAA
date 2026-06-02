@@ -22,6 +22,8 @@ website:
             href: Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html
           - text: "Presentation"
             href: Take-home_Ex/Take-home_Ex01/Take-home_Ex01_slides.html
+      - text: "Take-home Ex 2"
+        href: Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html
     right:
       - href: index.qmd
         text: Home
