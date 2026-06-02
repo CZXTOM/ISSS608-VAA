@@ -60,18 +60,16 @@ pacman::p_load(tidyverse, jsonlite, tidygraph, ggraph, ggiraph, patchwork, ggrep
 
 ```{r}
 #| label: palette
-# Tactical colour palette used across the report
 agent_palette <- c(
-  "legal_agent"        = "#e8861a",  # amber - rogue
-  "social_media_agent" = "#e8861a",  # amber - rogue
-  "quality_agent"      = "#1f9aa5",  # cyan  - compliant
-  "pr_agent"           = "#1f9aa5",  # cyan  - compliant
-  "pr_intern_agent"    = "#8aa0ad",  # grey  - background
-  "intern_agent"       = "#8aa0ad",  # grey  - background
-  "judge_agent"        = "#1f9aa5"   # cyan  - overseer
+  "legal_agent"        = "#e8861a",
+  "social_media_agent" = "#e8861a",
+  "quality_agent"      = "#1f9aa5",
+  "pr_agent"           = "#1f9aa5",
+  "pr_intern_agent"    = "#8aa0ad",
+  "intern_agent"       = "#8aa0ad",
+  "judge_agent"        = "#1f9aa5"
 )
-
-breach_red <- "#d83a3a"   # reserved for the breach moment
+breach_red <- "#d83a3a"
 ```
 
 # Data Preparation
@@ -403,8 +401,7 @@ chan_labels <- c("Team huddle (open)","One-on-one chat","Side huddle (private)",
                  "Official public post","Personal public post","Anonymous public post")
 
 shift <- messages |>
-  mutate(period = if_else(day == as_date("2046-06-05"),
-                          "breach", "typical")) |>
+  mutate(period = if_else(day == as_date("2046-06-05"), "breach", "typical")) |>
   count(period, channel) |>
   group_by(period) |>
   mutate(share = 100 * n / sum(n)) |>
@@ -412,16 +409,13 @@ shift <- messages |>
   select(period, channel, share) |>
   pivot_wider(names_from = period, values_from = share, values_fill = 0) |>
   mutate(channel = factor(channel, levels = rev(chan_levels))) |>
-  arrange(channel)
-
-amber <- "#e8861a"; cyan <- "#1f9aa5"; alert <- "#d83a3a"; grey <- "#9aa7b1"
-
-# colour the breach dot: red for anonymous, amber for the private/personal channels
-shift <- shift |>
+  arrange(channel) |>
   mutate(dot_col = case_when(
-    channel == "anonymous_post" ~ alert,
-    channel %in% c("side_huddle","personal_post") ~ amber,
+    channel == "anonymous_post" ~ "#d83a3a",
+    channel %in% c("side_huddle","personal_post") ~ "#e8861a",
     TRUE ~ "#3c4a54"))
+
+grey <- "#9aa7b1"
 
 ggplot(shift, aes(y = channel)) +
   geom_segment(aes(x = typical, xend = breach, yend = channel),
@@ -435,7 +429,7 @@ ggplot(shift, aes(y = channel)) +
   scale_colour_identity() +
   scale_y_discrete(labels = rev(chan_labels)) +
   scale_x_continuous(limits = c(-2, 65), labels = function(x) paste0(x, "%")) +
-  annotate("text", x = 55, y = 1.5,
+  annotate("text", x = 50, y = 1.6,
            label = "grey = a typical day\ncoloured = the breach day",
            size = 3, colour = "grey45", hjust = 0, lineheight = 0.95) +
   labs(title = "On the Breach Day, the Team Moved Into Private and Hidden Channels",
@@ -450,112 +444,215 @@ ggplot(shift, aes(y = channel)) +
 
 ### What changed
 
-On a normal day the team talks in the open. Roughly nine messages in ten go
-through the team huddle or one-on-one chats, the official account posts a couple
-of routine updates, and that is about it. Two channels are almost never touched.
-Side huddles, which are small private groups, appear on only two quiet days in the
-whole fortnight. Anonymous posts never appear at all.
+On a normal day the team talks in the open. About 61% of messages go through the
+team huddle and another 28% through one-on-one chats, so roughly nine in ten stay
+in plain view. The official account posts a couple of routine updates, and that is
+about it. Two channels are almost never touched. Side huddles, which are small
+private groups, appear on only two quiet days in the whole fortnight. Anonymous
+posts never appear at all.
 
-The breach day breaks that pattern. Side huddles jump from about 3 in 100 messages
-to 1 in 5, so the team splits off into private groups instead of talking in the
-shared room. And anonymous posts, which had never been used once in two weeks,
-show up twelve times. The open channels shrink as a share of the total while the
-private and hidden ones take over.
+The breach day breaks that pattern. Side huddles jump from 3% of messages to 20%,
+so the team splits off into private groups instead of talking in the shared room.
+And anonymous posts, which had never been used once in two weeks, show up twelve
+times. The open channels shrink as a share of the total while the private and
+hidden ones take over.
 
 This matters because it shows the breach was not simply a busy day with more of
 the usual traffic. The kind of communication changed. The team moved its
 conversation out of the open huddle and into private and unattributed channels,
 which is exactly where decisions escape oversight.
 
+## Who drove the hidden channels
+
+```{r}
+#| label: who-hidden
+#| fig-width: 10
+#| fig-height: 4.8
+
+hidden_levels <- c("side_huddle","anonymous_post","personal_post")
+hidden_labels <- c("Side huddle (private)","Anonymous post","Personal post")
+
+who <- messages |>
+  filter(day == as_date("2046-06-05"), channel %in% hidden_levels) |>
+  count(agent_id, channel) |>
+  mutate(channel = factor(channel, levels = hidden_levels)) |>
+  group_by(agent_id) |> mutate(tot = sum(n)) |> ungroup() |>
+  mutate(agent_id = fct_reorder(agent_id, tot))
+
+amber <- "#e8861a"; cyan <- "#1f9aa5"; grey <- "#8aa0ad"; alert <- "#d83a3a"
+
+ggplot(who, aes(x = n, y = agent_id, fill = channel)) +
+  geom_col(width = 0.65) +
+  geom_text(aes(x = tot, label = tot), hjust = -0.3, size = 3.2,
+            fontface = "bold", colour = "grey30",
+            data = ~distinct(.x, agent_id, tot)) +
+  scale_fill_manual(values = c("side_huddle" = "#3c4a54",
+                               "anonymous_post" = alert,
+                               "personal_post" = amber),
+                    labels = hidden_labels, name = NULL) +
+  scale_y_discrete(labels = function(x) toupper(gsub("_agent","",x))) +
+  scale_x_continuous(limits = c(0, 66), expand = expansion(mult = c(0, 0.02))) +
+  labs(title = "Two Agents Drove Almost All the Private and Anonymous Traffic",
+       subtitle = "Messages on private or hidden channels, June 5. Every one of the 12 anonymous posts (red) was Legal.",
+       x = "Messages on June 5", y = NULL) +
+  theme_minimal(base_size = 12) +
+  theme(plot.title    = element_text(face = "bold"),
+        plot.subtitle = element_text(colour = "grey40", size = 9),
+        panel.grid.minor = element_blank(),
+        panel.grid.major.y = element_blank(),
+        legend.position = "top")
+```
+
+### Who actually changed
+
+The shift was not the whole team. It was two agents. On the breach day Legal sent
+60 messages on private or hidden channels and Social-Media sent 50, while everyone
+else stayed in single figures. Quality managed 17, PR just 7, and the interns
+barely touched these channels at all.
+
+The anonymous channel is the sharpest example. Every single one of the twelve
+anonymous posts came from Legal, and nobody else used it once. The private side
+huddles were dominated by the same pair, Legal with 44 and Social-Media with 36.
+So the two agents who confirmed the merger were also the two who pulled the
+conversation into the channels with the least oversight. The change in behaviour
+and the change in who was behaving that way point to the same place.
+
 ## Answer to Question 2
 
-Normal behaviour for this team was open and routine. Almost everything happened in
-the shared huddle or in one-on-one chats, public posting was limited to a couple
-of official updates a day, and nobody ever posted anonymously.
+Normal behaviour for this team was open and routine. About nine messages in ten
+stayed in the shared huddle or one-on-one chats, public posting was limited to a
+couple of official updates a day, and nobody ever posted anonymously.
 
 The breach behaviour was different in kind, not just in volume. The team
 fragmented into private side huddles, public personal posts rose, and anonymous
-posts appeared for the first time in the entire record. So the move that broke the
-embargo came wrapped in a wider shift, away from open, attributable communication
-and toward private and anonymous channels. The breach was the loudest moment of a
-day on which the whole team quietly stopped working in the open.
+posts appeared for the first time in the entire record. And this shift was not
+shared evenly. Legal and Social-Media drove almost all of it, with Legal alone
+responsible for every anonymous post. So the move that broke the embargo came
+wrapped in a wider change of behaviour by the same two agents, away from open,
+attributable communication and toward private and unattributed channels. The
+breach was the loudest moment of a day on which those two agents quietly stopped
+working in the open.
 
 # Question 3: Were There Leading Indicators
 
-## The dress rehearsal
+## A warning hidden in normal behaviour
 
 ```{r}
-#| label: leading-indicators
+#| label: personal-post-baseline
 #| fig-width: 11
 #| fig-height: 4.8
 
-signals <- tribble(
-  ~date,          ~title,                              ~detail,
-  "2046-05-29",   "Dress rehearsal",                   "Social-Media slips embargo-sensitive\ninfo on a personal account",
-  "2046-05-30",   "Flagged, then closed",              "Logged as a Category 2 event;\nJudge reviews and is 'satisfied'",
-  "2046-06-05",   "The real breach",                   "The same behaviour, but bigger:\nLegal confirms the merger early"
-) |>
-  mutate(date = as_date(date),
-         is_breach = str_detect(title, "real breach"),
-         label = paste0(format(date, "%b %d"), " — ", title, "\n", detail))
+pp <- messages |>
+  filter(channel == "personal_post", day < as_date("2046-06-05")) |>
+  mutate(risky = agent_id == "social_media_agent" & day == as_date("2046-05-29"),
+         who = case_when(
+           risky ~ "Embargo-sensitive slip",
+           agent_id %in% c("intern_agent","pr_intern_agent") ~ "Routine intern posts",
+           TRUE ~ "Other routine posts"))
 
-ink <- "#3c4a54"; alert <- "#d83a3a"
-d0 <- as_date("2046-05-28"); d1 <- as_date("2046-06-07")
+amber <- "#e8861a"; grey <- "#8aa0ad"; alert <- "#d83a3a"
 
-ggplot(signals, aes(x = date, y = 0)) +
-  annotate("segment", x = d0, xend = d1, y = 0, yend = 0,
-           colour = "grey80", linewidth = 0.6,
-           arrow = arrow(length = unit(0.16, "cm"), type = "closed")) +
-  geom_segment(aes(xend = date, y = 0, yend = 0.4, colour = is_breach), linewidth = 0.5) +
-  geom_point(aes(colour = is_breach), size = 4.5) +
-  geom_text(aes(y = 0.5, label = label, colour = is_breach),
-            vjust = 0, size = 3, lineheight = 0.9) +
-  scale_colour_manual(values = c(`FALSE` = ink, `TRUE` = alert), guide = "none") +
+ggplot(pp, aes(x = day, y = who, colour = who)) +
+  geom_point(size = 4, alpha = 0.9,
+             position = position_jitter(height = 0.12, width = 0, seed = 1)) +
+  annotate("text", x = as_date("2046-05-29"), y = 3.45,
+           label = "29 May: Social-Media tags the\nCivicLoom CEO on a personal account",
+           colour = alert, size = 3, fontface = "bold", lineheight = 0.9, vjust = 0) +
+  scale_colour_manual(values = c("Routine intern posts" = grey,
+                                 "Other routine posts" = "#3c4a54",
+                                 "Embargo-sensitive slip" = alert), guide = "none") +
   scale_x_date(date_breaks = "2 days", date_labels = "%b %d",
-               limits = c(d0, d1), expand = expansion(mult = 0.04)) +
-  scale_y_continuous(limits = c(-0.3, 2.0)) +
-  labs(title = "The Warning Came Five Days Early",
-       subtitle = "The same kind of slip happened on 29 May, was logged, and was waved through with no change.",
+               limits = c(as_date("2046-05-22"), as_date("2046-06-05"))) +
+  scale_y_discrete(limits = c("Routine intern posts","Other routine posts","Embargo-sensitive slip")) +
+  labs(title = "One Personal Post Did Not Belong",
+       subtitle = "Personal posts before the breach. Almost all are harmless intern chatter; one, on 29 May, crossed into embargo territory.",
        x = NULL, y = NULL) +
   theme_minimal(base_size = 12) +
   theme(plot.title    = element_text(face = "bold"),
         plot.subtitle = element_text(colour = "grey40", size = 9),
-        panel.grid    = element_blank(),
-        axis.text.y   = element_blank())
+        panel.grid.minor = element_blank(),
+        panel.grid.major.y = element_blank())
 ```
 
 ### What the earlier signal showed
 
 The breach was not the first time an agent let embargo-sensitive information slip
-out on a personal account. On 29 May, five days earlier, Social-Media posted on
-its personal Flex account and tagged the CivicLoom CEO alongside its own, a public
-hint at exactly the relationship that was supposed to stay secret. It was the same
-behaviour that broke the embargo later, only smaller and caught in time.
+out on a personal account. Through the fortnight, personal posts were harmless.
+The interns posted "first week" and "loving the team" notes, one a day, and that
+was the entire pattern. Against that calm backdrop one post stands out. On 29 May,
+five days before the breach, Social-Media posted on its personal account and
+tagged the CivicLoom CEO alongside its own, a public hint at the very relationship
+that was supposed to stay secret. It is the same behaviour that broke the embargo
+later, only smaller and caught in time.
 
-The team responded the way you would hope. Social-Media flagged it within minutes,
-Legal briefed the CEO, and Quality logged it in the risk register as a "Category 2
-embargo sensitivity event." The next morning the Judge reviewed the incident,
-noted that the post had been deleted, and declared itself satisfied that the matter
-was closed.
+## The warning was logged, then shelved
+
+```{r}
+#| label: dress-rehearsal
+#| fig-width: 11
+#| fig-height: 3.6
+
+steps <- tribble(
+  ~x, ~title,                  ~detail,
+  1,  "29 May: the slip",      "Social-Media tags the\nCivicLoom CEO publicly",
+  2,  "29 May: flagged",       "Logged as a Category 2\nembargo-sensitivity event",
+  3,  "30 May: closed",        "Judge reviews, post deleted,\ndeclares itself 'satisfied'",
+  4,  "Nothing changes",       "No new rule on personal\nposts or embargo checks",
+  5,  "5 June: it recurs",     "The same behaviour, but\nbigger. Embargo breaks."
+) |> mutate(is_end = x == 5)
+
+ink <- "#3c4a54"; alert <- "#d83a3a"
+
+ggplot(steps, aes(x = x, y = 0)) +
+  geom_segment(aes(x = x, xend = x + 1, y = 0, yend = 0),
+               data = ~filter(.x, x < 5), colour = "grey70", linewidth = 0.6,
+               arrow = arrow(length = unit(0.14, "cm"), type = "closed")) +
+  geom_point(aes(colour = is_end), size = 6) +
+  geom_text(aes(label = x), colour = "white", fontface = "bold", size = 3.2) +
+  geom_text(aes(y = 0.16, label = title, colour = is_end),
+            vjust = 0, size = 3.1, fontface = "bold", lineheight = 0.9) +
+  geom_text(aes(y = -0.16, label = detail), vjust = 1, size = 2.8,
+            colour = "grey35", lineheight = 0.9) +
+  scale_colour_manual(values = c(`FALSE` = ink, `TRUE` = alert), guide = "none") +
+  scale_x_continuous(limits = c(0.5, 5.7)) +
+  scale_y_continuous(limits = c(-0.5, 0.55)) +
+  labs(title = "The Same Slip, Caught Once and Then Ignored",
+       subtitle = "Five days before the breach, the identical behaviour was logged and closed with no change to the system.",
+       x = NULL, y = NULL) +
+  theme_minimal(base_size = 12) +
+  theme(plot.title    = element_text(face = "bold"),
+        plot.subtitle = element_text(colour = "grey40", size = 9),
+        panel.grid    = element_blank(),
+        axis.text     = element_blank())
+```
+
+### Why nobody acted
+
+The team handled the 29 May slip the way you would hope. Social-Media flagged it
+within minutes, Legal briefed the CEO, and Quality logged it in the risk register
+as a "Category 2 embargo sensitivity event." The next morning the Judge reviewed
+the incident, noted the post had been deleted, and declared itself satisfied that
+the matter was closed.
 
 And that is where it ended. The post was removed, but nothing about the system
-changed. No new rule about personal accounts, no tighter check on embargo-sensitive
-posts, no change to who could publish during the embargo. The warning was treated
-as an incident to be closed rather than a sign of a weakness to be fixed. Five days
-later the same gap was still open, and this time the post stayed up.
+changed. There was no new rule about personal accounts, no tighter check on
+embargo-sensitive posts, and no change to who could publish during the embargo.
+The warning was treated as an incident to tidy away rather than a weakness to fix.
+Five days later the same gap was still open, and this time the post stayed up.
 
 ## Answer to Question 3
 
 Yes, there was a clear leading indicator. On 29 May an agent did a smaller version
 of the very thing that broke the embargo, putting embargo-sensitive information on
-a personal account. There were also quieter signs on the day itself, like Legal's
+a personal account. Set against a fortnight of harmless personal posts, that one
+stood out plainly. There were also quieter signs on the day itself, like Legal's
 anonymous posts starting in the morning and the Judge's single unanswered warning
 at 15:08.
 
 The reason none of them led to action is the same each time. Each signal was
-handled as a one-off to be tidied away. The 29 May slip was logged and closed, the
-morning's anonymous posts were never challenged, and the 15:08 warning was never
-followed up. The system was good at recording that something had happened and poor
-at changing anything so it would not happen again. The breach did not come out of
-nowhere. The warning had already been given, noticed, written down, and then left
-on the shelf.
+handled as a one-off to be closed. The 29 May slip was logged and waved through,
+the morning's anonymous posts were never challenged, and the 15:08 warning was
+never followed up. The system was good at recording that something had happened
+and poor at changing anything so it would not happen again. The breach did not
+come out of nowhere. The warning had already been given, noticed, written down,
+and then left on the shelf.
