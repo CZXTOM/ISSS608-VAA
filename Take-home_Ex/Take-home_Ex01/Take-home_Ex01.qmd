@@ -9,9 +9,6 @@ format:
     toc-depth: 3
     toc-location: right
     number-sections: true
-    code-fold: true
-    code-summary: "Show the code"
-    code-overflow: wrap
 execute:
   echo: true
   eval: true

@@ -6,8 +6,6 @@ date-modified: "2026-06-09"
 format:
   html:
     toc: true
-    code-fold: true
-    code-summary: "Show code"
     number-sections: true
 execute:
   echo: true
@@ -168,7 +166,6 @@ ggplot(heat_df, aes(x = slot_lbl, y = agent_id, fill = n)) +
 ## The Code
 ```{r}
 #| eval: false
-#| label: heatmap
 #| fig-width: 12
 #| fig-height: 5
 
@@ -309,7 +306,6 @@ ggplot(events, aes(x = time, y = y0)) +
 ## The Code
 ```{r}
 #| eval: false
-#| label: event-timeline
 #| fig-width: 11
 #| fig-height: 5.5
 
@@ -471,7 +467,6 @@ p_legal / p_judge +
 ## The Code
 ```{r}
 #| eval: false
-#| label: past-the-judge
 #| fig-width: 11
 #| fig-height: 5.5
 
@@ -609,7 +604,6 @@ ggplot(steps, aes(x = 0, y = y)) +
 ## The Code
 ```{r}
 #| eval: false
-#| label: legal-justification
 #| fig-width: 10
 #| fig-height: 5.2
 
@@ -759,7 +753,6 @@ ggplot(shift, aes(y = channel)) +
 ## The Code
 ```{r}
 #| eval: false
-#| label: channel-shift
 #| fig-width: 10
 #| fig-height: 5
 
@@ -880,7 +873,6 @@ ggplot(who, aes(x = n, y = agent_id, fill = channel)) +
 ## The Code
 ```{r}
 #| eval: false
-#| label: who-hidden
 #| fig-width: 10
 #| fig-height: 4.8
 
@@ -1001,7 +993,6 @@ ggplot(pp, aes(x = day, y = agent_id)) +
 ## The Code
 ```{r}
 #| eval: false
-#| label: personal-post-baseline
 #| fig-width: 11
 #| fig-height: 4.8
 
@@ -1098,7 +1089,6 @@ ggplot(steps, aes(x = x, y = 0)) +
 ## The Code
 ```{r}
 #| eval: false
-#| label: dress-rehearsal
 #| fig-width: 11
 #| fig-height: 3.6
 

@@ -7,8 +7,6 @@ date-modified: "2026-06-09"
 format:
   html:
     toc: true
-    code-fold: true
-    code-summary: "Show code"
     number-sections: true
 execute:
   echo: true
