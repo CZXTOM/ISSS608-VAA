@@ -1,5 +1,6 @@
 ---
-title: "Take-home Exercise 2: Anatomy of an Embargo Breach"
+title: "Take-home Exercise 2"
+subtitle: "Anatomy of an Embargo Breach"
 author: "ZeXin Chen"
 date: "2026-06-05"
 date-modified: "2026-06-09"

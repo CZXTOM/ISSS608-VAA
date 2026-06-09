@@ -1,11 +1,13 @@
 ---
-title: "Hands-on Exercise 1: A Layered Grammar of Graphics"
+title: "Hands-on Exercise 1"
+subtitle: "A Layered Grammar of Graphics"
 author: "ZeXin Chen"
-date: "April 26, 2026"
+date: "2026-04-26"
 date-modified: "2026-06-09"
 format:
   html:
     toc: true
+    number-sections: true
 execute:
   echo: true
   eval: true

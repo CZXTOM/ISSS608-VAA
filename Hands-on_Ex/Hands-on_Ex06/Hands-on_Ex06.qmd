@@ -1,6 +1,6 @@
 ---
 title: "Hands-on Exercise 6"
-subtitle: "Visualising and Analysing Network Data & Text Data"
+subtitle: "Visualising and Analysing Network Data and Text Data"
 author: "ZeXin Chen"
 date: "2026-06-02"
 date-modified: "2026-06-09"
@@ -101,6 +101,23 @@ GAStech_graph <- tbl_graph(nodes = GAStech_nodes,
 ```{r}
 GAStech_graph
 ```
+
+### Rearranging the Edges
+
+The edges and nodes of a `tbl_graph` are held as two separate tables. We use
+`activate()` to choose which table to work on, then ordinary dplyr verbs such as
+`arrange()` to reorder it. The example below sorts the edges so the heaviest ones
+(the most frequent email pairs) come first.
+
+```{r}
+GAStech_graph %>%
+  activate(edges) %>%
+  arrange(desc(Weight))
+```
+
+A useful thing to remember is that most centrality measures work at the node
+level, so when computing them later we need to `activate(nodes)` first, otherwise
+the calculation runs on the edges by mistake.
 
 ## Plotting Static Network Graphs with ggraph
 

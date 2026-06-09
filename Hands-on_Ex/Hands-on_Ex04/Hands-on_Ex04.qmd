@@ -1,11 +1,13 @@
 ---
 title: "Hands-on Exercise 4"
+subtitle: "Visualising Distribution and Statistical Analysis"
 author: "ZeXin Chen"
 date: "2025-05-03"
 date-modified: "2026-06-09"
 format:
   html:
     toc: true
+    number-sections: true
 execute:
   echo: true
   eval: true
