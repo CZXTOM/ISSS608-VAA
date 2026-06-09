@@ -3,7 +3,7 @@ title: "Hands-on Exercise 7"
 subtitle: "Visualising and Analysing Time-oriented Data"
 author: "ZeXin Chen"
 date: "2026-06-09"
-date-modified: last-modified
+date-modified: "2026-06-09"
 format:
   html:
     toc: true
@@ -116,7 +116,10 @@ We aggregate the attacks by weekday and hour, then plot a tile for each
 combination. Colour here encodes the number of attacks, which is the whole point
 of the heatmap.
 
+::: panel-tabset
+## The Plot
 ```{r}
+#| echo: false
 grouped <- attacks %>%
   count(wkday, hour) %>%
   ungroup() %>%
@@ -141,6 +144,34 @@ theme(axis.ticks = element_blank(),
       legend.title = element_text(size = 8),
       legend.text = element_text(size = 6))
 ```
+## The Code
+```{r}
+#| eval: false
+grouped <- attacks %>%
+  count(wkday, hour) %>%
+  ungroup() %>%
+  na.omit()
+
+ggplot(grouped,
+       aes(hour,
+           wkday,
+           fill = n)) +
+geom_tile(color = "white",
+          size = 0.1) +
+theme_tufte(base_family = "Helvetica") +
+coord_equal() +
+scale_fill_gradient(name = "# of attacks",
+                    low = "sky blue",
+                    high = "dark blue") +
+labs(x = NULL,
+     y = NULL,
+     title = "Attacks by weekday and time of day") +
+theme(axis.ticks = element_blank(),
+      plot.title = element_text(hjust = 0.5),
+      legend.title = element_text(size = 8),
+      legend.text = element_text(size = 6))
+```
+:::
 
 ## Building Multiple Calendar Heatmaps
 
@@ -171,7 +202,10 @@ top4_attacks <- attacks %>%
 
 ### Plotting the Faceted Heatmap
 
+::: panel-tabset
+## The Plot
 ```{r}
+#| echo: false
 ggplot(top4_attacks,
        aes(hour,
            wkday,
@@ -192,6 +226,30 @@ ggplot(top4_attacks,
         legend.title = element_text(size = 8),
         legend.text = element_text(size = 6))
 ```
+## The Code
+```{r}
+#| eval: false
+ggplot(top4_attacks,
+       aes(hour,
+           wkday,
+           fill = n)) +
+  geom_tile(color = "white",
+          size = 0.1) +
+  theme_tufte(base_family = "Helvetica") +
+  coord_equal() +
+  scale_fill_gradient(name = "# of attacks",
+                    low = "sky blue",
+                    high = "dark blue") +
+  facet_wrap(~source_country, ncol = 2) +
+  labs(x = NULL, y = NULL,
+     title = "Attacks on top 4 countries by weekday and time of day") +
+  theme(axis.ticks = element_blank(),
+        axis.text.x = element_text(size = 7),
+        plot.title = element_text(hjust = 0.5),
+        legend.title = element_text(size = 8),
+        legend.text = element_text(size = 6))
+```
+:::
 
 # Plotting Cycle Plot
 
@@ -238,7 +296,10 @@ Each panel is one month, the black line shows the year-on-year trend, and the re
 reference line marks that month's average. Colour is used only for the reference
 line, to separate it from the data.
 
+::: panel-tabset
+## The Plot
 ```{r}
+#| echo: false
 ggplot() +
   geom_line(data = Vietnam,
             aes(x = year,
@@ -257,6 +318,28 @@ ggplot() +
   ylab("No. of Visitors") +
   theme_tufte(base_family = "Helvetica")
 ```
+## The Code
+```{r}
+#| eval: false
+ggplot() +
+  geom_line(data = Vietnam,
+            aes(x = year,
+                y = `Vietnam`,
+                group = month),
+            colour = "black") +
+  geom_hline(aes(yintercept = avgvalue),
+             data = hline.data,
+             linetype = 6,
+             colour = "red",
+             size = 0.5) +
+  facet_grid(~month) +
+  labs(axis.text.x = element_blank(),
+       title = "Visitor arrivals from Vietnam by air, Jan 2010-Dec 2019") +
+  xlab("") +
+  ylab("No. of Visitors") +
+  theme_tufte(base_family = "Helvetica")
+```
+:::
 
 # Plotting Slopegraph
 
@@ -274,7 +357,10 @@ rice <- read_csv("data/rice.csv")
 We convert `Year` to a factor and keep only 1961 and 1980, then use
 `newggslopegraph()` of the CGPfunctions package.
 
+::: panel-tabset
+## The Plot
 ```{r}
+#| echo: false
 rice %>%
   mutate(Year = factor(Year)) %>%
   filter(Year %in% c(1961, 1980)) %>%
@@ -283,6 +369,18 @@ rice %>%
                 SubTitle = "1961-1980",
                 Caption = "Prepared by: ZeXin Chen")
 ```
+## The Code
+```{r}
+#| eval: false
+rice %>%
+  mutate(Year = factor(Year)) %>%
+  filter(Year %in% c(1961, 1980)) %>%
+  newggslopegraph(Year, Yield, Country,
+                Title = "Rice Yield of Top 11 Asian Counties",
+                SubTitle = "1961-1980",
+                Caption = "Prepared by: ZeXin Chen")
+```
+:::
 
 # Plotting Horizon Chart
 
@@ -311,7 +409,10 @@ air_long <- air %>%
 country so each one gets its own compact strip. Colour here encodes the value
 band, which is the core idea of the chart.
 
+::: panel-tabset
+## The Plot
 ```{r}
+#| echo: false
 #| fig-height: 12
 air_long %>%
   ggplot() +
@@ -333,3 +434,28 @@ air_long %>%
   labs(title = 'Visitor arrivals by air, 2010 onward',
        x = NULL, y = NULL)
 ```
+## The Code
+```{r}
+#| eval: false
+#| fig-height: 12
+air_long %>%
+  ggplot() +
+  geom_horizon(aes(x = date,
+                   y = arrivals),
+               origin = "midpoint",
+               horizonscale = 6) +
+  scale_fill_hcl(palette = 'RdBu') +
+  facet_grid(country ~ .) +
+  theme_few() +
+  theme(panel.spacing.y = unit(0, "lines"),
+        strip.text.y = element_text(size = 5,
+                                    angle = 0,
+                                    hjust = 0),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        panel.border = element_blank(),
+        legend.position = 'none') +
+  labs(title = 'Visitor arrivals by air, 2010 onward',
+       x = NULL, y = NULL)
+```
+:::

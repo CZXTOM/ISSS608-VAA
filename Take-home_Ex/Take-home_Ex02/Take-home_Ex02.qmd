@@ -1,7 +1,8 @@
 ---
 title: "Take-home Exercise 2: Anatomy of an Embargo Breach"
 author: "ZeXin Chen"
-date: "last-modified"
+date: "2026-06-05"
+date-modified: "2026-06-09"
 format:
   html:
     toc: true
@@ -114,7 +115,10 @@ glimpse(messages)
 
 ## Activity overview
 
+::: panel-tabset
+## The Plot
 ```{r}
+#| echo: false
 #| label: heatmap
 #| fig-width: 12
 #| fig-height: 5
@@ -161,6 +165,56 @@ ggplot(heat_df, aes(x = slot_lbl, y = agent_id, fill = n)) +
         strip.text    = element_text(face = "bold", size = 9),
         legend.position = "right")
 ```
+## The Code
+```{r}
+#| eval: false
+#| label: heatmap
+#| fig-width: 12
+#| fig-height: 5
+
+heat_df <- messages |>
+  mutate(slot = floor_date(timestamp, "hour")) |>
+  count(agent_id, slot, name = "n") |>
+  complete(agent_id, slot, fill = list(n = 0)) |>
+  mutate(
+    agent_id = factor(agent_id, levels = rev(c(
+      "legal_agent","social_media_agent","quality_agent","pr_agent",
+      "pr_intern_agent","intern_agent","judge_agent"))),
+    phase = if_else(as_date(slot) == as_date("2046-06-05"),
+                    "Crisis Day: Jun 05 (hourly)",
+                    "Baseline: May 17 to Jun 04 (daily)"),
+    phase = factor(phase, levels = c("Baseline: May 17 to Jun 04 (daily)",
+                                     "Crisis Day: Jun 05 (hourly)")),
+    slot_lbl = if_else(phase == "Crisis Day: Jun 05 (hourly)",
+                       format(slot, "%H:%M"),
+                       format(slot, "%b %d")),
+    slot_lbl = fct_reorder(slot_lbl, slot)
+  )
+
+label_colours <- c("#1f9aa5","#8aa0ad","#8aa0ad","#1f9aa5","#1f9aa5","#e8861a","#e8861a")
+label_faces   <- c("plain","plain","plain","plain","plain","bold","bold")
+
+ggplot(heat_df, aes(x = slot_lbl, y = agent_id, fill = n)) +
+  geom_tile(colour = "white", linewidth = 0.5) +
+  geom_text(data = ~filter(.x, n >= 16), aes(label = n),
+            colour = "white", fontface = "bold", size = 3) +
+  facet_grid(~phase, scales = "free_x", space = "free_x") +
+  scale_fill_gradientn(colours = c("#f7f7f5", "#f5c77a", "#e8861a", "#d83a3a"),
+                       name = "Messages\nin slot") +
+  scale_y_discrete(labels = function(x) toupper(gsub("_agent","",x))) +
+  labs(title = "Agent Activity Heatmap: the System Ignites on June 5",
+       subtitle = "Each cell = messages sent by an agent in that time slot. Numbers mark the busiest flurries.",
+       x = NULL, y = NULL) +
+  theme_minimal(base_size = 12) +
+  theme(plot.title    = element_text(face = "bold"),
+        plot.subtitle = element_text(colour = "grey40", size = 9),
+        axis.text.x   = element_text(angle = 45, hjust = 1, size = 8),
+        axis.text.y   = element_text(colour = label_colours, face = label_faces, size = 11),
+        panel.grid    = element_blank(),
+        strip.text    = element_text(face = "bold", size = 9),
+        legend.position = "right")
+```
+:::
 
 ### What the heatmap shows
 
@@ -182,7 +236,10 @@ that silence was a cause or a symptom is a question the next figures take up.
 
 ## The sequence of the breach
 
+::: panel-tabset
+## The Plot
 ```{r}
+#| echo: false
 #| label: event-timeline
 #| fig-width: 11
 #| fig-height: 5.5
@@ -249,6 +306,76 @@ ggplot(events, aes(x = time, y = y0)) +
         axis.text.y   = element_blank(),
         legend.position = "none")
 ```
+## The Code
+```{r}
+#| eval: false
+#| label: event-timeline
+#| fig-width: 11
+#| fig-height: 5.5
+
+events <- tribble(
+  ~time,                  ~lane,     ~lab_level, ~desc,
+  "2046-06-05 15:00:00", "outside", "near",     "Press attacks the company's silence",
+  "2046-06-05 17:00:00", "outside", "near",     "SaltWind newspaper reveals the merger",
+  "2046-06-05 11:31:00", "inside",  "near",     "Social-Media publicly denies any merger talks",
+  "2046-06-05 17:00:00", "inside",  "near",     "CEO orders the team to wait until 6:00 PM",
+  "2046-06-05 17:25:00", "inside",  "far",      "BREACH: Legal confirms the merger early"
+) |>
+  mutate(
+    time      = ymd_hms(time),
+    is_breach = str_detect(desc, "BREACH"),
+    y0        = if_else(lane == "outside", 0.35, -0.35),
+    lab_y     = case_when(
+      lane == "outside"                      ~  1.0,
+      lane == "inside" & lab_level == "near" ~ -1.0,
+      lane == "inside" & lab_level == "far"  ~ -1.85
+    ),
+    vjust_v   = if_else(lane == "outside", 0, 1),
+    label     = paste0(format(time, "%H:%M"), "\n", str_wrap(desc, 22))
+  )
+
+day_start <- ymd_hms("2046-06-05 10:30:00")
+day_end   <- ymd_hms("2046-06-05 18:45:00")
+embargo   <- ymd_hms("2046-06-05 18:06:00")
+ink <- "#3c4a54"; alert <- "#d83a3a"
+
+ggplot(events, aes(x = time, y = y0)) +
+  annotate("rect", xmin = day_start, xmax = embargo, ymin = -Inf, ymax = Inf,
+           fill = "#9aa7b1", alpha = 0.06) +
+  annotate("segment", x = embargo, xend = embargo, y = -1.6, yend = 1.6,
+           colour = "grey60", linewidth = 0.5, linetype = "dotted") +
+  annotate("text", x = embargo, y = 1.75, label = "18:06 embargo lifts",
+           colour = "grey45", size = 3) +
+  annotate("segment", x = day_start, xend = day_end, y = 0, yend = 0,
+           colour = "grey80", linewidth = 0.6,
+           arrow = arrow(length = unit(0.16, "cm"), type = "closed")) +
+  annotate("text", x = day_start, y = 1.75, label = "OUTSIDE THE COMPANY (the press)",
+           hjust = 0, colour = "#8aa0ad", size = 3, fontface = "bold") +
+  annotate("text", x = day_start, y = -2.25, label = "INSIDE THE COMPANY (the agents)",
+           hjust = 0, colour = "#8aa0ad", size = 3, fontface = "bold") +
+  geom_segment(data = ~filter(.x, lab_level == "far"),
+               aes(x = time, xend = time, y = y0, yend = lab_y + 0.25),
+               colour = alert, linewidth = 0.3, linetype = "dotted") +
+  geom_segment(aes(x = time, xend = time, y = 0, yend = y0, colour = is_breach),
+               linewidth = 0.45) +
+  geom_point(aes(colour = is_breach), size = 4) +
+  geom_text(aes(y = lab_y, label = label, colour = is_breach, vjust = vjust_v),
+            size = 3, lineheight = 0.9) +
+  scale_colour_manual(values = c(`FALSE` = ink, `TRUE` = alert), guide = "none") +
+  scale_x_datetime(date_breaks = "1 hour", date_labels = "%H:%M",
+                   limits = c(day_start, day_end), expand = expansion(mult = 0.03)) +
+  scale_y_continuous(limits = c(-2.4, 1.95)) +
+  labs(title = "How the Embargo Broke on June 5",
+       subtitle = "The press revealed the merger at 17:00. The CEO said wait until 18:00. Legal confirmed it at 17:25 anyway.",
+       x = NULL, y = NULL) +
+  theme_minimal(base_size = 12) +
+  theme(plot.title    = element_text(face = "bold"),
+        plot.subtitle = element_text(colour = "grey40", size = 9),
+        panel.grid    = element_blank(),
+        axis.text.y   = element_blank(),
+        legend.position = "none")
+```
+:::
 
 ### Reading the timeline
 
@@ -275,7 +402,10 @@ like one agent jumping the gun under pressure.
 
 ## How it got past the Judge
 
+::: panel-tabset
+## The Plot
 ```{r}
+#| echo: false
 #| label: past-the-judge
 #| fig-width: 11
 #| fig-height: 5.5
@@ -338,6 +468,72 @@ p_legal / p_judge +
     theme = theme(plot.title = element_text(face = "bold", size = 14),
                   plot.subtitle = element_text(colour = "grey40", size = 9)))
 ```
+## The Code
+```{r}
+#| eval: false
+#| label: past-the-judge
+#| fig-width: 11
+#| fig-height: 5.5
+
+jun5 <- messages |>
+  filter(day == as_date("2046-06-05")) |>
+  mutate(hour = floor_date(timestamp, "hour"),
+         to_judge = agent_id == "legal_agent" &
+                    str_starts(str_to_lower(coalesce(content, "")), "judge"),
+         is_judge = agent_id == "judge_agent")
+
+hours_seq <- seq(ymd_hms("2046-06-05 11:00:00"),
+                 ymd_hms("2046-06-05 18:00:00"), by = "hour")
+
+legal_row <- jun5 |> filter(to_judge) |> count(hour, name = "n") |>
+  complete(hour = hours_seq, fill = list(n = 0))
+judge_row <- jun5 |> filter(is_judge) |> count(hour, name = "n") |>
+  complete(hour = hours_seq, fill = list(n = 0))
+
+amber <- "#e8861a"; cyan <- "#1f9aa5"; alert <- "#d83a3a"
+breach  <- ymd_hms("2046-06-05 17:25:00")
+xlims   <- c(ymd_hms("2046-06-05 10:30:00"), ymd_hms("2046-06-05 18:30:00"))
+
+p_legal <- ggplot(legal_row, aes(x = hour, y = n)) +
+  geom_vline(xintercept = breach, colour = alert, linetype = "dashed", linewidth = 0.6) +
+  geom_segment(aes(xend = hour, yend = 0), colour = amber, linewidth = 0.7) +
+  geom_point(colour = amber, size = 5) +
+  geom_text(data = ~filter(.x, n > 0), aes(label = n),
+            colour = "white", fontface = "bold", size = 3) +
+  annotate("text", x = breach, y = 7.5, label = "17:25 breach",
+           colour = alert, size = 3, fontface = "bold", hjust = 1.05) +
+  scale_x_datetime(date_breaks = "1 hour", date_labels = "%H:%M", limits = xlims) +
+  scale_y_continuous(limits = c(0, 8)) +
+  labs(title = "Legal kept calling on the Judge", x = NULL, y = "Times per hour") +
+  theme_minimal(base_size = 12) +
+  theme(plot.title = element_text(face = "bold", colour = amber, size = 12),
+        panel.grid.minor = element_blank(), panel.grid.major.x = element_blank())
+
+p_judge <- ggplot(judge_row, aes(x = hour, y = n)) +
+  geom_vline(xintercept = breach, colour = alert, linetype = "dashed", linewidth = 0.6) +
+  geom_segment(aes(xend = hour, yend = 0), colour = cyan, linewidth = 0.7) +
+  geom_point(colour = cyan, size = 5) +
+  geom_text(data = ~filter(.x, n > 0), aes(label = n),
+            colour = "white", fontface = "bold", size = 3) +
+  annotate("text", x = ymd_hms("2046-06-05 15:00:00"), y = 5.8,
+           label = "Last reply 15:08", colour = cyan, size = 3, fontface = "bold") +
+  annotate("text", x = ymd_hms("2046-06-05 17:00:00"), y = 2.3,
+           label = "nothing after 15:08", colour = "grey55", size = 3, fontface = "italic") +
+  scale_x_datetime(date_breaks = "1 hour", date_labels = "%H:%M", limits = xlims) +
+  scale_y_continuous(limits = c(0, 7)) +
+  labs(title = "The Judge stopped replying", x = NULL, y = "Times per hour") +
+  theme_minimal(base_size = 12) +
+  theme(plot.title = element_text(face = "bold", colour = cyan, size = 12),
+        panel.grid.minor = element_blank(), panel.grid.major.x = element_blank())
+
+p_legal / p_judge +
+  plot_annotation(
+    title = "Legal Kept Calling. The Judge Stopped Answering.",
+    subtitle = "Each stick is one hour on June 5. Legal addressed the Judge right through the breach; the Judge's last reply was at 15:08.",
+    theme = theme(plot.title = element_text(face = "bold", size = 14),
+                  plot.subtitle = element_text(colour = "grey40", size = 9)))
+```
+:::
 
 ### How it got past the Judge
 
@@ -367,7 +563,10 @@ record their private reasoning. Reading Legal's own thoughts through 5 June show
 the breach was not a sudden decision. It was a justification that hardened, hour by
 hour, until breaking the embargo felt like the responsible thing to do.
 
+::: panel-tabset
+## The Plot
 ```{r}
+#| echo: false
 #| label: legal-justification
 #| fig-width: 10
 #| fig-height: 5.2
@@ -407,6 +606,49 @@ ggplot(steps, aes(x = 0, y = y)) +
         panel.grid    = element_blank(),
         axis.text     = element_blank())
 ```
+## The Code
+```{r}
+#| eval: false
+#| label: legal-justification
+#| fig-width: 10
+#| fig-height: 5.2
+
+steps <- tribble(
+  ~time,                  ~headline,                          ~thought,
+  "2046-06-05 09:00:00", "Silence is the danger",            "Stock down 8%. A walk-away clause means\nif we look bad, CivicLoom can cancel the deal.",
+  "2046-06-05 11:00:00", "I can't let a lie stand",          "A false story names the wrong buyer and\ntanks the stock, but the embargo bars a reply.",
+  "2046-06-05 15:02:00", "Silence is the bigger legal risk", "Counsel's opinion says staying quiet is riskier.\n\"That opinion is a shield. I'm using it.\"",
+  "2046-06-05 17:01:00", "The rule no longer matters",       "The story is out anyway, so the embargo's\npurpose is \"now moot.\" Confirms at 17:25."
+) |>
+  mutate(time = ymd_hms(time),
+         is_breach = time == ymd_hms("2046-06-05 17:01:00"),
+         y = rev(seq_len(n())))
+
+amber <- "#e8861a"; alert <- "#d83a3a"; ink <- "#3c4a54"
+
+ggplot(steps, aes(x = 0, y = y)) +
+  geom_segment(aes(x = 0, xend = 0, y = min(y), yend = max(y)),
+               colour = "grey80", linewidth = 0.6) +
+  geom_point(aes(colour = is_breach), size = 6) +
+  geom_text(aes(label = format(time, "%H:%M")), colour = "white",
+            fontface = "bold", size = 2.6) +
+  geom_text(aes(x = 0.06, label = headline, colour = is_breach),
+            hjust = 0, vjust = 0.2, fontface = "bold", size = 3.5) +
+  geom_text(aes(x = 0.06, label = thought), hjust = 0, vjust = 1.45,
+            size = 2.9, colour = "grey35", lineheight = 0.92) +
+  scale_colour_manual(values = c(`FALSE` = amber, `TRUE` = alert), guide = "none") +
+  scale_x_continuous(limits = c(-0.05, 1)) +
+  scale_y_continuous(limits = c(0.5, 4.6), expand = expansion(add = 0.2)) +
+  labs(title = "Legal Talked Itself Into It",
+       subtitle = "Legal's own private reasoning on June 5. Each step lowered the bar for breaking the embargo, until breaking it felt justified.",
+       x = NULL, y = NULL) +
+  theme_minimal(base_size = 12) +
+  theme(plot.title    = element_text(face = "bold"),
+        plot.subtitle = element_text(colour = "grey40", size = 9),
+        panel.grid    = element_blank(),
+        axis.text     = element_blank())
+```
+:::
 
 ### What the reasoning shows
 
@@ -460,7 +702,10 @@ had stopped paying attention.
 
 ## The shift in channels
 
+::: panel-tabset
+## The Plot
 ```{r}
+#| echo: false
 #| label: channel-shift
 #| fig-width: 10
 #| fig-height: 5
@@ -511,6 +756,60 @@ ggplot(shift, aes(y = channel)) +
         panel.grid.minor = element_blank(),
         panel.grid.major.y = element_blank())
 ```
+## The Code
+```{r}
+#| eval: false
+#| label: channel-shift
+#| fig-width: 10
+#| fig-height: 5
+
+chan_levels <- c("comms_huddle","one_on_one_chat","side_huddle",
+                 "official_post","personal_post","anonymous_post")
+chan_labels <- c("Team huddle (open)","One-on-one chat","Side huddle (private)",
+                 "Official public post","Personal public post","Anonymous public post")
+
+shift <- messages |>
+  mutate(period = if_else(day == as_date("2046-06-05"), "breach", "typical")) |>
+  count(period, channel) |>
+  group_by(period) |>
+  mutate(share = 100 * n / sum(n)) |>
+  ungroup() |>
+  select(period, channel, share) |>
+  pivot_wider(names_from = period, values_from = share, values_fill = 0) |>
+  mutate(channel = factor(channel, levels = rev(chan_levels))) |>
+  arrange(channel) |>
+  mutate(dot_col = case_when(
+    channel == "anonymous_post" ~ "#d83a3a",
+    channel %in% c("side_huddle","personal_post") ~ "#e8861a",
+    TRUE ~ "#3c4a54"))
+
+grey <- "#9aa7b1"
+
+ggplot(shift, aes(y = channel)) +
+  geom_segment(aes(x = typical, xend = breach, yend = channel),
+               colour = "grey75", linewidth = 0.8) +
+  geom_point(aes(x = typical), colour = grey, size = 4) +
+  geom_point(aes(x = breach, colour = dot_col), size = 4) +
+  geom_text(aes(x = breach, label = paste0(round(breach), "%"), colour = dot_col),
+            vjust = -1.1, size = 3, fontface = "bold") +
+  geom_text(aes(x = typical, label = paste0(round(typical), "%")),
+            colour = grey, vjust = 2, size = 3) +
+  scale_colour_identity() +
+  scale_y_discrete(labels = rev(chan_labels)) +
+  scale_x_continuous(limits = c(-2, 65), labels = function(x) paste0(x, "%")) +
+  annotate("text", x = 50, y = 1.6,
+           label = "grey = a typical day\ncoloured = the breach day",
+           size = 3, colour = "grey45", hjust = 0, lineheight = 0.95) +
+  labs(title = "On the Breach Day, the Team Moved Into Private and Hidden Channels",
+       subtitle = "Share of all messages on each channel. Side huddles surged and anonymous posts appeared for the first time.",
+       x = "Share of messages", y = NULL) +
+  theme_minimal(base_size = 12) +
+  theme(plot.title    = element_text(face = "bold"),
+        plot.subtitle = element_text(colour = "grey40", size = 9),
+        panel.grid.minor = element_blank(),
+        panel.grid.major.y = element_blank())
+```
+:::
 
 ### What changed
 
@@ -534,7 +833,10 @@ which is exactly where decisions escape oversight.
 
 ## Who drove the hidden channels
 
+::: panel-tabset
+## The Plot
 ```{r}
+#| echo: false
 #| label: who-hidden
 #| fig-width: 10
 #| fig-height: 4.8
@@ -575,6 +877,50 @@ ggplot(who, aes(x = n, y = agent_id, fill = channel)) +
         panel.grid.major.y = element_blank(),
         legend.position = "top")
 ```
+## The Code
+```{r}
+#| eval: false
+#| label: who-hidden
+#| fig-width: 10
+#| fig-height: 4.8
+
+hidden_levels <- c("side_huddle","anonymous_post","personal_post")
+hidden_labels <- c("Side huddle (private)","Anonymous post","Personal post")
+
+who <- messages |>
+  filter(day == as_date("2046-06-05"), channel %in% hidden_levels) |>
+  count(agent_id, channel) |>
+  mutate(channel = factor(channel, levels = hidden_levels)) |>
+  group_by(agent_id) |> mutate(tot = sum(n)) |> ungroup() |>
+  mutate(agent_id = fct_reorder(agent_id, tot))
+
+who_tot <- who |> distinct(agent_id, tot)
+
+amber <- "#e8861a"; cyan <- "#1f9aa5"; grey <- "#8aa0ad"; alert <- "#d83a3a"
+
+ggplot(who, aes(x = n, y = agent_id, fill = channel)) +
+  geom_col(width = 0.65) +
+  geom_text(data = who_tot,
+            aes(x = tot, y = agent_id, label = tot),
+            inherit.aes = FALSE,
+            hjust = -0.3, size = 3.2, fontface = "bold", colour = "grey30") +
+  scale_fill_manual(values = c("side_huddle" = "#3c4a54",
+                               "anonymous_post" = alert,
+                               "personal_post" = amber),
+                    labels = hidden_labels, name = NULL) +
+  scale_y_discrete(labels = function(x) toupper(gsub("_agent","",x))) +
+  scale_x_continuous(limits = c(0, 66), expand = expansion(mult = c(0, 0.02))) +
+  labs(title = "Two Agents Drove Almost All the Private and Anonymous Traffic",
+       subtitle = "Messages on private or hidden channels, June 5. Every one of the 12 anonymous posts (red) was Legal.",
+       x = "Messages on June 5", y = NULL) +
+  theme_minimal(base_size = 12) +
+  theme(plot.title    = element_text(face = "bold"),
+        plot.subtitle = element_text(colour = "grey40", size = 9),
+        panel.grid.minor = element_blank(),
+        panel.grid.major.y = element_blank(),
+        legend.position = "top")
+```
+:::
 
 ### Who actually changed
 
@@ -610,7 +956,10 @@ working in the open.
 
 ## A warning hidden in normal behaviour
 
+::: panel-tabset
+## The Plot
 ```{r}
+#| echo: false
 #| label: personal-post-baseline
 #| fig-width: 11
 #| fig-height: 4.8
@@ -649,6 +998,48 @@ ggplot(pp, aes(x = day, y = agent_id)) +
         panel.grid.minor = element_blank(),
         panel.grid.major.y = element_blank())
 ```
+## The Code
+```{r}
+#| eval: false
+#| label: personal-post-baseline
+#| fig-width: 11
+#| fig-height: 4.8
+
+agent_levels_pp <- c("intern_agent","pr_intern_agent","social_media_agent")
+
+pp <- messages |>
+  filter(channel == "personal_post", day < as_date("2046-06-05")) |>
+  mutate(slip = agent_id == "social_media_agent" & day == as_date("2046-05-29"),
+         agent_id = factor(agent_id, levels = agent_levels_pp))
+
+amber <- "#e8861a"; grey <- "#8aa0ad"; alert <- "#d83a3a"
+
+ggplot(pp, aes(x = day, y = agent_id)) +
+  geom_point(aes(colour = slip), size = 4, alpha = 0.9) +
+  annotate("text", x = as_date("2046-05-27"), y = 3.35,
+           label = "29 May: Social-Media tags the CivicLoom\nCEO alongside its own on a personal account",
+           colour = alert, size = 3, fontface = "bold", lineheight = 0.9,
+           hjust = 0, vjust = 1) +
+  annotate("curve", x = as_date("2046-05-29"), xend = as_date("2046-05-29"),
+           y = 3.15, yend = 3.05, colour = alert, linewidth = 0.4,
+           curvature = 0, arrow = arrow(length = unit(0.12, "cm"))) +
+  scale_colour_manual(values = c(`FALSE` = grey, `TRUE` = alert), guide = "none") +
+  scale_x_date(date_breaks = "2 days", date_labels = "%b %d",
+               limits = c(as_date("2046-05-22"), as_date("2046-06-04"))) +
+  scale_y_discrete(labels = c("intern_agent" = "INTERN",
+                              "pr_intern_agent" = "PR-INTERN",
+                              "social_media_agent" = "SOCIAL-MEDIA"),
+                   expand = expansion(add = c(0.5, 0.9))) +
+  labs(title = "One Personal Post Did Not Belong",
+       subtitle = "Every personal post in the fortnight before the breach. The interns post harmless updates; Social-Media's 29 May post (red) crossed into embargo territory.",
+       x = NULL, y = NULL) +
+  theme_minimal(base_size = 12) +
+  theme(plot.title    = element_text(face = "bold"),
+        plot.subtitle = element_text(colour = "grey40", size = 9),
+        panel.grid.minor = element_blank(),
+        panel.grid.major.y = element_blank())
+```
+:::
 
 ### What the earlier signal showed
 
@@ -663,7 +1054,10 @@ later, only smaller and caught in time.
 
 ## The warning was logged, then shelved
 
+::: panel-tabset
+## The Plot
 ```{r}
+#| echo: false
 #| label: dress-rehearsal
 #| fig-width: 11
 #| fig-height: 3.6
@@ -701,6 +1095,47 @@ ggplot(steps, aes(x = x, y = 0)) +
         panel.grid    = element_blank(),
         axis.text     = element_blank())
 ```
+## The Code
+```{r}
+#| eval: false
+#| label: dress-rehearsal
+#| fig-width: 11
+#| fig-height: 3.6
+
+steps <- tribble(
+  ~x, ~title,                  ~detail,
+  1,  "29 May: the slip",      "Social-Media tags the\nCivicLoom CEO publicly",
+  2,  "29 May: flagged",       "Logged as a Category 2\nembargo-sensitivity event",
+  3,  "30 May: closed",        "Judge reviews, post deleted,\ndeclares itself 'satisfied'",
+  4,  "Nothing changes",       "No new rule on personal\nposts or embargo checks",
+  5,  "5 June: it recurs",     "The same behaviour, but\nbigger. Embargo breaks."
+) |> mutate(is_end = x == 5)
+
+ink <- "#3c4a54"; alert <- "#d83a3a"
+
+ggplot(steps, aes(x = x, y = 0)) +
+  geom_segment(aes(x = x, xend = x + 1, y = 0, yend = 0),
+               data = ~filter(.x, x < 5), colour = "grey70", linewidth = 0.6,
+               arrow = arrow(length = unit(0.14, "cm"), type = "closed")) +
+  geom_point(aes(colour = is_end), size = 6) +
+  geom_text(aes(label = x), colour = "white", fontface = "bold", size = 3.2) +
+  geom_text(aes(y = 0.16, label = title, colour = is_end),
+            vjust = 0, size = 3.1, fontface = "bold", lineheight = 0.9) +
+  geom_text(aes(y = -0.16, label = detail), vjust = 1, size = 2.8,
+            colour = "grey35", lineheight = 0.9) +
+  scale_colour_manual(values = c(`FALSE` = ink, `TRUE` = alert), guide = "none") +
+  scale_x_continuous(limits = c(0.5, 5.7)) +
+  scale_y_continuous(limits = c(-0.5, 0.55)) +
+  labs(title = "The Same Slip, Caught Once and Then Ignored",
+       subtitle = "Five days before the breach, the identical behaviour was logged and closed with no change to the system.",
+       x = NULL, y = NULL) +
+  theme_minimal(base_size = 12) +
+  theme(plot.title    = element_text(face = "bold"),
+        plot.subtitle = element_text(colour = "grey40", size = 9),
+        panel.grid    = element_blank(),
+        axis.text     = element_blank())
+```
+:::
 
 ### Why nobody acted
 
