@@ -4,7 +4,6 @@ author: "ZeXin Chen"
 date: "last-modified"
 format:
   html:
-    theme: flatly
     toc: true
     code-fold: true
     code-summary: "Show code"

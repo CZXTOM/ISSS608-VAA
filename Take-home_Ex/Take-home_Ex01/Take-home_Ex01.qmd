@@ -9,7 +9,6 @@ format:
     toc-depth: 3
     toc-location: right
     number-sections: true
-    theme: flatly
     code-fold: true
     code-summary: "Show the code"
     code-overflow: wrap

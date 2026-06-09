@@ -5,8 +5,9 @@ date: "2025-05-14"
 date-modified: last-modified
 format:
   html:
-    theme: flatly
     toc: true
+    code-fold: true
+    code-summary: "Show code"
 execute:
   echo: true
   eval: true
@@ -49,34 +50,17 @@ agpop_mutated <- pop_data %>%
 
 ### Static Ternary Plot
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 ggtern(data = agpop_mutated,
        aes(x = YOUNG,
            y = ACTIVE,
            z = OLD)) +
   geom_point()
 ```
-
-## The Code
-```{r}
-#| eval: false
-ggtern(data = agpop_mutated,
-       aes(x = YOUNG,
-           y = ACTIVE,
-           z = OLD)) +
-  geom_point()
-```
-::::
 
 ### Static Ternary Plot with Theme
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 ggtern(data = agpop_mutated,
        aes(x = YOUNG,
            y = ACTIVE,
@@ -85,26 +69,10 @@ ggtern(data = agpop_mutated,
   labs(title = "Population structure, 2018") +
   theme_rgbw()
 ```
-
-## The Code
-```{r}
-#| eval: false
-ggtern(data = agpop_mutated,
-       aes(x = YOUNG,
-           y = ACTIVE,
-           z = OLD)) +
-  geom_point() +
-  labs(title = "Population structure, 2018") +
-  theme_rgbw()
-```
-::::
 
 ### Interactive Ternary Plot
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 label <- function(txt) {
   list(
     text = txt,
@@ -142,48 +110,6 @@ plot_ly(
     ternary = ternaryAxes
   )
 ```
-
-## The Code
-```{r}
-#| eval: false
-label <- function(txt) {
-  list(
-    text = txt,
-    x = 0.1, y = 1,
-    ax = 0, ay = 0,
-    xref = "paper", yref = "paper",
-    align = "center",
-    font = list(family = "serif", size = 15, color = "white"),
-    bgcolor = "#b3b3b3", bordercolor = "black", borderwidth = 2
-  )
-}
-
-axis <- function(txt) {
-  list(
-    title = txt, tickformat = ".0%", tickfont = list(size = 10)
-  )
-}
-
-ternaryAxes <- list(
-  aaxis = axis("Young"),
-  baxis = axis("Active"),
-  caxis = axis("Old")
-)
-
-plot_ly(
-  agpop_mutated,
-  a = ~YOUNG,
-  b = ~ACTIVE,
-  c = ~OLD,
-  color = I("black"),
-  type = "scatterternary"
-) %>%
-  layout(
-    annotations = label("Ternary Markers"),
-    ternary = ternaryAxes
-  )
-```
-::::
 
 # Visual Correlation Analysis
 
@@ -205,42 +131,19 @@ wine <- read_csv("data/wine_quality.csv")
 
 ### Basic Correlation Matrix
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 pairs(wine[,1:11])
 ```
-
-## The Code
-```{r}
-#| eval: false
-pairs(wine[,1:11])
-```
-::::
 
 ### Lower Corner Only
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 pairs(wine[,2:12], upper.panel = NULL)
 ```
-
-## The Code
-```{r}
-#| eval: false
-pairs(wine[,2:12], upper.panel = NULL)
-```
-::::
 
 ### With Correlation Coefficients
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 panel.cor <- function(x, y, digits=2, prefix="", cex.cor, ...) {
   usr <- par("usr")
   on.exit(par(usr))
@@ -255,54 +158,20 @@ panel.cor <- function(x, y, digits=2, prefix="", cex.cor, ...) {
 pairs(wine[,2:12],
       upper.panel = panel.cor)
 ```
-
-## The Code
-```{r}
-#| eval: false
-panel.cor <- function(x, y, digits=2, prefix="", cex.cor, ...) {
-  usr <- par("usr")
-  on.exit(par(usr))
-  par(usr = c(0, 1, 0, 1))
-  r <- abs(cor(x, y, use="complete.obs"))
-  txt <- format(c(r, 0.123456789), digits=digits)[1]
-  txt <- paste(prefix, txt, sep="")
-  if(missing(cex.cor)) cex.cor <- 0.8/strwidth(txt)
-  text(0.5, 0.5, txt, cex = cex.cor * (1 + r) / 2)
-}
-
-pairs(wine[,2:12],
-      upper.panel = panel.cor)
-```
-::::
 
 ## Visualising Correlation Matrix: ggcorrmat()
 
 ### Basic ggcorrmat Plot
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 ggstatsplot::ggcorrmat(
   data = wine,
   cor.vars = 1:11)
 ```
-
-## The Code
-```{r}
-#| eval: false
-ggstatsplot::ggcorrmat(
-  data = wine,
-  cor.vars = 1:11)
-```
-::::
 
 ### ggcorrmat with Customisation
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 ggstatsplot::ggcorrmat(
   data = wine,
   cor.vars = 1:11,
@@ -313,28 +182,10 @@ ggstatsplot::ggcorrmat(
   subtitle = "Four pairs are not significant at p < 0.05"
 )
 ```
-
-## The Code
-```{r}
-#| eval: false
-ggstatsplot::ggcorrmat(
-  data = wine,
-  cor.vars = 1:11,
-  ggcorrplot.args = list(outline.color = "black",
-                         hc.order = TRUE,
-                         tl.cex = 10),
-  title    = "Correlogram for wine dataset",
-  subtitle = "Four pairs are not significant at p < 0.05"
-)
-```
-::::
 
 ## Building Multiple Plots
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 grouped_ggcorrmat(
   data = wine,
   cor.vars = 1:11,
@@ -353,29 +204,6 @@ grouped_ggcorrmat(
   )
 )
 ```
-
-## The Code
-```{r}
-#| eval: false
-grouped_ggcorrmat(
-  data = wine,
-  cor.vars = 1:11,
-  grouping.var = type,
-  type = "robust",
-  p.adjust.method = "holm",
-  plotgrid.args = list(ncol = 2),
-  ggcorrplot.args = list(outline.color = "black",
-                         hc.order = TRUE,
-                         tl.cex = 10),
-  annotation.args = list(
-    tag_levels = "a",
-    title = "Correlogram for wine dataset",
-    subtitle = "The measures are: alcohol, sulphates, fixed acidity, citric acid, chlorides, residual sugar, density, free sulfur dioxide and volatile acidity",
-    caption = "Dataset: UCI Machine Learning Repository"
-  )
-)
-```
-::::
 
 ## Visualising Correlation Matrix: corrplot Package
 
@@ -387,68 +215,30 @@ wine.cor <- cor(wine[, 1:11])
 
 ### Basic corrplot
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 corrplot(wine.cor)
 ```
-
-## The Code
-```{r}
-#| eval: false
-corrplot(wine.cor)
-```
-::::
 
 ### Using Ellipse Method
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 corrplot(wine.cor,
          method = "ellipse")
 ```
-
-## The Code
-```{r}
-#| eval: false
-corrplot(wine.cor,
-         method = "ellipse")
-```
-::::
 
 ### Lower Layout
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 corrplot(wine.cor,
          method = "ellipse",
          type = "lower",
          diag = FALSE,
          tl.col = "black")
 ```
-
-## The Code
-```{r}
-#| eval: false
-corrplot(wine.cor,
-         method = "ellipse",
-         type = "lower",
-         diag = FALSE,
-         tl.col = "black")
-```
-::::
 
 ### Mixed Layout
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 corrplot.mixed(wine.cor,
                lower = "ellipse",
                upper = "number",
@@ -456,25 +246,10 @@ corrplot.mixed(wine.cor,
                diag = "l",
                tl.col = "black")
 ```
-
-## The Code
-```{r}
-#| eval: false
-corrplot.mixed(wine.cor,
-               lower = "ellipse",
-               upper = "number",
-               tl.pos = "lt",
-               diag = "l",
-               tl.col = "black")
-```
-::::
 
 ### With Significance Test
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 wine.sig = cor.mtest(wine.cor, conf.level = .95)
 
 corrplot(wine.cor,
@@ -486,29 +261,10 @@ corrplot(wine.cor,
          p.mat = wine.sig$p,
          sig.level = .05)
 ```
-
-## The Code
-```{r}
-#| eval: false
-wine.sig = cor.mtest(wine.cor, conf.level = .95)
-
-corrplot(wine.cor,
-         method = "number",
-         type = "lower",
-         diag = FALSE,
-         tl.col = "black",
-         tl.srt = 45,
-         p.mat = wine.sig$p,
-         sig.level = .05)
-```
-::::
 
 ### Reordering with AOE
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 corrplot.mixed(wine.cor,
                lower = "ellipse",
                upper = "number",
@@ -517,26 +273,10 @@ corrplot.mixed(wine.cor,
                order = "AOE",
                tl.col = "black")
 ```
-
-## The Code
-```{r}
-#| eval: false
-corrplot.mixed(wine.cor,
-               lower = "ellipse",
-               upper = "number",
-               tl.pos = "lt",
-               diag = "l",
-               order = "AOE",
-               tl.col = "black")
-```
-::::
 
 ### Reordering with hclust
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 corrplot(wine.cor,
          method = "ellipse",
          tl.pos = "lt",
@@ -545,19 +285,6 @@ corrplot(wine.cor,
          hclust.method = "ward.D",
          addrect = 3)
 ```
-
-## The Code
-```{r}
-#| eval: false
-corrplot(wine.cor,
-         method = "ellipse",
-         tl.pos = "lt",
-         tl.col = "black",
-         order = "hclust",
-         hclust.method = "ward.D",
-         addrect = 3)
-```
-::::
 
 # Heatmap for Visualising and Analysing Multivariate Data
 
@@ -592,149 +319,61 @@ wh_matrix <- data.matrix(wh)
 
 ### Basic Heatmap
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 wh_heatmap <- heatmap(wh_matrix,
                       Rowv=NA, Colv=NA)
 ```
-
-## The Code
-```{r}
-#| eval: false
-wh_heatmap <- heatmap(wh_matrix,
-                      Rowv=NA, Colv=NA)
-```
-::::
 
 ### Cluster Heatmap
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 wh_heatmap <- heatmap(wh_matrix)
 ```
-
-## The Code
-```{r}
-#| eval: false
-wh_heatmap <- heatmap(wh_matrix)
-```
-::::
 
 ### Normalised Heatmap
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 wh_heatmap <- heatmap(wh_matrix,
                       scale="column",
                       cexRow = 0.6,
                       cexCol = 0.8,
                       margins = c(10, 4))
 ```
-
-## The Code
-```{r}
-#| eval: false
-wh_heatmap <- heatmap(wh_matrix,
-                      scale="column",
-                      cexRow = 0.6,
-                      cexCol = 0.8,
-                      margins = c(10, 4))
-```
-::::
 
 ## Interactive Heatmap
 
 ### Basic heatmaply
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 heatmaply(wh_matrix[, -c(1, 2, 4, 5)])
 ```
-
-## The Code
-```{r}
-#| eval: false
-heatmaply(wh_matrix[, -c(1, 2, 4, 5)])
-```
-::::
 
 ### Scaling Method
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 heatmaply(wh_matrix[, -c(1, 2, 4, 5)],
           scale = "column")
 ```
-
-## The Code
-```{r}
-#| eval: false
-heatmaply(wh_matrix[, -c(1, 2, 4, 5)],
-          scale = "column")
-```
-::::
 
 ### Normalising Method
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]))
 ```
-
-## The Code
-```{r}
-#| eval: false
-heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]))
-```
-::::
 
 ### Percentising Method
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 heatmaply(percentize(wh_matrix[, -c(1, 2, 4, 5)]))
 ```
-
-## The Code
-```{r}
-#| eval: false
-heatmaply(percentize(wh_matrix[, -c(1, 2, 4, 5)]))
-```
-::::
 
 ### Manual Clustering Approach
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),
           dist_method = "euclidean",
           hclust_method = "ward.D")
 ```
-
-## The Code
-```{r}
-#| eval: false
-heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),
-          dist_method = "euclidean",
-          hclust_method = "ward.D")
-```
-::::
 
 ### Statistical Clustering Approach
 
@@ -749,106 +388,45 @@ num_k <- find_k(wh_clust)
 plot(num_k)
 ```
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),
           dist_method = "euclidean",
           hclust_method = "average",
           k_row = 3)
 ```
-
-## The Code
-```{r}
-#| eval: false
-heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),
-          dist_method = "euclidean",
-          hclust_method = "average",
-          k_row = 3)
-```
-::::
 
 ### Seriation: OLO
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),
           seriate = "OLO")
 ```
-
-## The Code
-```{r}
-#| eval: false
-heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),
-          seriate = "OLO")
-```
-::::
 
 ### Seriation: GW
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),
           seriate = "GW")
 ```
-
-## The Code
-```{r}
-#| eval: false
-heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),
-          seriate = "GW")
-```
-::::
 
 ### Seriation: Mean
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),
           seriate = "mean")
 ```
-
-## The Code
-```{r}
-#| eval: false
-heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),
-          seriate = "mean")
-```
-::::
 
 ### Working with Colour Palettes
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),
           seriate = "none",
           colors = Blues)
 ```
-
-## The Code
-```{r}
-#| eval: false
-heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),
-          seriate = "none",
-          colors = Blues)
-```
-::::
 
 ### Finishing Touch
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),
           Colv=NA,
           seriate = "none",
@@ -861,23 +439,6 @@ heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),
           xlab = "World Happiness Indicators",
           ylab = "World Countries")
 ```
-
-## The Code
-```{r}
-#| eval: false
-heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),
-          Colv=NA,
-          seriate = "none",
-          colors = Blues,
-          k_row = 5,
-          margins = c(NA,200,60,NA),
-          fontsize_row = 4,
-          fontsize_col = 5,
-          main="World Happiness Score and Variables by Country, 2018 \nData Transformation using Normalise Method",
-          xlab = "World Happiness Indicators",
-          ylab = "World Countries")
-```
-::::
 
 # Visual Multivariate Analysis with Parallel Coordinates Plot
 
@@ -899,28 +460,14 @@ wh <- read_csv("data/WHData-2018.csv")
 
 ### Basic Parallel Coordinates
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 ggparcoord(data = wh,
            columns = c(7:12))
 ```
-
-## The Code
-```{r}
-#| eval: false
-ggparcoord(data = wh,
-           columns = c(7:12))
-```
-::::
 
 ### Parallel Coordinates with Boxplot
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 ggparcoord(data = wh,
            columns = c(7:12),
            groupColumn = 2,
@@ -929,26 +476,10 @@ ggparcoord(data = wh,
            boxplot = TRUE,
            title = "Parallel Coordinates Plot of World Happiness Variables")
 ```
-
-## The Code
-```{r}
-#| eval: false
-ggparcoord(data = wh,
-           columns = c(7:12),
-           groupColumn = 2,
-           scale = "uniminmax",
-           alphaLines = 0.2,
-           boxplot = TRUE,
-           title = "Parallel Coordinates Plot of World Happiness Variables")
-```
-::::
 
 ### Parallel Coordinates with Facet
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 ggparcoord(data = wh,
            columns = c(7:12),
            groupColumn = 2,
@@ -958,27 +489,10 @@ ggparcoord(data = wh,
            title = "Multiple Parallel Coordinates Plots of World Happiness Variables by Region") +
   facet_wrap(~ Region)
 ```
-
-## The Code
-```{r}
-#| eval: false
-ggparcoord(data = wh,
-           columns = c(7:12),
-           groupColumn = 2,
-           scale = "uniminmax",
-           alphaLines = 0.2,
-           boxplot = TRUE,
-           title = "Multiple Parallel Coordinates Plots of World Happiness Variables by Region") +
-  facet_wrap(~ Region)
-```
-::::
 
 ### Rotating x-axis Labels
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 ggparcoord(data = wh,
            columns = c(7:12),
            groupColumn = 2,
@@ -989,21 +503,6 @@ ggparcoord(data = wh,
   facet_wrap(~ Region) +
   theme(axis.text.x = element_text(angle = 30, hjust=1))
 ```
-
-## The Code
-```{r}
-#| eval: false
-ggparcoord(data = wh,
-           columns = c(7:12),
-           groupColumn = 2,
-           scale = "uniminmax",
-           alphaLines = 0.2,
-           boxplot = TRUE,
-           title = "Multiple Parallel Coordinates Plots of World Happiness Variables by Region") +
-  facet_wrap(~ Region) +
-  theme(axis.text.x = element_text(angle = 30, hjust=1))
-```
-::::
 
 ## Interactive Parallel Coordinates Plot
 
@@ -1016,83 +515,35 @@ wh <- wh %>%
 
 ### Basic parallelPlot
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 parallelPlot(wh,
              width = 320,
              height = 250)
 ```
-
-## The Code
-```{r}
-#| eval: false
-parallelPlot(wh,
-             width = 320,
-             height = 250)
-```
-::::
 
 ### Rotating Axis Labels
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 parallelPlot(wh,
              rotateTitle = TRUE)
 ```
-
-## The Code
-```{r}
-#| eval: false
-parallelPlot(wh,
-             rotateTitle = TRUE)
-```
-::::
 
 ### Changing Colour Scheme
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 parallelPlot(wh,
              continuousCS = "YlOrRd",
              rotateTitle = TRUE)
 ```
-
-## The Code
-```{r}
-#| eval: false
-parallelPlot(wh,
-             continuousCS = "YlOrRd",
-             rotateTitle = TRUE)
-```
-::::
 
 ### Parallel Coordinates with Histogram
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 histoVisibility <- rep(TRUE, ncol(wh))
 parallelPlot(wh,
              rotateTitle = TRUE,
              histoVisibility = histoVisibility)
 ```
-
-## The Code
-```{r}
-#| eval: false
-histoVisibility <- rep(TRUE, ncol(wh))
-parallelPlot(wh,
-             rotateTitle = TRUE,
-             histoVisibility = histoVisibility)
-```
-::::
 
 # Treemap Visualisation with R
 
@@ -1136,10 +587,7 @@ realis2018_selected <- realis2018_summarised %>%
 
 ### Basic Treemap
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 treemap(realis2018_selected,
         index=c("Planning Region", "Planning Area", "Project Name"),
         vSize="Total Unit Sold",
@@ -1148,26 +596,10 @@ treemap(realis2018_selected,
         title.legend = "Median Unit Price (S$ per sq. m)"
         )
 ```
-
-## The Code
-```{r}
-#| eval: false
-treemap(realis2018_selected,
-        index=c("Planning Region", "Planning Area", "Project Name"),
-        vSize="Total Unit Sold",
-        vColor="Median Unit Price ($ psm)",
-        title="Resale Condominium by Planning Region and Area, 2017",
-        title.legend = "Median Unit Price (S$ per sq. m)"
-        )
-```
-::::
 
 ### Value Type Treemap
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 treemap(realis2018_selected,
         index=c("Planning Region", "Planning Area", "Project Name"),
         vSize="Total Unit Sold",
@@ -1177,27 +609,10 @@ treemap(realis2018_selected,
         title.legend = "Median Unit Price (S$ per sq. m)"
         )
 ```
-
-## The Code
-```{r}
-#| eval: false
-treemap(realis2018_selected,
-        index=c("Planning Region", "Planning Area", "Project Name"),
-        vSize="Total Unit Sold",
-        vColor="Median Unit Price ($ psm)",
-        type = "value",
-        title="Resale Condominium by Planning Region and Area, 2017",
-        title.legend = "Median Unit Price (S$ per sq. m)"
-        )
-```
-::::
 
 ### Value Type with RdYlBu Palette
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 treemap(realis2018_selected,
         index=c("Planning Region", "Planning Area", "Project Name"),
         vSize="Total Unit Sold",
@@ -1208,28 +623,10 @@ treemap(realis2018_selected,
         title.legend = "Median Unit Price (S$ per sq. m)"
         )
 ```
-
-## The Code
-```{r}
-#| eval: false
-treemap(realis2018_selected,
-        index=c("Planning Region", "Planning Area", "Project Name"),
-        vSize="Total Unit Sold",
-        vColor="Median Unit Price ($ psm)",
-        type="value",
-        palette="RdYlBu",
-        title="Resale Condominium by Planning Region and Area, 2017",
-        title.legend = "Median Unit Price (S$ per sq. m)"
-        )
-```
-::::
 
 ### Manual Type with Blues Palette
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 treemap(realis2018_selected,
         index=c("Planning Region", "Planning Area", "Project Name"),
         vSize="Total Unit Sold",
@@ -1240,28 +637,10 @@ treemap(realis2018_selected,
         title.legend = "Median Unit Price (S$ per sq. m)"
         )
 ```
-
-## The Code
-```{r}
-#| eval: false
-treemap(realis2018_selected,
-        index=c("Planning Region", "Planning Area", "Project Name"),
-        vSize="Total Unit Sold",
-        vColor="Median Unit Price ($ psm)",
-        type="manual",
-        palette="Blues",
-        title="Resale Condominium by Planning Region and Area, 2017",
-        title.legend = "Median Unit Price (S$ per sq. m)"
-        )
-```
-::::
 
 ### Squarified Algorithm
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 treemap(realis2018_selected,
         index=c("Planning Region", "Planning Area", "Project Name"),
         vSize="Total Unit Sold",
@@ -1273,29 +652,10 @@ treemap(realis2018_selected,
         title.legend = "Median Unit Price (S$ per sq. m)"
         )
 ```
-
-## The Code
-```{r}
-#| eval: false
-treemap(realis2018_selected,
-        index=c("Planning Region", "Planning Area", "Project Name"),
-        vSize="Total Unit Sold",
-        vColor="Median Unit Price ($ psm)",
-        type="manual",
-        palette="Blues",
-        algorithm = "squarified",
-        title="Resale Condominium by Planning Region and Area, 2017",
-        title.legend = "Median Unit Price (S$ per sq. m)"
-        )
-```
-::::
 
 ### Using sortID
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 treemap(realis2018_selected,
         index=c("Planning Region", "Planning Area", "Project Name"),
         vSize="Total Unit Sold",
@@ -1308,32 +668,12 @@ treemap(realis2018_selected,
         title.legend = "Median Unit Price (S$ per sq. m)"
         )
 ```
-
-## The Code
-```{r}
-#| eval: false
-treemap(realis2018_selected,
-        index=c("Planning Region", "Planning Area", "Project Name"),
-        vSize="Total Unit Sold",
-        vColor="Median Unit Price ($ psm)",
-        type="manual",
-        palette="Blues",
-        algorithm = "pivotSize",
-        sortID = "Median Transacted Price",
-        title="Resale Condominium by Planning Region and Area, 2017",
-        title.legend = "Median Unit Price (S$ per sq. m)"
-        )
-```
-::::
 
 ## Designing Treemap using treemapify Package
 
 ### Basic treemapify
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 ggplot(data=realis2018_selected,
        aes(area = `Total Unit Sold`,
            fill = `Median Unit Price ($ psm)`),
@@ -1342,26 +682,10 @@ ggplot(data=realis2018_selected,
   geom_treemap() +
   scale_fill_gradient(low = "light blue", high = "blue")
 ```
-
-## The Code
-```{r}
-#| eval: false
-ggplot(data=realis2018_selected,
-       aes(area = `Total Unit Sold`,
-           fill = `Median Unit Price ($ psm)`),
-       layout = "scol",
-       start = "bottomleft") +
-  geom_treemap() +
-  scale_fill_gradient(low = "light blue", high = "blue")
-```
-::::
 
 ### Group by Planning Region
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 ggplot(data=realis2018_selected,
        aes(area = `Total Unit Sold`,
            fill = `Median Unit Price ($ psm)`,
@@ -1369,25 +693,10 @@ ggplot(data=realis2018_selected,
        start = "topleft") +
   geom_treemap()
 ```
-
-## The Code
-```{r}
-#| eval: false
-ggplot(data=realis2018_selected,
-       aes(area = `Total Unit Sold`,
-           fill = `Median Unit Price ($ psm)`,
-           subgroup = `Planning Region`),
-       start = "topleft") +
-  geom_treemap()
-```
-::::
 
 ### Group by Planning Area with Boundary Lines
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 ggplot(data=realis2018_selected,
        aes(area = `Total Unit Sold`,
            fill = `Median Unit Price ($ psm)`,
@@ -1398,21 +707,6 @@ ggplot(data=realis2018_selected,
                                 size = 2) +
   geom_treemap_subgroup_border(colour = "gray20")
 ```
-
-## The Code
-```{r}
-#| eval: false
-ggplot(data=realis2018_selected,
-       aes(area = `Total Unit Sold`,
-           fill = `Median Unit Price ($ psm)`,
-           subgroup = `Planning Region`,
-           subgroup2 = `Planning Area`)) +
-  geom_treemap() +
-  geom_treemap_subgroup2_border(colour = "gray40",
-                                size = 2) +
-  geom_treemap_subgroup_border(colour = "gray20")
-```
-::::
 
 ## Designing Interactive Treemap using d3treeR
 
@@ -1426,10 +720,7 @@ install_github("timelyportfolio/d3treeR")
 
 ### Interactive Treemap
 
-:::: panel-tabset
-## The Plot
 ```{r}
-#| echo: false
 library(d3treeR)
 
 tm <- treemap(realis2018_summarised,
@@ -1443,23 +734,5 @@ tm <- treemap(realis2018_summarised,
 
 d3tree(tm, rootname = "Singapore")
 ```
-
-## The Code
-```{r}
-#| eval: false
-library(d3treeR)
-
-tm <- treemap(realis2018_summarised,
-        index=c("Planning Region", "Planning Area"),
-        vSize="Total Unit Sold",
-        vColor="Median Unit Price ($ psm)",
-        type="value",
-        title="Private Residential Property Sold, 2017",
-        title.legend = "Median Unit Price (S$ per sq. m)"
-        )
-
-d3tree(tm, rootname = "Singapore")
-```
-::::
 
 

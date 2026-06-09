@@ -5,8 +5,9 @@ date: "April 26, 2026"
 date-modified: "last-modified"
 format:
   html:
-    theme: flatly
     toc: true
+    code-fold: true
+    code-summary: "Show code"
 execute:
   echo: true
   eval: true
@@ -39,169 +40,74 @@ The dataset contains year-end examination grades of a cohort of Primary 3 studen
 
 A bar chart showing the count of students by race.
 
-::: panel-tabset
-## The Plot
-
 ```{r}
-#| echo: false
 ggplot(data = exam_data,
        aes(x = RACE)) +
   geom_bar()
 ```
-
-## The Code
-
-```{r}
-#| eval: false
-ggplot(data = exam_data,
-       aes(x = RACE)) +
-  geom_bar()
-```
-:::
 
 ## Dot Plot with `geom_dotplot()`
 
 A dot plot of Maths scores, where each dot represents one observation.
 
-::: panel-tabset
-## The Plot
-
 ```{r}
-#| echo: false
 ggplot(data = exam_data,
        aes(x = MATHS)) +
   geom_dotplot(binwidth = 2.5,
                dotsize = 0.5) +
   scale_y_continuous(NULL, breaks = NULL)
 ```
-
-## The Code
-
-```{r}
-#| eval: false
-ggplot(data = exam_data,
-       aes(x = MATHS)) +
-  geom_dotplot(binwidth = 2.5,
-               dotsize = 0.5) +
-  scale_y_continuous(NULL, breaks = NULL)
-```
-:::
 
 ## Histogram with `geom_histogram()`
 
 A histogram of Maths scores coloured by gender.
 
-::: panel-tabset
-## The Plot
-
 ```{r}
-#| echo: false
 ggplot(data = exam_data,
        aes(x = MATHS,
            fill = GENDER)) +
   geom_histogram(bins = 20,
                  color = "grey30")
 ```
-
-## The Code
-
-```{r}
-#| eval: false
-ggplot(data = exam_data,
-       aes(x = MATHS,
-           fill = GENDER)) +
-  geom_histogram(bins = 20,
-                 color = "grey30")
-```
-:::
 
 ## Kernel Density Estimate with `geom_density()`
 
 A kernel density plot comparing Maths score distributions between genders.
 
-::: panel-tabset
-## The Plot
-
 ```{r}
-#| echo: false
 ggplot(data = exam_data,
        aes(x = MATHS,
            colour = GENDER)) +
   geom_density()
 ```
-
-## The Code
-
-```{r}
-#| eval: false
-ggplot(data = exam_data,
-       aes(x = MATHS,
-           colour = GENDER)) +
-  geom_density()
-```
-:::
 
 ## Box Plot with `geom_boxplot()`
 
 A notched box plot of Maths scores by gender. Non-overlapping notches indicate differing medians.
 
-::: panel-tabset
-## The Plot
-
 ```{r}
-#| echo: false
 ggplot(data = exam_data,
        aes(y = MATHS,
            x = GENDER)) +
   geom_boxplot(notch = TRUE)
 ```
-
-## The Code
-
-```{r}
-#| eval: false
-ggplot(data = exam_data,
-       aes(y = MATHS,
-           x = GENDER)) +
-  geom_boxplot(notch = TRUE)
-```
-:::
 
 ## Violin Plot with `geom_violin()`
 
 A violin plot comparing the full distribution shape of Maths scores by gender.
 
-::: panel-tabset
-## The Plot
-
 ```{r}
-#| echo: false
 ggplot(data = exam_data,
        aes(y = MATHS,
            x = GENDER)) +
   geom_violin()
 ```
-
-## The Code
-
-```{r}
-#| eval: false
-ggplot(data = exam_data,
-       aes(y = MATHS,
-           x = GENDER)) +
-  geom_violin()
-```
-:::
 
 ## Combining Geoms, Box Plot plus Jitter
 
 Data points overlaid on box plots using `geom_point()` with jitter.
 
-::: panel-tabset
-## The Plot
-
 ```{r}
-#| echo: false
 ggplot(data = exam_data,
        aes(y = MATHS,
            x = GENDER)) +
@@ -209,19 +115,6 @@ ggplot(data = exam_data,
   geom_point(position = "jitter",
              size = 0.5)
 ```
-
-## The Code
-
-```{r}
-#| eval: false
-ggplot(data = exam_data,
-       aes(y = MATHS,
-           x = GENDER)) +
-  geom_boxplot() +
-  geom_point(position = "jitter",
-             size = 0.5)
-```
-:::
 
 # Statistics
 
@@ -229,11 +122,7 @@ ggplot(data = exam_data,
 
 Mean values added to box plots using `stat_summary()`.
 
-::: panel-tabset
-## The Plot
-
 ```{r}
-#| echo: false
 ggplot(data = exam_data,
        aes(y = MATHS,
            x = GENDER)) +
@@ -243,31 +132,12 @@ ggplot(data = exam_data,
                colour = "red",
                size = 4)
 ```
-
-## The Code
-
-```{r}
-#| eval: false
-ggplot(data = exam_data,
-       aes(y = MATHS,
-           x = GENDER)) +
-  geom_boxplot() +
-  stat_summary(geom = "point",
-               fun = "mean",
-               colour = "red",
-               size = 4)
-```
-:::
 
 ## Best Fit Line with `geom_smooth()`
 
 A scatter plot of Maths vs English with a linear regression line.
 
-::: panel-tabset
-## The Plot
-
 ```{r}
-#| echo: false
 ggplot(data = exam_data,
        aes(x = MATHS,
            y = ENGLISH)) +
@@ -275,19 +145,6 @@ ggplot(data = exam_data,
   geom_smooth(method = lm,
               linewidth = 0.5)
 ```
-
-## The Code
-
-```{r}
-#| eval: false
-ggplot(data = exam_data,
-       aes(x = MATHS,
-           y = ENGLISH)) +
-  geom_point() +
-  geom_smooth(method = lm,
-              linewidth = 0.5)
-```
-:::
 
 # Facets
 
@@ -295,27 +152,12 @@ ggplot(data = exam_data,
 
 Histograms of Maths scores faceted by class.
 
-::: panel-tabset
-## The Plot
-
 ```{r}
-#| echo: false
 ggplot(data = exam_data,
        aes(x = MATHS)) +
   geom_histogram(bins = 20) +
   facet_wrap(~ CLASS)
 ```
-
-## The Code
-
-```{r}
-#| eval: false
-ggplot(data = exam_data,
-       aes(x = MATHS)) +
-  geom_histogram(bins = 20) +
-  facet_wrap(~ CLASS)
-```
-:::
 
 # Coordinates & Themes
 
@@ -323,39 +165,19 @@ ggplot(data = exam_data,
 
 A horizontal bar chart of race counts with `theme_minimal()`.
 
-::: panel-tabset
-## The Plot
-
 ```{r}
-#| echo: false
 ggplot(data = exam_data,
        aes(x = RACE)) +
   geom_bar() +
   coord_flip() +
   theme_minimal()
 ```
-
-## The Code
-
-```{r}
-#| eval: false
-ggplot(data = exam_data,
-       aes(x = RACE)) +
-  geom_bar() +
-  coord_flip() +
-  theme_minimal()
-```
-:::
 
 ## Fixed Axis Range with `coord_cartesian()`
 
 Scatter plot with both axes fixed from 0 to 100.
 
-::: panel-tabset
-## The Plot
-
 ```{r}
-#| echo: false
 ggplot(data = exam_data,
        aes(x = MATHS,
            y = ENGLISH)) +
@@ -365,18 +187,3 @@ ggplot(data = exam_data,
   coord_cartesian(xlim = c(0, 100),
                   ylim = c(0, 100))
 ```
-
-## The Code
-
-```{r}
-#| eval: false
-ggplot(data = exam_data,
-       aes(x = MATHS,
-           y = ENGLISH)) +
-  geom_point() +
-  geom_smooth(method = lm,
-              linewidth = 0.5) +
-  coord_cartesian(xlim = c(0, 100),
-                  ylim = c(0, 100))
-```
-:::
