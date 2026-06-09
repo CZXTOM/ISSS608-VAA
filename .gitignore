@@ -1,10 +1,28 @@
-.Rproj.user
+# ---- Data files (keep large data off GitHub) ----
+# Quarto freeze caches the rendered output, so Vercel does not need the raw data.
+data/
+**/data/
+
+# ---- R and RStudio ----
+.Rproj.user/
 .Rhistory
 .RData
+.Ruserdata
 .httr-oauth
-.DS_Store
-.quarto
+*.Rproj
 
+# ---- Quarto build output ----
+.quarto/
 /.quarto/
 **/*.quarto_ipynb
+
+# ---- Positron / Posit AI ----
 .positai
+
+# ---- Temporary files ----
+*.tmp
+*.temp
+
+# ---- OS files ----
+.DS_Store
+Thumbs.db
