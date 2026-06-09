@@ -1,0 +1,336 @@
+---
+title: "Hands-on Exercise 7"
+subtitle: "Visualising and Analysing Time-oriented Data"
+author: "ZeXin Chen"
+date: "2026-06-09"
+date-modified: last-modified
+format:
+  html:
+    theme: flatly
+    toc: true
+    code-fold: true
+    code-summary: "Show code"
+    number-sections: true
+execute:
+  echo: true
+  eval: true
+  warning: false
+  message: false
+  freeze: true
+---
+
+# Overview
+
+In this hands-on exercise we learn to create several time-oriented data
+visualisations using R:
+
+- a **calendar heatmap** using ggplot2
+- a **cycle plot** using ggplot2
+- a **slopegraph** using the CGPfunctions package
+- a **horizon chart** using the ggHoriPlot package
+
+# Getting Started
+
+## Installing and Loading Packages
+
+```{r}
+pacman::p_load(scales, viridis, lubridate, ggthemes,
+               gridExtra, readxl, knitr, data.table,
+               CGPfunctions, ggHoriPlot, tidyverse)
+```
+
+# Plotting Calendar Heatmap
+
+A calendar heatmap shows the intensity of an event across two time dimensions,
+here the weekday and the hour of day.
+
+## The Data
+
+We use `eventlog.csv`, which holds 199,999 time-series cyber attack records by
+country. There are three columns: `timestamp` (date-time), `source_country` (ISO
+country code), and `tz` (time zone).
+
+## Importing the Data
+
+```{r}
+attacks <- read_csv("data/eventlog.csv")
+```
+
+## Examining the Data Structure
+
+It is good practice to examine the imported data frame before further analysis.
+`kable()` gives a tidy preview.
+
+```{r}
+kable(head(attacks))
+```
+
+## Data Preparation
+
+### Deriving Weekday and Hour Fields
+
+Before plotting we derive two new fields, `wkday` and `hour`. We write a function
+to do this, converting each timestamp to its real local time first.
+
+```{r}
+make_hr_wkday <- function(ts, sc, tz) {
+  real_times <- ymd_hms(ts,
+                        tz = tz[1],
+                        quiet = TRUE)
+  dt <- data.table(source_country = sc,
+                   wkday = weekdays(real_times),
+                   hour = hour(real_times))
+  return(dt)
+}
+```
+
+### Building the Cleaned Tibble
+
+We order the weekday and hour fields as factors so they plot in a sensible
+order.
+
+```{r}
+wkday_levels <- c('Saturday', 'Friday',
+                  'Thursday', 'Wednesday',
+                  'Tuesday', 'Monday',
+                  'Sunday')
+
+attacks <- attacks %>%
+  group_by(tz) %>%
+  do(make_hr_wkday(.$timestamp,
+                   .$source_country,
+                   .$tz)) %>%
+  ungroup() %>%
+  mutate(wkday = factor(
+    wkday, levels = wkday_levels),
+    hour  = factor(
+      hour, levels = 0:23))
+```
+
+```{r}
+kable(head(attacks))
+```
+
+## Building the Calendar Heatmap
+
+We aggregate the attacks by weekday and hour, then plot a tile for each
+combination. Colour here encodes the number of attacks, which is the whole point
+of the heatmap.
+
+```{r}
+grouped <- attacks %>%
+  count(wkday, hour) %>%
+  ungroup() %>%
+  na.omit()
+
+ggplot(grouped,
+       aes(hour,
+           wkday,
+           fill = n)) +
+geom_tile(color = "white",
+          size = 0.1) +
+theme_tufte(base_family = "Helvetica") +
+coord_equal() +
+scale_fill_gradient(name = "# of attacks",
+                    low = "sky blue",
+                    high = "dark blue") +
+labs(x = NULL,
+     y = NULL,
+     title = "Attacks by weekday and time of day") +
+theme(axis.ticks = element_blank(),
+      plot.title = element_text(hjust = 0.5),
+      legend.title = element_text(size = 8),
+      legend.text = element_text(size = 6))
+```
+
+## Building Multiple Calendar Heatmaps
+
+We can build one heatmap per country for the four countries with the most
+attacks.
+
+### Identifying the Top Four Countries
+
+```{r}
+attacks_by_country <- count(
+  attacks, source_country) %>%
+  mutate(percent = percent(n/sum(n))) %>%
+  arrange(desc(n))
+```
+
+### Preparing the Tidy Data Frame
+
+```{r}
+top4 <- attacks_by_country$source_country[1:4]
+top4_attacks <- attacks %>%
+  filter(source_country %in% top4) %>%
+  count(source_country, wkday, hour) %>%
+  ungroup() %>%
+  mutate(source_country = factor(
+    source_country, levels = top4)) %>%
+  na.omit()
+```
+
+### Plotting the Faceted Heatmap
+
+```{r}
+ggplot(top4_attacks,
+       aes(hour,
+           wkday,
+           fill = n)) +
+  geom_tile(color = "white",
+          size = 0.1) +
+  theme_tufte(base_family = "Helvetica") +
+  coord_equal() +
+  scale_fill_gradient(name = "# of attacks",
+                    low = "sky blue",
+                    high = "dark blue") +
+  facet_wrap(~source_country, ncol = 2) +
+  labs(x = NULL, y = NULL,
+     title = "Attacks on top 4 countries by weekday and time of day") +
+  theme(axis.ticks = element_blank(),
+        axis.text.x = element_text(size = 7),
+        plot.title = element_text(hjust = 0.5),
+        legend.title = element_text(size = 8),
+        legend.text = element_text(size = 6))
+```
+
+# Plotting Cycle Plot
+
+A cycle plot shows a time-series pattern and trend within and across a repeating
+cycle, here visitor arrivals from Vietnam by month across years.
+
+## Data Import
+
+```{r}
+air <- read_excel("data/arrivals_by_air.xlsx")
+```
+
+## Deriving Month and Year Fields
+
+```{r}
+air$month <- factor(month(air$`Month-Year`),
+                    levels = 1:12,
+                    labels = month.abb,
+                    ordered = TRUE)
+air$year <- year(ymd(air$`Month-Year`))
+```
+
+## Extracting the Target Country
+
+```{r}
+Vietnam <- air %>%
+  select(`Vietnam`,
+         month,
+         year) %>%
+  filter(year >= 2010)
+```
+
+## Computing Year Average Arrivals by Month
+
+```{r}
+hline.data <- Vietnam %>%
+  group_by(month) %>%
+  summarise(avgvalue = mean(`Vietnam`))
+```
+
+## Plotting the Cycle Plot
+
+Each panel is one month, the black line shows the year-on-year trend, and the red
+reference line marks that month's average. Colour is used only for the reference
+line, to separate it from the data.
+
+```{r}
+ggplot() +
+  geom_line(data = Vietnam,
+            aes(x = year,
+                y = `Vietnam`,
+                group = month),
+            colour = "black") +
+  geom_hline(aes(yintercept = avgvalue),
+             data = hline.data,
+             linetype = 6,
+             colour = "red",
+             size = 0.5) +
+  facet_grid(~month) +
+  labs(axis.text.x = element_blank(),
+       title = "Visitor arrivals from Vietnam by air, Jan 2010-Dec 2019") +
+  xlab("") +
+  ylab("No. of Visitors") +
+  theme_tufte(base_family = "Helvetica")
+```
+
+# Plotting Slopegraph
+
+A slopegraph compares values at two points in time and shows how each item moves
+between them.
+
+## Data Import
+
+```{r}
+rice <- read_csv("data/rice.csv")
+```
+
+## Plotting the Slopegraph
+
+We convert `Year` to a factor and keep only 1961 and 1980, then use
+`newggslopegraph()` of the CGPfunctions package.
+
+```{r}
+rice %>%
+  mutate(Year = factor(Year)) %>%
+  filter(Year %in% c(1961, 1980)) %>%
+  newggslopegraph(Year, Yield, Country,
+                Title = "Rice Yield of Top 11 Asian Counties",
+                SubTitle = "1961-1980",
+                Caption = "Prepared by: ZeXin Chen")
+```
+
+# Plotting Horizon Chart
+
+A horizon chart is a compact way to compare many time-series at once. Each series
+is split into colour bands by value, then the bands are layered so each series
+takes very little vertical space. This makes it easy to scan many countries
+together.
+
+## Preparing the Data
+
+We reshape the air arrivals data into a long format and derive a proper date
+field, keeping data from 2010 onward.
+
+```{r}
+air_long <- air %>%
+  pivot_longer(cols = -c(`Month-Year`, month, year),
+               names_to = "country",
+               values_to = "arrivals") %>%
+  mutate(date = ymd(`Month-Year`)) %>%
+  filter(year >= 2010)
+```
+
+## Plotting the Horizon Chart
+
+`geom_horizon()` of the ggHoriPlot package builds the bands, and we facet by
+country so each one gets its own compact strip. Colour here encodes the value
+band, which is the core idea of the chart.
+
+```{r}
+#| fig-height: 12
+air_long %>%
+  ggplot() +
+  geom_horizon(aes(x = date,
+                   y = arrivals),
+               origin = "midpoint",
+               horizonscale = 6) +
+  scale_fill_hcl(palette = 'RdBu') +
+  facet_grid(country ~ .) +
+  theme_few() +
+  theme(panel.spacing.y = unit(0, "lines"),
+        strip.text.y = element_text(size = 5,
+                                    angle = 0,
+                                    hjust = 0),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        panel.border = element_blank(),
+        legend.position = 'none') +
+  labs(title = 'Visitor arrivals by air, 2010 onward',
+       x = NULL, y = NULL)
+```
