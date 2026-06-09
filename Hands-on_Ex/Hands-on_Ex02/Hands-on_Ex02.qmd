@@ -3,11 +3,15 @@ title: "Hands-on Exercise 2"
 author: "ZeXin Chen"
 date: "2026-04-25"
 date-modified: last-modified
-format: html
+format:
+  html:
+    theme: flatly
+    toc: true
 execute:
   echo: true
   eval: true
   warning: false
+  message: false
   freeze: true
 ---
 
@@ -77,7 +81,7 @@ ggplot(exam_data, aes(x = MATHS, y = ENGLISH)) +
 
 ## Beyond ggplot2 Themes
 
-### ggthemes — Economist theme
+### ggthemes with the Economist theme
 
 :::: panel-tabset
 ## The Plot

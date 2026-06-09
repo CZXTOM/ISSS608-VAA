@@ -1,5 +1,9 @@
 ---
-title: "ISSS608-VAA"
+title: "ISSS608 Visual Analytics and Applications"
 ---
 
-Welcome to **ISSS608 Visual Analytics and Applications**. In this website, you will find my coursework prepared for this course.
+Hi, I am ZeXin. This site is where I keep my coursework for ISSS608 Visual Analytics and Applications at SMU.
+
+Most of the work here is built in R and Quarto. The hands-on exercises walk through the techniques we cover each week, starting from the basics of ggplot2 and moving into interactive charts, network graphs, text analysis, and time series. The take-home exercises are larger pieces where I apply those techniques to a real dataset and try to tell a clear story with the results.
+
+You can use the menu at the top to browse everything. If you are short on time, the take-home exercises are probably the best place to see how the ideas come together on an actual problem.

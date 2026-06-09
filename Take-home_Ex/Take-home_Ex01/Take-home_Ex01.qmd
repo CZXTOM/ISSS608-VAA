@@ -9,7 +9,7 @@ format:
     toc-depth: 3
     toc-location: right
     number-sections: true
-    theme: cosmo
+    theme: flatly
     code-fold: true
     code-summary: "Show the code"
     code-overflow: wrap
@@ -160,7 +160,7 @@ insurance |>
   kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
 ```
 
-## EDA 1: Univariate Analysis — Categorical Variables
+## EDA 1. Univariate Analysis of Categorical Variables
 
 ### Distribution of Policy Type
 
@@ -269,7 +269,7 @@ p6 | p7 | p8
 
 **Observation:** Inland municipalities account for the majority (64.6%) with coastal at 28.6% and island at 6.8%, broadly reflecting Spain's population distribution. Urban circulation edges ahead of rural at 53.8% vs 46.2%. Diesel vehicles dominate at 64.2%, though this may shift as newer petrol and electric vehicles gain market share.
 
-## EDA 2: Univariate Analysis — Numerical Variables
+## EDA 2. Univariate Analysis of Numerical Variables
 
 ### Driver and Vehicle Characteristics
 
@@ -482,7 +482,7 @@ insurance |>
 
 **Observation:** The power-to-weight ratio distribution is right-skewed with most vehicles clustering in the lower range, reflecting the dominance of standard passenger vehicles. A smaller tail of high-performance vehicles with elevated ratios represents a potential risk segment, as higher-powered vehicles are associated with greater accident severity.
 
-## EDA 3: Univariate Analysis — Derived Profitability Metrics
+## EDA 3. Univariate Analysis of Derived Profitability Metrics
 
 ### Loss Ratio Distribution
 
@@ -573,7 +573,7 @@ insurance |>
 
 **Observation:** Among policies that filed claims, most had a frequency near 0.1–0.5 claims per year, consistent with a single claim on a full-year policy. The rare policies with high claim frequencies (\>2 per year) represent a significant volatility risk, indicating accident-prone drivers.
 
-## EDA 4: Bivariate Analysis — Factors Affecting Profitability
+## EDA 4. Bivariate Analysis of Factors Affecting Profitability
 
 ### Loss Ratio by Policy Type
 
@@ -600,7 +600,7 @@ insurance |>
            colour = "#D6604D", size = 3.5) +
   coord_cartesian(ylim = c(0, 2)) +
   scale_fill_identity() +
-  labs(title = "Loss Ratio by Policy Type — Raincloud Plot",
+  labs(title = "Loss Ratio by Policy Type, Raincloud Plot",
        subtitle = "Claimants only (LR > 0), capped at 2 | Highlighted: COMP/E and COMP/N | Diamond = mean",
        x = "Policy Type", y = "Loss Ratio") +
   theme_minimal()
@@ -638,7 +638,7 @@ insurance |>
            label = "Break-even (LR = 1)", hjust = 0,
            colour = "#D6604D", size = 3.5) +
   scale_fill_identity() +
-  labs(title = "Loss Ratio by Bonus Score — Raincloud Plot",
+  labs(title = "Loss Ratio by Bonus Score, Raincloud Plot",
        subtitle = "Claimants only (LR > 0), capped at 1.5 | Highlighted: Bad-score policyholders | Diamond = mean",
        x = "Bonus Score", y = "Loss Ratio",
        caption = "< 3% of claimants exceed LR = 1.5 and are excluded") +
@@ -748,7 +748,7 @@ insurance |>
   geom_hline(yintercept = 1, colour = "#D6604D",
              linetype = "dashed", linewidth = 0.8) +
   scale_fill_identity() +
-  labs(title = "Loss Ratio by Vehicle Age Group — Raincloud Plot",
+  labs(title = "Loss Ratio by Vehicle Age Group, Raincloud Plot",
        subtitle = "Claimants only (LR > 0), capped at 1.5 | Highlighted: newer vehicles (0-15 yrs) | Diamond = mean",
        x = "Vehicle Age Group (years)", y = "Loss Ratio",
        caption = "< 3% of claimants exceed LR = 1.5 and are excluded") +
@@ -781,7 +781,7 @@ insurance |>
   coord_cartesian(ylim = c(0, 3000)) +
   scale_y_continuous(labels = comma) +
   scale_fill_identity() +
-  labs(title = "Claim Severity by Policy Type — Raincloud Plot",
+  labs(title = "Claim Severity by Policy Type, Raincloud Plot",
        subtitle = "Capped at 99th percentile | Policies with claims only | Highlighted: COMP/E and COMP/N | Diamond = mean",
        x = "Policy Type", y = "Claim Severity (EUR per claim)") +
   theme_minimal()
@@ -789,7 +789,7 @@ insurance |>
 
 **Observation:** Comprehensive policies (COMP/E: +Excess and COMP/N: Full) show substantially higher claim severity compared to basic coverage types, reflecting their broader protection against costly events like theft and total loss. High variance within each policy type highlights the difficulty of predicting individual claim costs.
 
-## EDA 5: Bivariate Analysis — Factors Affecting Volatility
+## EDA 5. Bivariate Analysis of Factors Affecting Volatility
 
 ### Claim Frequency by Circulation Area and Municipality Type
 
@@ -807,7 +807,7 @@ insurance |>
             size = 5, fontface = "bold", colour = "white") +
   scale_fill_gradient(low = "#BABABA", high = "#2166AC",
                       name = "Mean Claim\nFrequency") +
-  labs(title = "Mean Claim Frequency by Municipality & Circulation Area — Heatmap",
+  labs(title = "Mean Claim Frequency by Municipality and Circulation Area, Heatmap",
        subtitle = "Darker blue = higher claim frequency | Inland Urban (0.371) is highest risk combination",
        x = "Municipality Type", y = "Circulation Area") +
   theme_minimal() +

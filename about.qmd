@@ -2,8 +2,20 @@
 title: "About"
 ---
 
-About this site
+## About this site
 
-```{r}
-1 + 1
-```
+This site collects my coursework for ISSS608 Visual Analytics and Applications, a course in the Master of IT in Business programme at Singapore Management University. It is taught by Dr. Kam Tin Seong.
+
+The course is about turning data into visuals that actually help people understand and decide. We spend time on the thinking behind a good chart, not just the code to draw one. A plot should be clear first and attractive second, and those two goals usually pull in the same direction once you get the design right.
+
+## What you will find here
+
+The work is split into two kinds of exercises.
+
+The hands-on exercises follow the weekly topics. Each one focuses on a family of techniques and works through them step by step, with the code shown so the result can be reproduced. They cover the grammar of graphics in ggplot2, interactive and animated charts, distributions and uncertainty, correlation and multivariate views, network and text data, and time series.
+
+The take-home exercises are bigger and more open ended. Here the goal is to take a real dataset, decide what is worth showing, and build a small analysis that leads to a clear conclusion. These are the pieces I am most proud of, since they are closest to how visual analytics is used in practice.
+
+## Tools
+
+Everything is written in R and published with Quarto. The site is version controlled on GitHub and deployed through Vercel, so any update to the source is reflected here automatically.

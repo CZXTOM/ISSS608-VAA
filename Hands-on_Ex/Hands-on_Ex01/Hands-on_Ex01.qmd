@@ -3,6 +3,10 @@ title: "Hands-on Exercise 1: A Layered Grammar of Graphics"
 author: "ZeXin Chen"
 date: "April 26, 2026"
 date-modified: "last-modified"
+format:
+  html:
+    theme: flatly
+    toc: true
 execute:
   echo: true
   eval: true
@@ -27,11 +31,11 @@ pacman::p_load(tidyverse)
 exam_data <- read_csv("data/Exam_data.csv")
 ```
 
-The dataset contains year-end examination grades of a cohort of Primary 3 students from a local school. It has seven attributes — four categorical (`ID`, `CLASS`, `GENDER`, `RACE`) and three continuous (`MATHS`, `ENGLISH`, `SCIENCE`).
+The dataset contains year-end examination grades of a cohort of Primary 3 students from a local school. It has seven attributes, four categorical (`ID`, `CLASS`, `GENDER`, `RACE`) and three continuous (`MATHS`, `ENGLISH`, `SCIENCE`).
 
 # Geometric Objects
 
-## Bar Chart — `geom_bar()`
+## Bar Chart with `geom_bar()`
 
 A bar chart showing the count of students by race.
 
@@ -55,7 +59,7 @@ ggplot(data = exam_data,
 ```
 :::
 
-## Dot Plot — `geom_dotplot()`
+## Dot Plot with `geom_dotplot()`
 
 A dot plot of Maths scores, where each dot represents one observation.
 
@@ -83,7 +87,7 @@ ggplot(data = exam_data,
 ```
 :::
 
-## Histogram — `geom_histogram()`
+## Histogram with `geom_histogram()`
 
 A histogram of Maths scores coloured by gender.
 
@@ -111,7 +115,7 @@ ggplot(data = exam_data,
 ```
 :::
 
-## Kernel Density Estimate — `geom_density()`
+## Kernel Density Estimate with `geom_density()`
 
 A kernel density plot comparing Maths score distributions between genders.
 
@@ -137,7 +141,7 @@ ggplot(data = exam_data,
 ```
 :::
 
-## Box Plot — `geom_boxplot()`
+## Box Plot with `geom_boxplot()`
 
 A notched box plot of Maths scores by gender. Non-overlapping notches indicate differing medians.
 
@@ -163,7 +167,7 @@ ggplot(data = exam_data,
 ```
 :::
 
-## Violin Plot — `geom_violin()`
+## Violin Plot with `geom_violin()`
 
 A violin plot comparing the full distribution shape of Maths scores by gender.
 
@@ -189,7 +193,7 @@ ggplot(data = exam_data,
 ```
 :::
 
-## Combining Geoms — Box Plot + Jitter
+## Combining Geoms, Box Plot plus Jitter
 
 Data points overlaid on box plots using `geom_point()` with jitter.
 
@@ -221,7 +225,7 @@ ggplot(data = exam_data,
 
 # Statistics
 
-## Adding Mean Points — `stat_summary()`
+## Adding Mean Points with `stat_summary()`
 
 Mean values added to box plots using `stat_summary()`.
 
@@ -255,7 +259,7 @@ ggplot(data = exam_data,
 ```
 :::
 
-## Best Fit Line — `geom_smooth()`
+## Best Fit Line with `geom_smooth()`
 
 A scatter plot of Maths vs English with a linear regression line.
 
@@ -287,7 +291,7 @@ ggplot(data = exam_data,
 
 # Facets
 
-## Trellis Plot — `facet_wrap()`
+## Trellis Plot with `facet_wrap()`
 
 Histograms of Maths scores faceted by class.
 
@@ -315,7 +319,7 @@ ggplot(data = exam_data,
 
 # Coordinates & Themes
 
-## Flipped Bar Chart — `coord_flip()`
+## Flipped Bar Chart with `coord_flip()`
 
 A horizontal bar chart of race counts with `theme_minimal()`.
 
@@ -343,7 +347,7 @@ ggplot(data = exam_data,
 ```
 :::
 
-## Fixed Axis Range — `coord_cartesian()`
+## Fixed Axis Range with `coord_cartesian()`
 
 Scatter plot with both axes fixed from 0 to 100.
 

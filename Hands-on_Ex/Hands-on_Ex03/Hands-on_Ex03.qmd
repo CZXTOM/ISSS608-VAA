@@ -3,7 +3,10 @@ title: "Hands-on Exercise 3"
 author: "ZeXin Chen"
 date: "2026-04-26"
 date-modified: last-modified
-format: html
+format:
+  html:
+    theme: flatly
+    toc: true
 execute:
   echo: true
   eval: true

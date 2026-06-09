@@ -244,7 +244,7 @@ Loss Ratio &gt; 1 = <strong>Unprofitable</strong></p>
 </div>
 </div></div>
 <aside class="notes">
-<p>This is real anonymised data from a Spanish motor insurer. Each row is one policy in one year. Loss ratio is our profitability measure — below 1 means profitable. Claim frequency tells us how often accidents happen per year of exposure. Severity tells us the average cost per claim when one does occur.</p>
+<p>This is real anonymised data from a Spanish motor insurer. Each row is one policy in one year. Loss ratio is our profitability measure, below 1 means profitable. Claim frequency tells us how often accidents happen per year of exposure. Severity tells us the average cost per claim when one does occur.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -331,8 +331,8 @@ Loss Ratio &gt; 1 = <strong>Unprofitable</strong></p>
 <h2>Data Quality</h2>
 
 <img data-src="Take-home_Ex01_slides_files/figure-revealjs/unnamed-chunk-1-1.png" class="quarto-figure quarto-figure-center r-stretch" width="864"><ul>
-<li><code>fuel_type</code>: <strong>0.37%</strong> missing — excluded when fuel type is analysed</li>
-<li><code>vehicle_value</code>: <strong>0.14%</strong> missing — excluded when vehicle value is analysed</li>
+<li><code>fuel_type</code>: <strong>0.37%</strong> missing, excluded when fuel type is analysed</li>
+<li><code>vehicle_value</code>: <strong>0.14%</strong> missing, excluded when vehicle value is analysed</li>
 <li>All remaining <strong>45 variables</strong> are 100% complete</li>
 </ul>
 <aside class="notes">
@@ -360,7 +360,7 @@ Loss Ratio &gt; 1 = <strong>Unprofitable</strong></p>
 <img data-src="Take-home_Ex01_slides_files/figure-revealjs/unnamed-chunk-2-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"><ul>
 <li><strong>CC: +Add-ons</strong> (third-party + theft, fire, glass) dominates at <strong>57.8%</strong> of all policies</li>
 <li><strong>COMP/E: +Excess</strong> (comprehensive with excess) is second at <strong>25.8%</strong></li>
-<li><strong>TP: Basic</strong> (third-party only) is rare at just <strong>1.6%</strong> — most customers prefer broader coverage</li>
+<li><strong>TP: Basic</strong> (third-party only) is rare at just <strong>1.6%</strong>, most customers prefer broader coverage</li>
 </ul>
 <aside class="notes">
 <p>CC policies dominate at 57.8 percent. These combine third-party liability with add-ons like theft and glass cover. COMP/E at 25.8 percent is full comprehensive with an excess. What stands out is how rare basic TP policies are at just 1.6 percent. This tells us the insurer is largely serving customers who want broader protection.</p>
@@ -381,7 +381,7 @@ Loss Ratio &gt; 1 = <strong>Unprofitable</strong></p>
 
 <img data-src="Take-home_Ex01_slides_files/figure-revealjs/unnamed-chunk-3-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1056"><ul>
 <li><strong>89.2%</strong> active; cancellation rate of <strong>10.8%</strong> warrants monitoring</li>
-<li><strong>96.4%</strong> of customers have a <strong>Good</strong> bonus score — excellent claims history</li>
+<li><strong>96.4%</strong> of customers have a <strong>Good</strong> bonus score, excellent claims history</li>
 <li>Bad-score customers are only <strong>1.3%</strong> but represent elevated risk</li>
 </ul>
 <aside class="notes">
@@ -402,8 +402,8 @@ Loss Ratio &gt; 1 = <strong>Unprofitable</strong></p>
 <h2>Insight 3: Middle-Aged Drivers, Older Vehicles</h2>
 
 <img data-src="Take-home_Ex01_slides_files/figure-revealjs/unnamed-chunk-4-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1056"><ul>
-<li>Driver age peaks at <strong>40-60 years</strong> (mean: 49, median: 48) — experienced, low-risk segment</li>
-<li>Vehicle age median is <strong>25 years</strong> — an older fleet than typical</li>
+<li>Driver age peaks at <strong>40-60 years</strong> (mean: 49, median: 48), experienced, low-risk segment</li>
+<li>Vehicle age median is <strong>25 years</strong>, an older fleet than typical</li>
 <li>Vehicle value median is <strong>€24,730</strong>; 75th percentile at <strong>€32,252</strong></li>
 </ul>
 <aside class="notes">
@@ -424,9 +424,9 @@ Loss Ratio &gt; 1 = <strong>Unprofitable</strong></p>
 <h2>Insight 4: Inland-Dominant, Balanced Urban-Rural</h2>
 
 <img data-src="Take-home_Ex01_slides_files/figure-revealjs/unnamed-chunk-5-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1056"><ul>
-<li><strong>64.6%</strong> inland, <strong>28.6%</strong> coastal, <strong>6.8%</strong> islands — reflects Spain’s geography</li>
+<li><strong>64.6%</strong> inland, <strong>28.6%</strong> coastal, <strong>6.8%</strong> islands, reflects Spain’s geography</li>
 <li>Urban vs rural split is nearly equal at <strong>53.8% vs 46.2%</strong></li>
-<li><strong>64.2%</strong> diesel vehicles — relevant for repair cost patterns</li>
+<li><strong>64.2%</strong> diesel vehicles, relevant for repair cost patterns</li>
 </ul>
 <aside class="notes">
 <p>The geographic breakdown shows inland dominance at 64.6 percent. Urban and rural circulation are fairly balanced at 54 and 46 percent. Diesel vehicles make up 64 percent of the fleet. These splits matter because urban and rural drivers have very different claim frequencies as we will see in Part 4.</p>
@@ -453,7 +453,7 @@ Loss Ratio &gt; 1 = <strong>Unprofitable</strong></p>
 <img data-src="Take-home_Ex01_slides_files/figure-revealjs/unnamed-chunk-6-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1056"><ul>
 <li><strong>88.1%</strong> of policies never file a claim; only <strong>11.9%</strong> generate any loss</li>
 <li>Among claimants, distribution peaks at <strong>LR = 0.1-0.3</strong> and decays toward break-even</li>
-<li><strong>9.0%</strong> of ALL policies exceed break-even (LR &gt; 1) — these drive total portfolio losses</li>
+<li><strong>9.0%</strong> of ALL policies exceed break-even (LR &gt; 1), these drive total portfolio losses</li>
 </ul>
 <aside class="notes">
 <p>Two panels tell the full story. On the left, 88.1 percent of policies never filed a single claim. On the right, we see only claimants. The distribution peaks near 0.1 to 0.3 and decays toward break-even. Just 9 percent of all policies exceed LR equals 1. These are the policies that really matter for the portfolio bottom line.</p>
@@ -473,9 +473,9 @@ Loss Ratio &gt; 1 = <strong>Unprofitable</strong></p>
 <h2>Insight 6: Comprehensive Policies Have Higher Loss Ratios</h2>
 
 <img data-src="Take-home_Ex01_slides_files/figure-revealjs/unnamed-chunk-7-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"><ul>
-<li><strong>COMP/N: Full</strong> mean LR = <strong>0.950</strong>, median = <strong>0.897</strong> — highest among all policy types</li>
-<li><strong>COMP/E: +Excess</strong> mean LR = <strong>0.942</strong>, median = <strong>0.915</strong> — second highest</li>
-<li><strong>TP: Basic</strong> mean LR = <strong>0.864</strong>, median = <strong>0.676</strong> — narrowest distribution, lowest loss ratio</li>
+<li><strong>COMP/N: Full</strong> mean LR = <strong>0.950</strong>, median = <strong>0.897</strong>, highest among all policy types</li>
+<li><strong>COMP/E: +Excess</strong> mean LR = <strong>0.942</strong>, median = <strong>0.915</strong>, second highest</li>
+<li><strong>TP: Basic</strong> mean LR = <strong>0.864</strong>, median = <strong>0.676</strong>, narrowest distribution, lowest loss ratio</li>
 </ul>
 <aside class="notes">
 <p>This raincloud plot from Chapter 9 combines a half-density curve, boxplot, and mean diamond marker in one chart. The blue half-densities for COMP/E and COMP/N are visibly wider and taller than the grey ones. The mean diamond sits above the median box line for all types, showing the right-skew of insurance losses. Comprehensive policies have both higher medians and wider spreads.</p>
@@ -495,12 +495,12 @@ Loss Ratio &gt; 1 = <strong>Unprofitable</strong></p>
 <h2>Insight 7: Bad Claims History Predicts Higher Loss Ratios</h2>
 
 <img data-src="Take-home_Ex01_slides_files/figure-revealjs/unnamed-chunk-8-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"><ul>
-<li><strong>Bad-score</strong> median LR = <strong>0.668</strong>, IQR = <strong>0.31–1.05</strong> — wide spread crossing break-even</li>
-<li><strong>Good-score</strong> median LR = <strong>0.724</strong>, IQR = <strong>0.35–1.10</strong> — both groups show high variance</li>
-<li>Bad policyholders are only <strong>1.3%</strong> of portfolio (n=433) — the half-density shape shows heavier tail risk</li>
+<li><strong>Bad-score</strong> median LR = <strong>0.668</strong>, IQR = <strong>0.31–1.05</strong>, wide spread crossing break-even</li>
+<li><strong>Good-score</strong> median LR = <strong>0.724</strong>, IQR = <strong>0.35–1.10</strong>, both groups show high variance</li>
+<li>Bad policyholders are only <strong>1.3%</strong> of portfolio (n=433), the half-density shape shows heavier tail risk</li>
 </ul>
 <aside class="notes">
-<p>The raincloud plot highlights the Bad group in blue. The median difference between Bad and Good is actually modest. What the raincloud reveals is the distribution shape — the half-density for Bad policyholders is wider with a heavier upper tail, meaning more of them have high loss ratios. Both groups have similarly wide IQRs crossing break-even. The bonus-malus system identifies customers who are more likely to generate large claims, even if the average difference is not dramatic.</p>
+<p>The raincloud plot highlights the Bad group in blue. The median difference between Bad and Good is actually modest. What the raincloud reveals is the distribution shape, the half-density for Bad policyholders is wider with a heavier upper tail, meaning more of them have high loss ratios. Both groups have similarly wide IQRs crossing break-even. The bonus-malus system identifies customers who are more likely to generate large claims, even if the average difference is not dramatic.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -517,8 +517,8 @@ Loss Ratio &gt; 1 = <strong>Unprofitable</strong></p>
 <h2>Insight 8: Comprehensive Policies Cost More Per Claim</h2>
 
 <img data-src="Take-home_Ex01_slides_files/figure-revealjs/unnamed-chunk-9-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"><ul>
-<li><strong>COMP/E: +Excess</strong> mean severity = <strong>€753</strong> per claim; median = <strong>€547</strong> — highest among all types</li>
-<li><strong>CC: +Add-ons</strong> mean = <strong>€651</strong>, median = <strong>€437</strong> — moderate severity</li>
+<li><strong>COMP/E: +Excess</strong> mean severity = <strong>€753</strong> per claim; median = <strong>€547</strong>, highest among all types</li>
+<li><strong>CC: +Add-ons</strong> mean = <strong>€651</strong>, median = <strong>€437</strong>, moderate severity</li>
 <li>Wide gap between mean and median across ALL types confirms heavily right-skewed distributions</li>
 </ul>
 <aside class="notes">
@@ -544,12 +544,12 @@ Loss Ratio &gt; 1 = <strong>Unprofitable</strong></p>
 <h2>Insight 9: Young Drivers File Claims 2.7x More Often</h2>
 
 <img data-src="Take-home_Ex01_slides_files/figure-revealjs/unnamed-chunk-10-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"><ul>
-<li><strong>19-25</strong> group: mean frequency = <strong>0.716</strong> — highest of all age groups</li>
-<li><strong>56-65</strong> group: mean frequency = <strong>0.289</strong> — safest segment</li>
+<li><strong>19-25</strong> group: mean frequency = <strong>0.716</strong>, highest of all age groups</li>
+<li><strong>56-65</strong> group: mean frequency = <strong>0.289</strong>, safest segment</li>
 <li>Young drivers file claims <strong>2.5x more often</strong> than the 56-65 group (0.716 / 0.289 = 2.48x)</li>
 </ul>
 <aside class="notes">
-<p>A lollipop chart is cleaner than a bar chart for showing this comparison — less ink, same information, the dot draws the eye straight to the value. The 19-25 group highlighted in blue stands out clearly at 0.716. Then frequency drops steadily through middle age. Young drivers file claims 2.5 times more often than the safest group. Note the 19-25 sample is relatively small as very few young drivers appear in this portfolio.</p>
+<p>A lollipop chart is cleaner than a bar chart for showing this comparison, less ink, same information, the dot draws the eye straight to the value. The 19-25 group highlighted in blue stands out clearly at 0.716. Then frequency drops steadily through middle age. Young drivers file claims 2.5 times more often than the safest group. Note the 19-25 sample is relatively small as very few young drivers appear in this portfolio.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -566,12 +566,12 @@ Loss Ratio &gt; 1 = <strong>Unprofitable</strong></p>
 <h2>Insight 10: Urban Areas Drive Higher Claim Frequency</h2>
 
 <img data-src="Take-home_Ex01_slides_files/figure-revealjs/unnamed-chunk-11-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"><ul>
-<li><strong>Inland Urban</strong> = <strong>0.371</strong> — highest claim frequency of all 6 combinations</li>
-<li>Urban always exceeds rural within each municipality type — traffic density effect</li>
-<li><strong>Island Rural</strong> = <strong>0.246</strong> — lowest frequency, well-insulated from traffic risk</li>
+<li><strong>Inland Urban</strong> = <strong>0.371</strong>, highest claim frequency of all 6 combinations</li>
+<li>Urban always exceeds rural within each municipality type, traffic density effect</li>
+<li><strong>Island Rural</strong> = <strong>0.246</strong>, lowest frequency, well-insulated from traffic risk</li>
 </ul>
 <aside class="notes">
-<p>A heatmap from Chapter 14 is ideal here — it shows all 6 municipality-circulation combinations in one clean grid. Darker blue means higher claim frequency. Inland Urban at 0.371 is the darkest cell and the highest risk combination. Island Rural at 0.246 is the lightest. The pattern is clear: urban always exceeds rural in every row, and inland urban poses the greatest volatility risk.</p>
+<p>A heatmap from Chapter 14 is ideal here, it shows all 6 municipality-circulation combinations in one clean grid. Darker blue means higher claim frequency. Inland Urban at 0.371 is the darkest cell and the highest risk combination. Island Rural at 0.246 is the lightest. The pattern is clear: urban always exceeds rural in every row, and inland urban poses the greatest volatility risk.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -588,9 +588,9 @@ Loss Ratio &gt; 1 = <strong>Unprofitable</strong></p>
 <h2>Insight 11: COMP/N and COMP/E Crossed Break-Even in 2024</h2>
 
 <img data-src="Take-home_Ex01_slides_files/figure-revealjs/unnamed-chunk-12-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"><ul>
-<li><strong>COMP/N: Full</strong>: LR rose from <strong>0.706 (2022)</strong> → <strong>0.944 (2023)</strong> → <strong>1.171 (2024)</strong> — crossed break-even</li>
-<li><strong>COMP/E: +Excess</strong>: LR rose from <strong>0.641 (2022)</strong> → <strong>0.783 (2023)</strong> → <strong>1.106 (2024)</strong> — also crossed</li>
-<li><strong>CC, TP, TPG</strong> remain below break-even throughout — basic coverage types stay profitable</li>
+<li><strong>COMP/N: Full</strong>: LR rose from <strong>0.706 (2022)</strong> → <strong>0.944 (2023)</strong> → <strong>1.171 (2024)</strong>, crossed break-even</li>
+<li><strong>COMP/E: +Excess</strong>: LR rose from <strong>0.641 (2022)</strong> → <strong>0.783 (2023)</strong> → <strong>1.106 (2024)</strong>, also crossed</li>
+<li><strong>CC, TP, TPG</strong> remain below break-even throughout, basic coverage types stay profitable</li>
 </ul>
 <aside class="notes">
 <p>This is the most alarming finding in the analysis. COMP/N went from 0.706 in 2022 all the way to 1.171 in 2024. COMP/E similarly crossed from 0.641 to 1.106. Both comprehensive policy types are now paying out more in claims than they collect in premiums. This could be claims inflation from rising repair or medical costs. Basic coverage types CC, TP and TPG remain comfortably below break-even throughout.</p>
@@ -635,7 +635,7 @@ Loss Ratio &gt; 1 = <strong>Unprofitable</strong></p>
 <p><strong>Important</strong></p>
 </div>
 <div class="callout-content">
-<p><strong>Core finding:</strong> 88.1% of policies have zero claims. The portfolio’s challenge is that COMP/N and COMP/E (full comprehensive policies) have now crossed break-even — the insurer is losing money on these segments.</p>
+<p><strong>Core finding:</strong> 88.1% of policies have zero claims. The portfolio’s challenge is that COMP/N and COMP/E (full comprehensive policies) have now crossed break-even, the insurer is losing money on these segments.</p>
 </div>
 </div>
 </div>

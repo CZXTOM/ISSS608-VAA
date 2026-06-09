@@ -35,7 +35,7 @@ website:
 format:
   html:
     theme:
-      - morph
+      - flatly
     css: styles.css
     toc: true
 editor: visual

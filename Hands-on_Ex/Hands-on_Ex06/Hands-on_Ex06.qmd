@@ -146,7 +146,7 @@ g + theme_graph()
 
 ### Colouring Nodes by Department
 
-Here colour encodes a meaningful variable — each node is coloured by the
+Here colour encodes a meaningful variable. Each node is coloured by the
 employee's department.
 
 ```{r}
