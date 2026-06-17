@@ -5,7 +5,6 @@ website:
   navbar:
     left:
       - text: "Hands-on Exercise"
-        href: "Hands-on_Ex/Hands-on_Ex08/Hands-on_Ex08.html"
         menu:
           - text: "Hands-on Exercise 1"
             href: "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html"
