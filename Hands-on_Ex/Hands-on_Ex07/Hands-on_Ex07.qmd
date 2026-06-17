@@ -1,8 +1,8 @@
 ---
 title: "Hands-on Exercise 7"
-subtitle: "Visualising and Analysing Time-oriented Data"
+subtitle: "Visualising and Analysing Network Data and Text Data"
 author: "ZeXin Chen"
-date: "2026-06-09"
+date: "2026-06-02"
 date-modified: "2026-06-09"
 format:
   html:
@@ -16,444 +16,1067 @@ execute:
   freeze: true
 ---
 
-# Overview
+# Part A: Visualising and Analysing Network Data
 
-In this hands-on exercise we learn to create several time-oriented data
-visualisations using R:
+In this section, we model, analyse and visualise network data using R. We build
+graph objects with **tidygraph**, draw static network graphs with **ggraph**,
+compute network metrics, and finally build an interactive network graph with
+**visNetwork**.
 
-- a **calendar heatmap** using ggplot2
-- a **cycle plot** using ggplot2
-- a **slopegraph** using the CGPfunctions package
-- a **horizon chart** using the ggHoriPlot package
+## Getting Started
 
-# Getting Started
-
-## Installing and Loading Packages
+### Installing and Loading Packages
 
 ```{r}
-pacman::p_load(scales, viridis, lubridate, ggthemes,
-               gridExtra, readxl, knitr, data.table,
-               CGPfunctions, ggHoriPlot, tidyverse)
+pacman::p_load(igraph, tidygraph, ggraph,
+               visNetwork, lubridate, clock,
+               tidyverse, graphlayouts,
+               concaveman, ggforce)
 ```
-
-# Plotting Calendar Heatmap
-
-A calendar heatmap shows the intensity of an event across two time dimensions,
-here the weekday and the hour of day.
 
 ## The Data
 
-We use `eventlog.csv`, which holds 199,999 time-series cyber attack records by
-country. There are three columns: `timestamp` (date-time), `source_country` (ISO
-country code), and `tz` (time zone).
+The data is from an oil exploration and extraction company (GAStech). There are
+two files: a **nodes** file (the 55 employees) and an **edges** file (the email
+correspondences between them).
 
-## Importing the Data
+### Importing the Network Data
 
 ```{r}
-attacks <- read_csv("data/eventlog.csv")
+GAStech_nodes <- read_csv("data/GAStech_email_node.csv")
+GAStech_edges <- read_csv("data/GAStech_email_edge-v2.csv")
 ```
 
-## Examining the Data Structure
-
-It is good practice to examine the imported data frame before further analysis.
-`kable()` gives a tidy preview.
+### Reviewing the Imported Data
 
 ```{r}
-kable(head(attacks))
+glimpse(GAStech_edges)
 ```
 
-## Data Preparation
+The `SentDate` field is read as a *character* type instead of a *date*. We fix
+this before continuing.
 
-### Deriving Weekday and Hour Fields
-
-Before plotting we derive two new fields, `wkday` and `hour`. We write a function
-to do this, converting each timestamp to its real local time first.
+### Wrangling Time
 
 ```{r}
-make_hr_wkday <- function(ts, sc, tz) {
-  real_times <- ymd_hms(ts,
-                        tz = tz[1],
-                        quiet = TRUE)
-  dt <- data.table(source_country = sc,
-                   wkday = weekdays(real_times),
-                   hour = hour(real_times))
-  return(dt)
+GAStech_edges <- GAStech_edges %>%
+  mutate(SendDate = dmy(SentDate)) %>%
+  mutate(Weekday = wday(SendDate,
+                        label = TRUE,
+                        abbr = FALSE))
+```
+
+Here `dmy()` converts `SentDate` to a proper Date type, and `wday()` extracts the
+day of the week as an ordered factor stored in a new `Weekday` column.
+
+### Wrangling Attributes
+
+The edges file contains one row per individual email, which is not very useful
+for visualisation. We aggregate by sender, receiver and day of the week, keeping
+only work-related emails and pairs with more than one email.
+
+```{r}
+GAStech_edges_aggregated <- GAStech_edges %>%
+  filter(MainSubject == "Work related") %>%
+  group_by(source, target, Weekday) %>%
+    summarise(Weight = n()) %>%
+  filter(source != target) %>%
+  filter(Weight > 1) %>%
+  ungroup()
+```
+
+## Creating Network Objects using tidygraph
+
+**tidygraph** provides a tidy way to handle network data as two tables: one for
+nodes and one for edges.
+
+### Building the tbl_graph Object
+
+```{r}
+GAStech_graph <- tbl_graph(nodes = GAStech_nodes,
+                           edges = GAStech_edges_aggregated,
+                           directed = TRUE)
+```
+
+```{r}
+GAStech_graph
+```
+
+### Rearranging the Edges
+
+The edges and nodes of a `tbl_graph` are held as two separate tables. We use
+`activate()` to choose which table to work on, then ordinary dplyr verbs such as
+`arrange()` to reorder it. The example below sorts the edges so the heaviest ones
+(the most frequent email pairs) come first.
+
+```{r}
+GAStech_graph %>%
+  activate(edges) %>%
+  arrange(desc(Weight))
+```
+
+A useful thing to remember is that most centrality measures work at the node
+level, so when computing them later we need to `activate(nodes)` first, otherwise
+the calculation runs on the edges by mistake.
+
+## Plotting Static Network Graphs with ggraph
+
+**ggraph** is an extension of **ggplot2** for network graphs. A ggraph plot has
+three main parts: nodes, edges and layouts.
+
+### Basic Network Graph
+
+::: panel-tabset
+## The Plot
+```{r}
+#| echo: false
+ggraph(GAStech_graph) +
+  geom_edge_link() +
+  geom_node_point()
+```
+## The Code
+```{r}
+#| eval: false
+ggraph(GAStech_graph) +
+  geom_edge_link() +
+  geom_node_point()
+```
+:::
+
+### Changing the Default Theme
+
+`theme_graph()` removes axes, grids and borders for a cleaner network look.
+
+::: panel-tabset
+## The Plot
+```{r}
+#| echo: false
+g <- ggraph(GAStech_graph) +
+  geom_edge_link(aes()) +
+  geom_node_point(aes())
+
+g + theme_graph()
+```
+## The Code
+```{r}
+#| eval: false
+g <- ggraph(GAStech_graph) +
+  geom_edge_link(aes()) +
+  geom_node_point(aes())
+
+g + theme_graph()
+```
+:::
+
+### Fruchterman-Reingold Layout
+
+The `layout` argument controls how the nodes are positioned. Here we use the
+popular Fruchterman-Reingold (`fr`) force-directed layout.
+
+::: panel-tabset
+## The Plot
+```{r}
+#| echo: false
+g <- ggraph(GAStech_graph,
+            layout = "fr") +
+  geom_edge_link(aes()) +
+  geom_node_point(aes())
+
+g + theme_graph()
+```
+## The Code
+```{r}
+#| eval: false
+g <- ggraph(GAStech_graph,
+            layout = "fr") +
+  geom_edge_link(aes()) +
+  geom_node_point(aes())
+
+g + theme_graph()
+```
+:::
+
+### Colouring Nodes by Department
+
+Here colour encodes a meaningful variable. Each node is coloured by the
+employee's department.
+
+::: panel-tabset
+## The Plot
+```{r}
+#| echo: false
+g <- ggraph(GAStech_graph,
+            layout = "nicely") +
+  geom_edge_link(aes()) +
+  geom_node_point(aes(colour = Department,
+                      size = 3))
+
+g + theme_graph()
+```
+## The Code
+```{r}
+#| eval: false
+g <- ggraph(GAStech_graph,
+            layout = "nicely") +
+  geom_edge_link(aes()) +
+  geom_node_point(aes(colour = Department,
+                      size = 3))
+
+g + theme_graph()
+```
+:::
+
+### Mapping Edge Weight to Thickness
+
+The width of each edge is mapped to the `Weight` variable (number of emails),
+and opacity is reduced to ease over-plotting.
+
+::: panel-tabset
+## The Plot
+```{r}
+#| echo: false
+g <- ggraph(GAStech_graph,
+            layout = "nicely") +
+  geom_edge_link(aes(width = Weight),
+                 alpha = 0.2) +
+  scale_edge_width(range = c(0.1, 5)) +
+  geom_node_point(aes(colour = Department),
+                  size = 3)
+
+g + theme_graph()
+```
+## The Code
+```{r}
+#| eval: false
+g <- ggraph(GAStech_graph,
+            layout = "nicely") +
+  geom_edge_link(aes(width = Weight),
+                 alpha = 0.2) +
+  scale_edge_width(range = c(0.1, 5)) +
+  geom_node_point(aes(colour = Department),
+                  size = 3)
+
+g + theme_graph()
+```
+:::
+
+## Creating Facet Graphs
+
+Faceting spreads nodes and edges out by an attribute, reducing over-plotting in a
+meaningful way.
+
+### Faceting by Weekday with facet_edges()
+
+::: panel-tabset
+## The Plot
+```{r}
+#| echo: false
+set_graph_style()
+
+g <- ggraph(GAStech_graph,
+            layout = "nicely") +
+  geom_edge_link(aes(width = Weight),
+                 alpha = 0.2) +
+  scale_edge_width(range = c(0.1, 5)) +
+  geom_node_point(aes(colour = Department),
+                  size = 2) +
+  theme(legend.position = 'bottom')
+
+g + facet_edges(~Weekday)
+```
+## The Code
+```{r}
+#| eval: false
+set_graph_style()
+
+g <- ggraph(GAStech_graph,
+            layout = "nicely") +
+  geom_edge_link(aes(width = Weight),
+                 alpha = 0.2) +
+  scale_edge_width(range = c(0.1, 5)) +
+  geom_node_point(aes(colour = Department),
+                  size = 2) +
+  theme(legend.position = 'bottom')
+
+g + facet_edges(~Weekday)
+```
+:::
+
+### Framed Facet Graph
+
+::: panel-tabset
+## The Plot
+```{r}
+#| echo: false
+set_graph_style()
+
+g <- ggraph(GAStech_graph,
+            layout = "nicely") +
+  geom_edge_link(aes(width = Weight),
+                 alpha = 0.2) +
+  scale_edge_width(range = c(0.1, 5)) +
+  geom_node_point(aes(colour = Department),
+                  size = 2)
+
+g + facet_edges(~Weekday) +
+  th_foreground(foreground = "grey80",
+                border = TRUE) +
+  theme(legend.position = 'bottom')
+```
+## The Code
+```{r}
+#| eval: false
+set_graph_style()
+
+g <- ggraph(GAStech_graph,
+            layout = "nicely") +
+  geom_edge_link(aes(width = Weight),
+                 alpha = 0.2) +
+  scale_edge_width(range = c(0.1, 5)) +
+  geom_node_point(aes(colour = Department),
+                  size = 2)
+
+g + facet_edges(~Weekday) +
+  th_foreground(foreground = "grey80",
+                border = TRUE) +
+  theme(legend.position = 'bottom')
+```
+:::
+
+### Faceting by Department with facet_nodes()
+
+::: panel-tabset
+## The Plot
+```{r}
+#| echo: false
+set_graph_style()
+
+g <- ggraph(GAStech_graph,
+            layout = "nicely") +
+  geom_edge_link(aes(width = Weight),
+                 alpha = 0.2) +
+  scale_edge_width(range = c(0.1, 5)) +
+  geom_node_point(aes(colour = Department),
+                  size = 2)
+
+g + facet_nodes(~Department) +
+  th_foreground(foreground = "grey80",
+                border = TRUE) +
+  theme(legend.position = 'bottom')
+```
+## The Code
+```{r}
+#| eval: false
+set_graph_style()
+
+g <- ggraph(GAStech_graph,
+            layout = "nicely") +
+  geom_edge_link(aes(width = Weight),
+                 alpha = 0.2) +
+  scale_edge_width(range = c(0.1, 5)) +
+  geom_node_point(aes(colour = Department),
+                  size = 2)
+
+g + facet_nodes(~Department) +
+  th_foreground(foreground = "grey80",
+                border = TRUE) +
+  theme(legend.position = 'bottom')
+```
+:::
+
+## Network Metrics Analysis
+
+### Computing and Visualising Betweenness Centrality
+
+Betweenness centrality measures how often a node lies on the shortest path
+between other nodes. From ggraph v2.0 onward, tidygraph algorithms can be called
+directly inside ggraph.
+
+::: panel-tabset
+## The Plot
+```{r}
+#| echo: false
+g <- GAStech_graph %>%
+  ggraph(layout = "fr") +
+  geom_edge_link(aes(width = Weight),
+                 alpha = 0.2) +
+  scale_edge_width(range = c(0.1, 5)) +
+  geom_node_point(aes(colour = Department,
+                      size = centrality_betweenness()))
+
+g + theme_graph()
+```
+## The Code
+```{r}
+#| eval: false
+g <- GAStech_graph %>%
+  ggraph(layout = "fr") +
+  geom_edge_link(aes(width = Weight),
+                 alpha = 0.2) +
+  scale_edge_width(range = c(0.1, 5)) +
+  geom_node_point(aes(colour = Department,
+                      size = centrality_betweenness()))
+
+g + theme_graph()
+```
+:::
+
+### Visualising Community
+
+Community detection groups nodes that are more densely connected to each other.
+Here `group_edge_betweenness()` is used to detect communities.
+
+::: panel-tabset
+## The Plot
+```{r}
+#| echo: false
+g <- GAStech_graph %>%
+  mutate(community = as.factor(
+    group_edge_betweenness(
+      weights = Weight,
+      directed = TRUE))) %>%
+  ggraph(layout = "fr") +
+  geom_edge_link(
+    aes(width = Weight),
+    alpha = 0.2) +
+  scale_edge_width(
+    range = c(0.1, 5)) +
+  geom_node_point(
+    aes(colour = community))
+
+g + theme_graph()
+```
+## The Code
+```{r}
+#| eval: false
+g <- GAStech_graph %>%
+  mutate(community = as.factor(
+    group_edge_betweenness(
+      weights = Weight,
+      directed = TRUE))) %>%
+  ggraph(layout = "fr") +
+  geom_edge_link(
+    aes(width = Weight),
+    alpha = 0.2) +
+  scale_edge_width(
+    range = c(0.1, 5)) +
+  geom_node_point(
+    aes(colour = community))
+
+g + theme_graph()
+```
+:::
+
+We can make the communities clearer using `geom_mark_hull()` of the **ggforce**
+package to draw a hull around each community.
+
+::: panel-tabset
+## The Plot
+```{r}
+#| echo: false
+g <- GAStech_graph %>%
+  activate(nodes) %>%
+  mutate(community = as.factor(
+    group_optimal(weights = Weight)),
+         betweenness_measure = centrality_betweenness()) %>%
+  ggraph(layout = "fr") +
+  geom_mark_hull(
+    aes(x, y,
+        group = community,
+        fill = community),
+    alpha = 0.2,
+    expand = unit(0.3, "cm"),
+    radius = unit(0.3, "cm")
+  ) +
+  geom_edge_link(aes(width = Weight),
+                 alpha = 0.2) +
+  scale_edge_width(range = c(0.1, 5)) +
+  geom_node_point(aes(fill = Department,
+                      size = betweenness_measure),
+                      color = "black",
+                      shape = 21)
+
+g + theme_graph()
+```
+## The Code
+```{r}
+#| eval: false
+g <- GAStech_graph %>%
+  activate(nodes) %>%
+  mutate(community = as.factor(
+    group_optimal(weights = Weight)),
+         betweenness_measure = centrality_betweenness()) %>%
+  ggraph(layout = "fr") +
+  geom_mark_hull(
+    aes(x, y,
+        group = community,
+        fill = community),
+    alpha = 0.2,
+    expand = unit(0.3, "cm"),
+    radius = unit(0.3, "cm")
+  ) +
+  geom_edge_link(aes(width = Weight),
+                 alpha = 0.2) +
+  scale_edge_width(range = c(0.1, 5)) +
+  geom_node_point(aes(fill = Department,
+                      size = betweenness_measure),
+                      color = "black",
+                      shape = 21)
+
+g + theme_graph()
+```
+:::
+
+## Building Interactive Network Graph with visNetwork
+
+**visNetwork** uses a nodes list and an edges list to create an interactive
+graph that you can drag, zoom and explore.
+
+### Data Preparation
+
+```{r}
+GAStech_edges_aggregated <- GAStech_edges %>%
+  left_join(GAStech_nodes, by = c("sourceLabel" = "label")) %>%
+  rename(from = id) %>%
+  left_join(GAStech_nodes, by = c("targetLabel" = "label")) %>%
+  rename(to = id) %>%
+  filter(MainSubject == "Work related") %>%
+  group_by(from, to) %>%
+    summarise(weight = n()) %>%
+  filter(from != to) %>%
+  filter(weight > 1) %>%
+  ungroup()
+```
+
+### Basic Interactive Network Graph
+
+::: panel-tabset
+## The Plot
+```{r}
+#| echo: false
+visNetwork(GAStech_nodes,
+           GAStech_edges_aggregated) %>%
+  visPhysics(stabilization = TRUE)
+```
+## The Code
+```{r}
+#| eval: false
+visNetwork(GAStech_nodes,
+           GAStech_edges_aggregated) %>%
+  visPhysics(stabilization = TRUE)
+```
+:::
+
+### Working with Layout
+
+::: panel-tabset
+## The Plot
+```{r}
+#| echo: false
+visNetwork(GAStech_nodes,
+           GAStech_edges_aggregated) %>%
+  visIgraphLayout(layout = "layout_with_fr")
+```
+## The Code
+```{r}
+#| eval: false
+visNetwork(GAStech_nodes,
+           GAStech_edges_aggregated) %>%
+  visIgraphLayout(layout = "layout_with_fr")
+```
+:::
+
+### Colouring Nodes by Group
+
+visNetwork looks for a field called `group` and colours nodes by its values. We
+rename `Department` to `group`.
+
+```{r}
+GAStech_nodes <- GAStech_nodes %>%
+  rename(group = Department)
+```
+
+::: panel-tabset
+## The Plot
+```{r}
+#| echo: false
+visNetwork(GAStech_nodes,
+           GAStech_edges_aggregated) %>%
+  visIgraphLayout(layout = "layout_with_fr") %>%
+  visLegend() %>%
+  visLayout(randomSeed = 123)
+```
+## The Code
+```{r}
+#| eval: false
+visNetwork(GAStech_nodes,
+           GAStech_edges_aggregated) %>%
+  visIgraphLayout(layout = "layout_with_fr") %>%
+  visLegend() %>%
+  visLayout(randomSeed = 123)
+```
+:::
+
+### Adding Edges and Interactivity
+
+`visEdges()` styles the edges, and `visOptions()` adds interactivity such as
+highlighting the nearest nodes on click and a dropdown to select a node by id.
+
+::: panel-tabset
+## The Plot
+```{r}
+#| echo: false
+visNetwork(GAStech_nodes,
+           GAStech_edges_aggregated) %>%
+  visIgraphLayout(layout = "layout_with_fr") %>%
+  visEdges(arrows = "to",
+           smooth = list(enabled = TRUE,
+                         type = "curvedCW")) %>%
+  visOptions(highlightNearest = TRUE,
+             nodesIdSelection = TRUE) %>%
+  visLegend() %>%
+  visLayout(randomSeed = 123)
+```
+## The Code
+```{r}
+#| eval: false
+visNetwork(GAStech_nodes,
+           GAStech_edges_aggregated) %>%
+  visIgraphLayout(layout = "layout_with_fr") %>%
+  visEdges(arrows = "to",
+           smooth = list(enabled = TRUE,
+                         type = "curvedCW")) %>%
+  visOptions(highlightNearest = TRUE,
+             nodesIdSelection = TRUE) %>%
+  visLegend() %>%
+  visLayout(randomSeed = 123)
+```
+:::
+
+# Part B: Visualising and Analysing Text Data
+
+In this section, we process and visualise text data using the **tidytext**
+framework. We import many text files, clean them, build a word cloud, compute
+TF-IDF, and visualise word relationships as a network.
+
+## Getting Started
+
+### Installing and Loading Packages
+
+```{r}
+pacman::p_load(tidytext, widyr, wordcloud, DT,
+               ggwordcloud, textplot, lubridate, hms,
+               tidyverse, tidygraph, ggraph, igraph)
+```
+
+## Importing Multiple Text Files from Multiple Folders
+
+### Creating a Folder List
+
+```{r}
+news20 <- "data/20news/"
+```
+
+### Defining a Function to Read a Folder
+
+```{r}
+read_folder <- function(infolder) {
+  tibble(file = dir(infolder,
+                    full.names = TRUE)) %>%
+    mutate(text = map(file,
+                      read_lines)) %>%
+    transmute(id = basename(file),
+              text) %>%
+    unnest(text)
 }
 ```
 
-### Building the Cleaned Tibble
-
-We order the weekday and hour fields as factors so they plot in a sensible
-order.
+### Reading All Messages
 
 ```{r}
-wkday_levels <- c('Saturday', 'Friday',
-                  'Thursday', 'Wednesday',
-                  'Tuesday', 'Monday',
-                  'Sunday')
-
-attacks <- attacks %>%
-  group_by(tz) %>%
-  do(make_hr_wkday(.$timestamp,
-                   .$source_country,
-                   .$tz)) %>%
-  ungroup() %>%
-  mutate(wkday = factor(
-    wkday, levels = wkday_levels),
-    hour  = factor(
-      hour, levels = 0:23))
+raw_text <- tibble(folder =
+                     dir(news20,
+                         full.names = TRUE)) %>%
+  mutate(folder_out = map(folder,
+                          read_folder)) %>%
+  unnest(cols = c(folder_out)) %>%
+  transmute(newsgroup = basename(folder),
+            id, text)
 ```
 
-```{r}
-kable(head(attacks))
-```
+## Initial EDA
 
-## Building the Calendar Heatmap
-
-We aggregate the attacks by weekday and hour, then plot a tile for each
-combination. Colour here encodes the number of attacks, which is the whole point
-of the heatmap.
+The chart below shows the number of messages by newsgroup.
 
 ::: panel-tabset
 ## The Plot
 ```{r}
 #| echo: false
-grouped <- attacks %>%
-  count(wkday, hour) %>%
-  ungroup() %>%
-  na.omit()
-
-ggplot(grouped,
-       aes(hour,
-           wkday,
-           fill = n)) +
-geom_tile(color = "white",
-          size = 0.1) +
-theme_tufte(base_family = "Helvetica") +
-coord_equal() +
-scale_fill_gradient(name = "# of attacks",
-                    low = "sky blue",
-                    high = "dark blue") +
-labs(x = NULL,
-     y = NULL,
-     title = "Attacks by weekday and time of day") +
-theme(axis.ticks = element_blank(),
-      plot.title = element_text(hjust = 0.5),
-      legend.title = element_text(size = 8),
-      legend.text = element_text(size = 6))
+raw_text %>%
+  group_by(newsgroup) %>%
+  summarize(messages = n_distinct(id)) %>%
+  ggplot(aes(messages, reorder(newsgroup, messages))) +
+  geom_col(fill = "lightblue") +
+  labs(x = "Number of messages", y = NULL) +
+  theme_minimal() +
+  theme(axis.text.y = element_text(colour = "black", size = 9),
+        axis.text.x = element_text(colour = "black"))
 ```
 ## The Code
 ```{r}
 #| eval: false
-grouped <- attacks %>%
-  count(wkday, hour) %>%
-  ungroup() %>%
-  na.omit()
-
-ggplot(grouped,
-       aes(hour,
-           wkday,
-           fill = n)) +
-geom_tile(color = "white",
-          size = 0.1) +
-theme_tufte(base_family = "Helvetica") +
-coord_equal() +
-scale_fill_gradient(name = "# of attacks",
-                    low = "sky blue",
-                    high = "dark blue") +
-labs(x = NULL,
-     y = NULL,
-     title = "Attacks by weekday and time of day") +
-theme(axis.ticks = element_blank(),
-      plot.title = element_text(hjust = 0.5),
-      legend.title = element_text(size = 8),
-      legend.text = element_text(size = 6))
+raw_text %>%
+  group_by(newsgroup) %>%
+  summarize(messages = n_distinct(id)) %>%
+  ggplot(aes(messages, reorder(newsgroup, messages))) +
+  geom_col(fill = "lightblue") +
+  labs(x = "Number of messages", y = NULL) +
+  theme_minimal() +
+  theme(axis.text.y = element_text(colour = "black", size = 9),
+        axis.text.x = element_text(colour = "black"))
 ```
 :::
 
-## Building Multiple Calendar Heatmaps
+## Introducing tidytext
 
-We can build one heatmap per country for the four countries with the most
-attacks.
+### Removing Headers and Signatures
 
-### Identifying the Top Four Countries
+Each message has a header and sometimes an automated signature that we don't want
+in the analysis.
 
 ```{r}
-attacks_by_country <- count(
-  attacks, source_country) %>%
-  mutate(percent = percent(n/sum(n))) %>%
-  arrange(desc(n))
+cleaned_text <- raw_text %>%
+  group_by(newsgroup, id) %>%
+  filter(cumsum(text == "") > 0,
+         cumsum(str_detect(
+           text, "^--")) == 0) %>%
+  ungroup()
 ```
 
-### Preparing the Tidy Data Frame
+### Removing Quoted Lines
 
 ```{r}
-top4 <- attacks_by_country$source_country[1:4]
-top4_attacks <- attacks %>%
-  filter(source_country %in% top4) %>%
-  count(source_country, wkday, hour) %>%
+cleaned_text <- cleaned_text %>%
+  filter(str_detect(text, "^[^>]+[A-Za-z\\d]")
+         | text == "",
+         !str_detect(text,
+                     "writes(:|\\.\\.\\.)$"),
+         !str_detect(text,
+                     "^In article <")
+  )
+```
+
+### Tokenising and Removing Stop Words
+
+`unnest_tokens()` splits the text into individual words, and we remove common
+stop words.
+
+```{r}
+usenet_words <- cleaned_text %>%
+  unnest_tokens(word, text) %>%
+  filter(str_detect(word, "[a-z']$"),
+         !word %in% stop_words$word)
+```
+
+```{r}
+usenet_words %>%
+  count(word, sort = TRUE)
+```
+
+### Counting Words by Newsgroup
+
+```{r}
+words_by_newsgroup <- usenet_words %>%
+  count(newsgroup, word, sort = TRUE) %>%
+  ungroup()
+```
+
+## Visualising Words with Word Cloud
+
+### Static Word Cloud with wordcloud
+
+::: panel-tabset
+## The Plot
+```{r}
+#| echo: false
+wordcloud(words_by_newsgroup$word,
+          words_by_newsgroup$n,
+          max.words = 300)
+```
+## The Code
+```{r}
+#| eval: false
+wordcloud(words_by_newsgroup$word,
+          words_by_newsgroup$n,
+          max.words = 300)
+```
+:::
+
+### Interactive Table of Word Counts
+
+```{r}
+DT::datatable(words_by_newsgroup, filter = 'top')
+```
+
+### Word Cloud with ggwordcloud
+
+::: panel-tabset
+## The Plot
+```{r}
+#| echo: false
+set.seed(1234)
+
+words_by_newsgroup %>%
+  group_by(newsgroup) %>%
+  slice_max(n, n = 30) %>%
   ungroup() %>%
-  mutate(source_country = factor(
-    source_country, levels = top4)) %>%
-  na.omit()
-```
-
-### Plotting the Faceted Heatmap
-
-::: panel-tabset
-## The Plot
-```{r}
-#| echo: false
-ggplot(top4_attacks,
-       aes(hour,
-           wkday,
-           fill = n)) +
-  geom_tile(color = "white",
-          size = 0.1) +
-  theme_tufte(base_family = "Helvetica") +
-  coord_equal() +
-  scale_fill_gradient(name = "# of attacks",
-                    low = "sky blue",
-                    high = "dark blue") +
-  facet_wrap(~source_country, ncol = 2) +
-  labs(x = NULL, y = NULL,
-     title = "Attacks on top 4 countries by weekday and time of day") +
-  theme(axis.ticks = element_blank(),
-        axis.text.x = element_text(size = 7),
-        plot.title = element_text(hjust = 0.5),
-        legend.title = element_text(size = 8),
-        legend.text = element_text(size = 6))
+  ggplot(aes(label = word,
+             size = n)) +
+  geom_text_wordcloud() +
+  scale_size_area(max_size = 6) +
+  theme_minimal() +
+  facet_wrap(~newsgroup)
 ```
 ## The Code
 ```{r}
 #| eval: false
-ggplot(top4_attacks,
-       aes(hour,
-           wkday,
-           fill = n)) +
-  geom_tile(color = "white",
-          size = 0.1) +
-  theme_tufte(base_family = "Helvetica") +
-  coord_equal() +
-  scale_fill_gradient(name = "# of attacks",
-                    low = "sky blue",
-                    high = "dark blue") +
-  facet_wrap(~source_country, ncol = 2) +
-  labs(x = NULL, y = NULL,
-     title = "Attacks on top 4 countries by weekday and time of day") +
-  theme(axis.ticks = element_blank(),
-        axis.text.x = element_text(size = 7),
-        plot.title = element_text(hjust = 0.5),
-        legend.title = element_text(size = 8),
-        legend.text = element_text(size = 6))
+set.seed(1234)
+
+words_by_newsgroup %>%
+  group_by(newsgroup) %>%
+  slice_max(n, n = 30) %>%
+  ungroup() %>%
+  ggplot(aes(label = word,
+             size = n)) +
+  geom_text_wordcloud() +
+  scale_size_area(max_size = 6) +
+  theme_minimal() +
+  facet_wrap(~newsgroup)
 ```
 :::
 
-# Plotting Cycle Plot
+## TF-IDF Analysis
 
-A cycle plot shows a time-series pattern and trend within and across a repeating
-cycle, here visitor arrivals from Vietnam by month across years.
+TF-IDF (term frequency–inverse document frequency) reflects how important a word
+is to a document within a collection.
 
-## Data Import
-
-```{r}
-air <- read_excel("data/arrivals_by_air.xlsx")
-```
-
-## Deriving Month and Year Fields
+### Computing TF-IDF
 
 ```{r}
-air$month <- factor(month(air$`Month-Year`),
-                    levels = 1:12,
-                    labels = month.abb,
-                    ordered = TRUE)
-air$year <- year(ymd(air$`Month-Year`))
+tf_idf <- words_by_newsgroup %>%
+  bind_tf_idf(word, newsgroup, n) %>%
+  arrange(desc(tf_idf))
 ```
 
-## Extracting the Target Country
+### Visualising TF-IDF as an Interactive Table
 
 ```{r}
-Vietnam <- air %>%
-  select(`Vietnam`,
-         month,
-         year) %>%
-  filter(year >= 2010)
+DT::datatable(tf_idf, filter = 'top') %>%
+  formatRound(columns = c('tf', 'idf',
+                          'tf_idf'),
+              digits = 3) %>%
+  formatStyle(0,
+              target = 'row',
+              lineHeight = '25%')
 ```
 
-## Computing Year Average Arrivals by Month
+### Visualising TF-IDF within Science Newsgroups
 
-```{r}
-hline.data <- Vietnam %>%
-  group_by(month) %>%
-  summarise(avgvalue = mean(`Vietnam`))
-```
-
-## Plotting the Cycle Plot
-
-Each panel is one month, the black line shows the year-on-year trend, and the red
-reference line marks that month's average. Colour is used only for the reference
-line, to separate it from the data.
+Facet bar charts show the top TF-IDF words for each science-related newsgroup.
 
 ::: panel-tabset
 ## The Plot
 ```{r}
 #| echo: false
-ggplot() +
-  geom_line(data = Vietnam,
-            aes(x = year,
-                y = `Vietnam`,
-                group = month),
-            colour = "black") +
-  geom_hline(aes(yintercept = avgvalue),
-             data = hline.data,
-             linetype = 6,
-             colour = "red",
-             size = 0.5) +
-  facet_grid(~month) +
-  labs(axis.text.x = element_blank(),
-       title = "Visitor arrivals from Vietnam by air, Jan 2010-Dec 2019") +
-  xlab("") +
-  ylab("No. of Visitors") +
-  theme_tufte(base_family = "Helvetica")
+tf_idf %>%
+  filter(str_detect(newsgroup, "^sci\\.")) %>%
+  group_by(newsgroup) %>%
+  slice_max(tf_idf,
+            n = 12) %>%
+  ungroup() %>%
+  mutate(word = reorder(word,
+                        tf_idf)) %>%
+  ggplot(aes(tf_idf,
+             word,
+             fill = newsgroup)) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~ newsgroup,
+             scales = "free") +
+  labs(x = "tf-idf",
+       y = NULL)
 ```
 ## The Code
 ```{r}
 #| eval: false
-ggplot() +
-  geom_line(data = Vietnam,
-            aes(x = year,
-                y = `Vietnam`,
-                group = month),
-            colour = "black") +
-  geom_hline(aes(yintercept = avgvalue),
-             data = hline.data,
-             linetype = 6,
-             colour = "red",
-             size = 0.5) +
-  facet_grid(~month) +
-  labs(axis.text.x = element_blank(),
-       title = "Visitor arrivals from Vietnam by air, Jan 2010-Dec 2019") +
-  xlab("") +
-  ylab("No. of Visitors") +
-  theme_tufte(base_family = "Helvetica")
+tf_idf %>%
+  filter(str_detect(newsgroup, "^sci\\.")) %>%
+  group_by(newsgroup) %>%
+  slice_max(tf_idf,
+            n = 12) %>%
+  ungroup() %>%
+  mutate(word = reorder(word,
+                        tf_idf)) %>%
+  ggplot(aes(tf_idf,
+             word,
+             fill = newsgroup)) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~ newsgroup,
+             scales = "free") +
+  labs(x = "tf-idf",
+       y = NULL)
 ```
 :::
 
-# Plotting Slopegraph
+## Counting and Correlating Pairs of Words
 
-A slopegraph compares values at two points in time and shows how each item moves
-between them.
+### Pairwise Correlation between Newsgroups
 
-## Data Import
+`pairwise_cor()` of **widyr** computes the correlation between newsgroups based on
+common words.
 
 ```{r}
-rice <- read_csv("data/rice.csv")
+newsgroup_cors <- words_by_newsgroup %>%
+  filter(n >= 5) %>%
+  pairwise_cor(newsgroup,
+               word,
+               n,
+               sort = TRUE)
 ```
 
-## Plotting the Slopegraph
-
-We convert `Year` to a factor and keep only 1961 and 1980, then use
-`newggslopegraph()` of the CGPfunctions package.
+### Visualising Correlation as a Network
 
 ::: panel-tabset
 ## The Plot
 ```{r}
 #| echo: false
-rice %>%
-  mutate(Year = factor(Year)) %>%
-  filter(Year %in% c(1961, 1980)) %>%
-  newggslopegraph(Year, Yield, Country,
-                Title = "Rice Yield of Top 11 Asian Counties",
-                SubTitle = "1961-1980",
-                Caption = "Prepared by: ZeXin Chen")
+set.seed(2017)
+
+newsgroup_cors %>%
+  filter(correlation > .025) %>%
+  graph_from_data_frame() %>%
+  ggraph(layout = "fr") +
+  geom_edge_link(aes(alpha = correlation,
+                     width = correlation)) +
+  geom_node_point(size = 6,
+                  color = "lightblue") +
+  geom_node_text(aes(label = name),
+                 color = "red",
+                 repel = TRUE) +
+  theme_void()
 ```
 ## The Code
 ```{r}
 #| eval: false
-rice %>%
-  mutate(Year = factor(Year)) %>%
-  filter(Year %in% c(1961, 1980)) %>%
-  newggslopegraph(Year, Yield, Country,
-                Title = "Rice Yield of Top 11 Asian Counties",
-                SubTitle = "1961-1980",
-                Caption = "Prepared by: ZeXin Chen")
+set.seed(2017)
+
+newsgroup_cors %>%
+  filter(correlation > .025) %>%
+  graph_from_data_frame() %>%
+  ggraph(layout = "fr") +
+  geom_edge_link(aes(alpha = correlation,
+                     width = correlation)) +
+  geom_node_point(size = 6,
+                  color = "lightblue") +
+  geom_node_text(aes(label = name),
+                 color = "red",
+                 repel = TRUE) +
+  theme_void()
 ```
 :::
 
-# Plotting Horizon Chart
+## Bigram Analysis
 
-A horizon chart is a compact way to compare many time-series at once. Each series
-is split into colour bands by value, then the bands are layered so each series
-takes very little vertical space. This makes it easy to scan many countries
-together.
+### Creating Bigrams
 
-## Preparing the Data
-
-We reshape the air arrivals data into a long format and derive a proper date
-field, keeping data from 2010 onward.
+A bigram is a pair of consecutive words.
 
 ```{r}
-air_long <- air %>%
-  pivot_longer(cols = -c(`Month-Year`, month, year),
-               names_to = "country",
-               values_to = "arrivals") %>%
-  mutate(date = ymd(`Month-Year`)) %>%
-  filter(year >= 2010)
+bigrams <- cleaned_text %>%
+  unnest_tokens(bigram,
+                text,
+                token = "ngrams",
+                n = 2)
 ```
 
-## Plotting the Horizon Chart
+### Cleaning Bigrams
 
-`geom_horizon()` of the ggHoriPlot package builds the bands, and we facet by
-country so each one gets its own compact strip. Colour here encodes the value
-band, which is the core idea of the chart.
+We separate each bigram into two words and remove stop words from both.
+
+```{r}
+bigrams_separated <- bigrams %>%
+  filter(bigram != 'NA') %>%
+  separate(bigram, c("word1", "word2"),
+           sep = " ")
+
+bigrams_filtered <- bigrams_separated %>%
+  filter(!word1 %in% stop_words$word) %>%
+  filter(!word2 %in% stop_words$word)
+```
+
+### Counting Bigrams
+
+```{r}
+bigram_counts <- bigrams_filtered %>%
+  count(word1, word2, sort = TRUE)
+```
+
+### Creating a Network Graph from Bigrams
+
+```{r}
+bigram_graph <- bigram_counts %>%
+  filter(n > 3) %>%
+  graph_from_data_frame()
+
+bigram_graph
+```
+
+### Visualising the Bigram Network
 
 ::: panel-tabset
 ## The Plot
 ```{r}
 #| echo: false
-#| fig-height: 12
-air_long %>%
-  ggplot() +
-  geom_horizon(aes(x = date,
-                   y = arrivals),
-               origin = "midpoint",
-               horizonscale = 6) +
-  scale_fill_hcl(palette = 'RdBu') +
-  facet_grid(country ~ .) +
-  theme_few() +
-  theme(panel.spacing.y = unit(0, "lines"),
-        strip.text.y = element_text(size = 5,
-                                    angle = 0,
-                                    hjust = 0),
-        axis.text.y = element_blank(),
-        axis.ticks.y = element_blank(),
-        panel.border = element_blank(),
-        legend.position = 'none') +
-  labs(title = 'Visitor arrivals by air, 2010 onward',
-       x = NULL, y = NULL)
+set.seed(1234)
+
+a <- grid::arrow(type = "closed",
+                 length = unit(.15,
+                               "inches"))
+
+ggraph(bigram_graph,
+       layout = "fr") +
+  geom_edge_link(aes(edge_alpha = n),
+                 show.legend = FALSE,
+                 arrow = a,
+                 end_cap = circle(.07,
+                                  'inches')) +
+  geom_node_point(color = "lightblue",
+                  size = 5) +
+  geom_node_text(aes(label = name),
+                 vjust = 1,
+                 hjust = 1) +
+  theme_void()
 ```
 ## The Code
 ```{r}
 #| eval: false
-#| fig-height: 12
-air_long %>%
-  ggplot() +
-  geom_horizon(aes(x = date,
-                   y = arrivals),
-               origin = "midpoint",
-               horizonscale = 6) +
-  scale_fill_hcl(palette = 'RdBu') +
-  facet_grid(country ~ .) +
-  theme_few() +
-  theme(panel.spacing.y = unit(0, "lines"),
-        strip.text.y = element_text(size = 5,
-                                    angle = 0,
-                                    hjust = 0),
-        axis.text.y = element_blank(),
-        axis.ticks.y = element_blank(),
-        panel.border = element_blank(),
-        legend.position = 'none') +
-  labs(title = 'Visitor arrivals by air, 2010 onward',
-       x = NULL, y = NULL)
+set.seed(1234)
+
+a <- grid::arrow(type = "closed",
+                 length = unit(.15,
+                               "inches"))
+
+ggraph(bigram_graph,
+       layout = "fr") +
+  geom_edge_link(aes(edge_alpha = n),
+                 show.legend = FALSE,
+                 arrow = a,
+                 end_cap = circle(.07,
+                                  'inches')) +
+  geom_node_point(color = "lightblue",
+                  size = 5) +
+  geom_node_text(aes(label = name),
+                 vjust = 1,
+                 hjust = 1) +
+  theme_void()
 ```
 :::
