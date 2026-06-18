@@ -1,0 +1,708 @@
+---
+title: "Hands-on Exercise 9"
+subtitle: "Visualising and Analysing Geographic Data"
+author: "ZeXin Chen"
+date: "2026-06-18"
+date-modified: "last-modified"
+format:
+  html:
+    toc: true
+    number-sections: true
+execute:
+  echo: true
+  eval: true
+  warning: false
+  message: false
+  freeze: true
+---
+
+# Overview
+
+In this hands-on exercise we learn to plot maps that carry data. We cover three
+related skills:
+
+- choropleth mapping, where regions are shaded by a value, using the **tmap** package
+- geospatial point data, where outlets or events are drawn as proportional symbols
+- analytical mapping, where we map rates and use percentile and box maps to surface outliers
+
+The key new packages are **sf** for handling spatial data and **tmap** for drawing
+thematic maps.
+
+# Getting Started
+
+## Installing and Loading Packages
+
+```{r}
+pacman::p_load(sf, tmap, tidyverse)
+```
+
+A quick note on the two new packages. **sf** reads and stores spatial data such as
+boundaries and points, and **tmap** turns that data into maps. The **tidyverse**
+packages handle the data wrangling along the way.
+
+# Part A: Choropleth Mapping
+
+A choropleth map shades enumeration units, such as countries or subzones, by a
+value. Here we map the dependency ratio across Singapore planning subzones.
+
+## The Data
+
+Two datasets are used:
+
+- the Master Plan 2014 Subzone Boundary, an ESRI shapefile holding the geographic
+  boundaries of Singapore at the subzone level
+- Singapore residents by planning area, subzone, age group and sex, an aspatial
+  CSV that we will join to the boundaries
+
+## Importing Geospatial Data
+
+`st_read()` of the **sf** package reads the shapefile into a simple feature data
+frame.
+
+```{r}
+mpsz <- st_read(dsn = "data/geospatial",
+                layer = "MP14_SUBZONE_WEB_PL")
+```
+
+```{r}
+mpsz
+```
+
+## Importing Attribute Data
+
+```{r}
+popdata <- read_csv("data/aspatial/respopagesextod2011to2020.csv")
+```
+
+## Data Preparation
+
+We build a table of 2020 values with the fields we need: young, economy active,
+aged, total, and a derived dependency ratio.
+
+```{r}
+popdata2020 <- popdata %>%
+  filter(Time == 2020) %>%
+  group_by(PA, SZ, AG) %>%
+  summarise(`POP` = sum(`Pop`)) %>%
+  ungroup() %>%
+  pivot_wider(names_from = AG,
+              values_from = POP) %>%
+  mutate(YOUNG = rowSums(.[3:6]) + rowSums(.[12])) %>%
+  mutate(`ECONOMY ACTIVE` = rowSums(.[7:11]) + rowSums(.[13:15])) %>%
+  mutate(`AGED` = rowSums(.[16:21])) %>%
+  mutate(`TOTAL` = rowSums(.[3:21])) %>%
+  mutate(`DEPENDENCY` = (`YOUNG` + `AGED`) / `ECONOMY ACTIVE`) %>%
+  select(`PA`, `SZ`, `YOUNG`,
+         `ECONOMY ACTIVE`, `AGED`,
+         `TOTAL`, `DEPENDENCY`)
+```
+
+Before joining, we convert the PA and SZ fields to uppercase so they match the
+boundary data.
+
+```{r}
+popdata2020 <- popdata2020 %>%
+  mutate(across(c(PA, SZ), toupper)) %>%
+  filter(`ECONOMY ACTIVE` > 0)
+```
+
+Now we join the attribute table onto the boundary data using the subzone name as
+the common key. Keeping `mpsz` on the left ensures the result stays a spatial
+data frame.
+
+```{r}
+mpsz_pop2020 <- left_join(mpsz, popdata2020,
+                          by = c("SUBZONE_N" = "SZ"))
+```
+
+## Choropleth Map Using qtm()
+
+The quickest way to draw a choropleth map is `qtm()`. It gives a sensible default
+in one line.
+
+::: panel-tabset
+## The Plot
+```{r}
+#| echo: false
+tmap_mode("plot")
+qtm(mpsz_pop2020,
+    fill = "DEPENDENCY")
+```
+## The Code
+```{r}
+#| eval: false
+tmap_mode("plot")
+qtm(mpsz_pop2020,
+    fill = "DEPENDENCY")
+```
+:::
+
+## Choropleth Map Using tmap Elements
+
+For more control over the look, we build the map from individual **tmap**
+elements. Colour here encodes the dependency ratio, which is the point of the
+map.
+
+::: panel-tabset
+## The Plot
+```{r}
+#| echo: false
+tm_shape(mpsz_pop2020) +
+  tm_polygons(fill = "DEPENDENCY",
+              fill.scale = tm_scale_intervals(
+                style = "quantile",
+                n = 5,
+                values = "brewer.blues"),
+              fill.legend = tm_legend(
+                title = "Dependency ratio")) +
+  tm_title("Distribution of Dependency Ratio by planning subzone") +
+  tm_layout(frame = TRUE) +
+  tm_borders(fill_alpha = 0.5) +
+  tm_compass(type = "8star", size = 2) +
+  tm_grid(alpha = 0.2) +
+  tm_credits("Source: URA Master Plan subzone boundary and Department of Statistics population data",
+             position = c("left", "bottom"))
+```
+## The Code
+```{r}
+#| eval: false
+tm_shape(mpsz_pop2020) +
+  tm_polygons(fill = "DEPENDENCY",
+              fill.scale = tm_scale_intervals(
+                style = "quantile",
+                n = 5,
+                values = "brewer.blues"),
+              fill.legend = tm_legend(
+                title = "Dependency ratio")) +
+  tm_title("Distribution of Dependency Ratio by planning subzone") +
+  tm_layout(frame = TRUE) +
+  tm_borders(fill_alpha = 0.5) +
+  tm_compass(type = "8star", size = 2) +
+  tm_grid(alpha = 0.2) +
+  tm_credits("Source: URA Master Plan subzone boundary and Department of Statistics population data",
+             position = c("left", "bottom"))
+```
+:::
+
+## Data Classification Methods
+
+`tmap` offers several ways to group values into classes. Below we compare the
+jenks method with the equal method.
+
+::: panel-tabset
+## The Plot
+```{r}
+#| echo: false
+tm_shape(mpsz_pop2020) +
+  tm_polygons("DEPENDENCY",
+              fill.scale = tm_scale_intervals(
+                style = "jenks",
+                n = 5)) +
+  tm_borders(fill_alpha = 0.5)
+```
+## The Code
+```{r}
+#| eval: false
+tm_shape(mpsz_pop2020) +
+  tm_polygons("DEPENDENCY",
+              fill.scale = tm_scale_intervals(
+                style = "jenks",
+                n = 5)) +
+  tm_borders(fill_alpha = 0.5)
+```
+:::
+
+::: panel-tabset
+## The Plot
+```{r}
+#| echo: false
+tm_shape(mpsz_pop2020) +
+  tm_polygons("DEPENDENCY",
+              fill.scale = tm_scale_intervals(
+                style = "equal",
+                n = 5)) +
+  tm_borders(fill_alpha = 0.5)
+```
+## The Code
+```{r}
+#| eval: false
+tm_shape(mpsz_pop2020) +
+  tm_polygons("DEPENDENCY",
+              fill.scale = tm_scale_intervals(
+                style = "equal",
+                n = 5)) +
+  tm_borders(fill_alpha = 0.5)
+```
+:::
+
+The jenks method spreads the classes to follow natural breaks in the data, while
+the equal method splits the range into equal width bands, which can look very
+different for skewed data.
+
+## Colour Scheme
+
+We can set the palette with the `values` argument. A minus prefix reverses it.
+
+::: panel-tabset
+## The Plot
+```{r}
+#| echo: false
+tm_shape(mpsz_pop2020) +
+  tm_polygons("DEPENDENCY",
+              fill.scale = tm_scale_intervals(
+                style = "quantile",
+                n = 5,
+                values = "brewer.greens")) +
+  tm_borders(fill_alpha = 0.5)
+```
+## The Code
+```{r}
+#| eval: false
+tm_shape(mpsz_pop2020) +
+  tm_polygons("DEPENDENCY",
+              fill.scale = tm_scale_intervals(
+                style = "quantile",
+                n = 5,
+                values = "brewer.greens")) +
+  tm_borders(fill_alpha = 0.5)
+```
+:::
+
+## Small Multiple Choropleth Maps
+
+Small multiples, also called facet maps, place several maps side by side so we
+can compare a value across a grouping variable. Here we facet by region.
+
+::: panel-tabset
+## The Plot
+```{r}
+#| echo: false
+tm_shape(mpsz_pop2020) +
+  tm_polygons("DEPENDENCY",
+              fill.scale = tm_scale_intervals(
+                style = "quantile",
+                n = 5,
+                values = "brewer.blues")) +
+  tm_facets(by = "REGION_N",
+            free.coords = TRUE) +
+  tm_borders(fill_alpha = 0.5) +
+  tm_layout(legend.show = FALSE)
+```
+## The Code
+```{r}
+#| eval: false
+tm_shape(mpsz_pop2020) +
+  tm_polygons("DEPENDENCY",
+              fill.scale = tm_scale_intervals(
+                style = "quantile",
+                n = 5,
+                values = "brewer.blues")) +
+  tm_facets(by = "REGION_N",
+            free.coords = TRUE) +
+  tm_borders(fill_alpha = 0.5) +
+  tm_layout(legend.show = FALSE)
+```
+:::
+
+# Part B: Visualising Geospatial Point Data
+
+A proportional symbol map uses the size of a symbol to show the magnitude of a
+value at a point. Here we map the winnings at Singapore Pools outlets.
+
+## The Data
+
+The dataset is `SGPools_svy21.csv`. Its XCOORD and YCOORD columns hold the outlet
+coordinates in the Singapore SVY21 projected system.
+
+## Importing the Aspatial Data
+
+```{r}
+sgpools <- read_csv("data/aspatial/SGPools_svy21.csv")
+```
+
+```{r}
+list(sgpools)
+```
+
+## Creating a Spatial Point Data Frame
+
+`st_as_sf()` converts the plain table into a spatial point data frame. The crs
+3414 is the EPSG code for Singapore SVY21.
+
+```{r}
+sgpools_sf <- st_as_sf(sgpools,
+                       coords = c("XCOORD", "YCOORD"),
+                       crs = 3414)
+```
+
+```{r}
+list(sgpools_sf)
+```
+
+## Interactive Point Symbol Map
+
+We turn on the interactive view mode, then draw a basic point map.
+
+::: panel-tabset
+## The Plot
+```{r}
+#| echo: false
+tmap_mode("view")
+tm_shape(sgpools_sf) +
+  tm_bubbles(fill = "red",
+             size = 1,
+             col = "black",
+             lwd = 1)
+```
+## The Code
+```{r}
+#| eval: false
+tmap_mode("view")
+tm_shape(sgpools_sf) +
+  tm_bubbles(fill = "red",
+             size = 1,
+             col = "black",
+             lwd = 1)
+```
+:::
+
+## Proportional Symbol Map
+
+Assigning a numeric variable to `size` makes each bubble proportional to its
+value, here the group 1 and group 2 winnings.
+
+::: panel-tabset
+## The Plot
+```{r}
+#| echo: false
+tm_shape(sgpools_sf) +
+  tm_bubbles(fill = "red",
+             size = "Gp1Gp2 Winnings",
+             col = "black",
+             lwd = 1)
+```
+## The Code
+```{r}
+#| eval: false
+tm_shape(sgpools_sf) +
+  tm_bubbles(fill = "red",
+             size = "Gp1Gp2 Winnings",
+             col = "black",
+             lwd = 1)
+```
+:::
+
+## Adding Colour by Outlet Type
+
+Mapping the outlet type to colour lets us compare branches and outlets while
+keeping the proportional sizing.
+
+::: panel-tabset
+## The Plot
+```{r}
+#| echo: false
+tm_shape(sgpools_sf) +
+  tm_bubbles(fill = "OUTLET TYPE",
+             size = "Gp1Gp2 Winnings",
+             col = "black",
+             lwd = 1)
+```
+## The Code
+```{r}
+#| eval: false
+tm_shape(sgpools_sf) +
+  tm_bubbles(fill = "OUTLET TYPE",
+             size = "Gp1Gp2 Winnings",
+             col = "black",
+             lwd = 1)
+```
+:::
+
+## Faceted Proportional Symbol Map
+
+The view mode also works with facets. The sync argument keeps the zoom and pan in
+step across the two maps.
+
+::: panel-tabset
+## The Plot
+```{r}
+#| echo: false
+tm_shape(sgpools_sf) +
+  tm_bubbles(fill = "OUTLET TYPE",
+             size = "Gp1Gp2 Winnings",
+             col = "black",
+             lwd = 1) +
+  tm_facets(by = "OUTLET TYPE",
+            nrow = 1,
+            sync = TRUE)
+```
+## The Code
+```{r}
+#| eval: false
+tm_shape(sgpools_sf) +
+  tm_bubbles(fill = "OUTLET TYPE",
+             size = "Gp1Gp2 Winnings",
+             col = "black",
+             lwd = 1) +
+  tm_facets(by = "OUTLET TYPE",
+            nrow = 1,
+            sync = TRUE)
+```
+:::
+
+```{r}
+tmap_mode("plot")
+```
+
+# Part C: Analytical Mapping
+
+Analytical maps go beyond showing raw counts. We map rates, then use percentile
+and box maps to highlight outliers. The data is water point information for
+Nigeria at the local government area level.
+
+## Importing the Data
+
+The prepared dataset is an rds file, which `read_rds()` reads back into a spatial
+data frame.
+
+```{r}
+NGA_wp <- read_rds("data/rds/NGA_wp.rds")
+```
+
+## Basic Choropleth of Counts
+
+We start by mapping the total and functional water point counts side by side.
+
+::: panel-tabset
+## The Plot
+```{r}
+#| echo: false
+p1 <- tm_shape(NGA_wp) +
+  tm_polygons(fill = "wp_functional",
+              fill.scale = tm_scale_intervals(
+                style = "equal",
+                n = 10,
+                values = "brewer.blues")) +
+  tm_borders(lwd = 0.1, fill_alpha = 1) +
+  tm_title("Distribution of functional water point by LGAs")
+
+p2 <- tm_shape(NGA_wp) +
+  tm_polygons(fill = "total_wp",
+              fill.scale = tm_scale_intervals(
+                style = "equal",
+                n = 10,
+                values = "brewer.blues")) +
+  tm_borders(lwd = 0.1, fill_alpha = 1) +
+  tm_title("Distribution of total water point by LGAs")
+
+tmap_arrange(p2, p1, nrow = 1)
+```
+## The Code
+```{r}
+#| eval: false
+p1 <- tm_shape(NGA_wp) +
+  tm_polygons(fill = "wp_functional",
+              fill.scale = tm_scale_intervals(
+                style = "equal",
+                n = 10,
+                values = "brewer.blues")) +
+  tm_borders(lwd = 0.1, fill_alpha = 1) +
+  tm_title("Distribution of functional water point by LGAs")
+
+p2 <- tm_shape(NGA_wp) +
+  tm_polygons(fill = "total_wp",
+              fill.scale = tm_scale_intervals(
+                style = "equal",
+                n = 10,
+                values = "brewer.blues")) +
+  tm_borders(lwd = 0.1, fill_alpha = 1) +
+  tm_title("Distribution of total water point by LGAs")
+
+tmap_arrange(p2, p1, nrow = 1)
+```
+:::
+
+## Choropleth Map for Rates
+
+Mapping rates rather than counts is important because water points are not evenly
+distributed. We derive the proportion of functional and non functional points
+per area.
+
+```{r}
+NGA_wp <- NGA_wp %>%
+  mutate(pct_functional = wp_functional / total_wp) %>%
+  mutate(pct_nonfunctional = wp_nonfunctional / total_wp)
+```
+
+::: panel-tabset
+## The Plot
+```{r}
+#| echo: false
+tm_shape(NGA_wp) +
+  tm_polygons("pct_functional",
+              fill.scale = tm_scale_intervals(
+                style = "equal",
+                n = 10,
+                values = "brewer.blues")) +
+  tm_borders(lwd = 0.1, fill_alpha = 1) +
+  tm_title("Rate map of functional water point by LGAs")
+```
+## The Code
+```{r}
+#| eval: false
+tm_shape(NGA_wp) +
+  tm_polygons("pct_functional",
+              fill.scale = tm_scale_intervals(
+                style = "equal",
+                n = 10,
+                values = "brewer.blues")) +
+  tm_borders(lwd = 0.1, fill_alpha = 1) +
+  tm_title("Rate map of functional water point by LGAs")
+```
+:::
+
+## Percentile Map
+
+A percentile map is a quantile map with six set categories: 0 to 1 percent, 1 to
+10, 10 to 50, 50 to 90, 90 to 99, and 99 to 100 percent. We first drop records
+with missing values, then write two small helper functions.
+
+```{r}
+NGA_wp <- NGA_wp %>%
+  drop_na()
+```
+
+```{r}
+get.var <- function(vname, df) {
+  v <- df[vname] %>%
+    st_set_geometry(NULL)
+  v <- unname(v[, 1])
+  return(v)
+}
+```
+
+```{r}
+percentmap <- function(vnam, df, legtitle = NA, mtitle = "Percentile Map") {
+  percent <- c(0, .01, .1, .5, .9, .99, 1)
+  var <- get.var(vnam, df)
+  bperc <- quantile(var, percent)
+  tm_shape(df) +
+    tm_polygons() +
+    tm_shape(df) +
+    tm_polygons(vnam,
+                title = legtitle,
+                breaks = bperc,
+                palette = "Blues",
+                labels = c("< 1%", "1% - 10%", "10% - 50%",
+                           "50% - 90%", "90% - 99%", "> 99%")) +
+    tm_borders() +
+    tm_layout(main.title = mtitle,
+              title.position = c("right", "bottom"))
+}
+```
+
+::: panel-tabset
+## The Plot
+```{r}
+#| echo: false
+percentmap("total_wp", NGA_wp)
+```
+## The Code
+```{r}
+#| eval: false
+percentmap("total_wp", NGA_wp)
+```
+:::
+
+## Box Map
+
+A box map is a quartile map with extra categories for lower and upper outliers,
+built on the logic of a boxplot. We start by looking at the distribution.
+
+::: panel-tabset
+## The Plot
+```{r}
+#| echo: false
+ggplot(data = NGA_wp,
+       aes(x = "",
+           y = wp_nonfunctional)) +
+  geom_boxplot()
+```
+## The Code
+```{r}
+#| eval: false
+ggplot(data = NGA_wp,
+       aes(x = "",
+           y = wp_nonfunctional)) +
+  geom_boxplot()
+```
+:::
+
+We write a function to compute the break points, handling the case where there
+are no lower or upper outliers.
+
+```{r}
+boxbreaks <- function(v, mult = 1.5) {
+  qv <- unname(quantile(v))
+  iqr <- qv[4] - qv[2]
+  upfence <- qv[4] + mult * iqr
+  lofence <- qv[2] - mult * iqr
+  bb <- vector(mode = "numeric", length = 7)
+  if (lofence < qv[1]) {
+    bb[1] <- lofence
+    bb[2] <- floor(qv[1])
+  } else {
+    bb[2] <- lofence
+    bb[1] <- qv[1]
+  }
+  if (upfence > qv[5]) {
+    bb[7] <- upfence
+    bb[6] <- ceiling(qv[5])
+  } else {
+    bb[6] <- upfence
+    bb[7] <- qv[5]
+  }
+  bb[3:5] <- qv[2:4]
+  return(bb)
+}
+```
+
+```{r}
+boxmap <- function(vnam, df,
+                   legtitle = NA,
+                   mtitle = "Box Map",
+                   mult = 1.5) {
+  var <- get.var(vnam, df)
+  bb <- boxbreaks(var)
+  tm_shape(df) +
+    tm_polygons() +
+    tm_shape(df) +
+    tm_fill(vnam, title = legtitle,
+            breaks = bb,
+            palette = "Blues",
+            labels = c("lower outlier",
+                       "< 25%",
+                       "25% - 50%",
+                       "50% - 75%",
+                       "> 75%",
+                       "upper outlier")) +
+    tm_borders() +
+    tm_layout(main.title = mtitle,
+              title.position = c("left", "top"))
+}
+```
+
+::: panel-tabset
+## The Plot
+```{r}
+#| echo: false
+tmap_mode("plot")
+boxmap("wp_nonfunctional", NGA_wp)
+```
+## The Code
+```{r}
+#| eval: false
+tmap_mode("plot")
+boxmap("wp_nonfunctional", NGA_wp)
+```
+:::

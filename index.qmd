@@ -10,7 +10,7 @@ Use the cards below or the menu at the top to explore.
 
 ```{=html}
 <div class="home-grid">
-  <a class="home-card" href="Hands-on_Ex/Hands-on_Ex08/Hands-on_Ex08.html">
+  <a class="home-card" href="Hands-on_Ex/Hands-on_Ex09/Hands-on_Ex09.html">
     <h3>Hands-on Exercises</h3>
     <p>Weekly practice working through each visual analytics technique, from ggplot2 basics to networks, text, and time series.</p>
   </a>
