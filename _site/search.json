@@ -595,6 +595,118 @@
     "text": "4.3 Funnel Plot with ggplot2\n\n4.3.1 Computing Derived Fields\n\ndf &lt;- covid19 %&gt;%\n  mutate(rate = Death / Positive) %&gt;%\n  mutate(rate.se = sqrt((rate*(1-rate)) / (Positive))) %&gt;%\n  filter(rate &gt; 0)\n\nfit.mean &lt;- weighted.mean(df$rate, 1/df$rate.se^2)\n\n\n\n4.3.2 Computing Confidence Interval Limits\n\nnumber.seq &lt;- seq(1, max(df$Positive), 1)\nnumber.ll95 &lt;- fit.mean - 1.96 * sqrt((fit.mean*(1-fit.mean)) / (number.seq)) \nnumber.ul95 &lt;- fit.mean + 1.96 * sqrt((fit.mean*(1-fit.mean)) / (number.seq)) \nnumber.ll999 &lt;- fit.mean - 3.29 * sqrt((fit.mean*(1-fit.mean)) / (number.seq)) \nnumber.ul999 &lt;- fit.mean + 3.29 * sqrt((fit.mean*(1-fit.mean)) / (number.seq)) \ndfCI &lt;- data.frame(number.ll95, number.ul95, number.ll999, \n                   number.ul999, number.seq, fit.mean)\n\n\n\n4.3.3 Static Funnel Plot\n\nThe PlotThe Code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\np &lt;- ggplot(df, aes(x = Positive, y = rate)) +\n  geom_point(aes(label=`Sub-district`), \n             alpha=0.4) +\n  geom_line(data = dfCI, \n            aes(x = number.seq, y = number.ll95), \n            size = 0.4, colour = \"grey40\", linetype = \"dashed\") +\n  geom_line(data = dfCI, \n            aes(x = number.seq, y = number.ul95), \n            size = 0.4, colour = \"grey40\", linetype = \"dashed\") +\n  geom_line(data = dfCI, \n            aes(x = number.seq, y = number.ll999), \n            size = 0.4, colour = \"grey40\") +\n  geom_line(data = dfCI, \n            aes(x = number.seq, y = number.ul999), \n            size = 0.4, colour = \"grey40\") +\n  geom_hline(data = dfCI, \n             aes(yintercept = fit.mean), \n             size = 0.4, colour = \"grey40\") +\n  coord_cartesian(ylim=c(0,0.05)) +\n  annotate(\"text\", x = 1, y = -0.13, label = \"95%\", size = 3, colour = \"grey40\") + \n  annotate(\"text\", x = 4.5, y = -0.18, label = \"99%\", size = 3, colour = \"grey40\") + \n  ggtitle(\"Cumulative Fatality Rate by Cumulative Number of COVID-19 Cases\") +\n  xlab(\"Cumulative Number of COVID-19 Cases\") + \n  ylab(\"Cumulative Fatality Rate\") +\n  theme_light() +\n  theme(plot.title = element_text(size=12),\n        legend.position = c(0.91,0.85), \n        legend.title = element_text(size=7),\n        legend.text = element_text(size=7),\n        legend.background = element_rect(colour = \"grey60\", linetype = \"dotted\"),\n        legend.key.height = unit(0.3, \"cm\"))\np\n\n\n\n\n\n\n4.3.4 Interactive Funnel Plot\n\nThe PlotThe Code\n\n\n\n\n\n\n\n\n\n\n\nfp_ggplotly &lt;- ggplotly(p,\n  tooltip = c(\"label\", \n              \"x\", \n              \"y\"))\nfp_ggplotly"
   },
   {
+    "objectID": "Hands-on_Ex/Hands-on_Ex10/Hands-on_Ex10.html",
+    "href": "Hands-on_Ex/Hands-on_Ex10/Hands-on_Ex10.html",
+    "title": "Hands-on Exercise 10",
+    "section": "",
+    "text": "In this hands-on exercise we learn to design the building blocks of an information dashboard in R. We cover three things:\n\nbullet charts and sparklines drawn with ggplot2\nstatic dashboard tables built with gt and gtExtras\ninteractive dashboard tables built with reactable and reactablefmtr\n\nA dashboard packs a lot of numbers into a small space, so the design principle throughout is restraint. We use plain backgrounds, a single highlight colour for the value that matters, and grey for everything that is context."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex10/Hands-on_Ex10.html#installing-and-loading-packages",
+    "href": "Hands-on_Ex/Hands-on_Ex10/Hands-on_Ex10.html#installing-and-loading-packages",
+    "title": "Hands-on Exercise 10",
+    "section": "2.1 Installing and Loading Packages",
+    "text": "2.1 Installing and Loading Packages\n\npacman::p_load(lubridate, ggthemes, reactable,\n               reactablefmtr, gt, gtExtras, tidyverse)\n\nThe interactive sparklines in the last section need the dataui package, which lives on GitHub rather than CRAN. Install it once with the line below, then it loads with the others.\n\nremotes::install_github(\"timelyportfolio/dataui\")\n\n\nlibrary(dataui)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex10/Hands-on_Ex10.html#preparing-the-data",
+    "href": "Hands-on_Ex/Hands-on_Ex10/Hands-on_Ex10.html#preparing-the-data",
+    "title": "Hands-on Exercise 10",
+    "section": "5.1 Preparing the Data",
+    "text": "5.1 Preparing the Data\n\nsales_report &lt;- coffeechain %&gt;%\n  filter(Date &gt;= \"2013-01-01\") %&gt;%\n  mutate(Month = month(Date)) %&gt;%\n  group_by(Month, Product) %&gt;%\n  summarise(Sales = sum(Sales)) %&gt;%\n  ungroup() %&gt;%\n  select(Month, Product, Sales)\n\nWe mark the lowest month, the highest month, and the final month so each sparkline can be annotated.\n\nmins &lt;- group_by(sales_report, Product) %&gt;%\n  slice(which.min(Sales))\nmaxs &lt;- group_by(sales_report, Product) %&gt;%\n  slice(which.max(Sales))\nends &lt;- group_by(sales_report, Product) %&gt;%\n  filter(Month == max(Month))\n\nWe also compute the 25th and 75th percentiles so we can shade the interquartile band behind each line.\n\nquarts &lt;- sales_report %&gt;%\n  group_by(Product) %&gt;%\n  summarise(quart1 = quantile(Sales, 0.25),\n            quart2 = quantile(Sales, 0.75)) %&gt;%\n  right_join(sales_report)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex10/Hands-on_Ex10.html#drawing-the-sparklines",
+    "href": "Hands-on_Ex/Hands-on_Ex10/Hands-on_Ex10.html#drawing-the-sparklines",
+    "title": "Hands-on Exercise 10",
+    "section": "5.2 Drawing the Sparklines",
+    "text": "5.2 Drawing the Sparklines\nThe grey band shows the normal range, the line shows the trend, the red point marks the lowest month and the blue point the highest. The Tufte theme strips away everything that is not data.\n\nThe PlotThe Code\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(sales_report, aes(x = Month, y = Sales)) +\n  facet_grid(Product ~ ., scales = \"free_y\") +\n  geom_ribbon(data = quarts, aes(ymin = quart1, max = quart2),\n              fill = 'grey90') +\n  geom_line(size = 0.3) +\n  geom_point(data = mins, col = 'red') +\n  geom_point(data = maxs, col = 'blue') +\n  geom_text(data = mins, aes(label = Sales), vjust = -1) +\n  geom_text(data = maxs, aes(label = Sales), vjust = 2.5) +\n  geom_text(data = ends, aes(label = Sales), hjust = 0, nudge_x = 0.5) +\n  geom_text(data = ends, aes(label = Product), hjust = 0, nudge_x = 1.0) +\n  expand_limits(x = max(sales_report$Month) +\n                  (0.25 * (max(sales_report$Month) - min(sales_report$Month)))) +\n  scale_x_continuous(breaks = seq(1, 12, 1)) +\n  scale_y_continuous(expand = c(0.1, 0)) +\n  theme_tufte(base_size = 3, base_family = \"Helvetica\") +\n  theme(axis.title = element_blank(),\n        axis.text.y = element_blank(),\n        axis.ticks = element_blank(),\n        strip.text = element_blank())"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex10/Hands-on_Ex10.html#simple-bullet-chart-table",
+    "href": "Hands-on_Ex/Hands-on_Ex10/Hands-on_Ex10.html#simple-bullet-chart-table",
+    "title": "Hands-on Exercise 10",
+    "section": "6.1 Simple Bullet Chart Table",
+    "text": "6.1 Simple Bullet Chart Table\ngt_plt_bullet() draws an inline bullet chart in each row, comparing the current value against its target. The light blue bar is the actual value, the black line the target.\n\nproduct %&gt;%\n  gt::gt() %&gt;%\n  gt_plt_bullet(column = current,\n                target = target,\n                width = 60,\n                palette = c(\"lightblue\", \"black\")) %&gt;%\n  gt_theme_538()\n\n\n\n\n\n\n\n\n\n\n\nProduct\ncurrent\n\n\n\n\nAmaretto\n\n    \n\n\n\nCaffe Latte\n\n    \n\n\n\nCaffe Mocha\n\n    \n\n\n\nChamomile\n\n    \n\n\n\nColombian\n\n    \n\n\n\nDarjeeling\n\n    \n\n\n\nDecaf Espresso\n\n    \n\n\n\nDecaf Irish Cream\n\n    \n\n\n\nEarl Grey\n\n    \n\n\n\nGreen Tea\n\n    \n\n\n\nLemon\n\n    \n\n\n\nMint\n\n    \n\n\n\nRegular Espresso"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex10/Hands-on_Ex10.html#preparing-the-monthly-report",
+    "href": "Hands-on_Ex/Hands-on_Ex10/Hands-on_Ex10.html#preparing-the-monthly-report",
+    "title": "Hands-on Exercise 10",
+    "section": "6.2 Preparing the Monthly Report",
+    "text": "6.2 Preparing the Monthly Report\nFor sparklines in a table, gtExtras needs the monthly sales for each product collected into a list column.\n\nreport &lt;- coffeechain %&gt;%\n  mutate(Year = year(Date)) %&gt;%\n  filter(Year == \"2013\") %&gt;%\n  mutate(Month = month(Date,\n                       label = TRUE,\n                       abbr = TRUE)) %&gt;%\n  group_by(Product, Month) %&gt;%\n  summarise(Sales = sum(Sales)) %&gt;%\n  ungroup()"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex10/Hands-on_Ex10.html#sparkline-table",
+    "href": "Hands-on_Ex/Hands-on_Ex10/Hands-on_Ex10.html#sparkline-table",
+    "title": "Hands-on Exercise 10",
+    "section": "6.3 Sparkline Table",
+    "text": "6.3 Sparkline Table\ngt_plt_sparkline() turns each product’s list of monthly sales into an inline sparkline.\n\nreport %&gt;%\n  group_by(Product) %&gt;%\n  summarize('Monthly Sales' = list(Sales),\n            .groups = \"drop\") %&gt;%\n  gt() %&gt;%\n  gt_plt_sparkline('Monthly Sales',\n                   same_limit = FALSE)\n\n\n\n\n\n\n\n\n\n\n\nProduct\nMonthly Sales\n\n\n\n\nAmaretto\n\n    1.2K\n\n\n\nCaffe Latte\n\n    1.5K\n\n\n\nCaffe Mocha\n\n    3.7K\n\n\n\nChamomile\n\n    3.3K\n\n\n\nColombian\n\n    5.5K\n\n\n\nDarjeeling\n\n    3.0K\n\n\n\nDecaf Espresso\n\n    3.2K\n\n\n\nDecaf Irish Cream\n\n    2.7K\n\n\n\nEarl Grey\n\n    3.0K\n\n\n\nGreen Tea\n\n    1.5K\n\n\n\nLemon\n\n    4.4K\n\n\n\nMint\n\n    1.5K\n\n\n\nRegular Espresso\n\n    1.1K"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex10/Hands-on_Ex10.html#adding-summary-statistics",
+    "href": "Hands-on_Ex/Hands-on_Ex10/Hands-on_Ex10.html#adding-summary-statistics",
+    "title": "Hands-on Exercise 10",
+    "section": "6.4 Adding Summary Statistics",
+    "text": "6.4 Adding Summary Statistics\nWe can place summary numbers next to the sparkline. First the spark list column, then the min, max and average, then join them.\n\nspark &lt;- report %&gt;%\n  group_by(Product) %&gt;%\n  summarize('Monthly Sales' = list(Sales),\n            .groups = \"drop\")\n\n\nsales &lt;- report %&gt;%\n  group_by(Product) %&gt;%\n  summarise(\"Min\" = min(Sales, na.rm = T),\n            \"Max\" = max(Sales, na.rm = T),\n            \"Average\" = mean(Sales, na.rm = T))\n\n\nsales_data &lt;- left_join(sales, spark)\n\n\nsales_data %&gt;%\n  gt() %&gt;%\n  gt_plt_sparkline('Monthly Sales',\n                   same_limit = FALSE)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nProduct\nMin\nMax\nAverage\nMonthly Sales\n\n\n\n\nAmaretto\n1016\n1210\n1119.000\n\n    1.2K\n\n\n\nCaffe Latte\n1398\n1653\n1528.333\n\n    1.5K\n\n\n\nCaffe Mocha\n3322\n3828\n3613.917\n\n    3.7K\n\n\n\nChamomile\n2967\n3395\n3217.417\n\n    3.3K\n\n\n\nColombian\n5132\n5961\n5457.250\n\n    5.5K\n\n\n\nDarjeeling\n2926\n3281\n3112.667\n\n    3.0K\n\n\n\nDecaf Espresso\n3181\n3493\n3326.833\n\n    3.2K\n\n\n\nDecaf Irish Cream\n2463\n2901\n2648.250\n\n    2.7K\n\n\n\nEarl Grey\n2730\n3005\n2841.833\n\n    3.0K\n\n\n\nGreen Tea\n1339\n1476\n1398.750\n\n    1.5K\n\n\n\nLemon\n3851\n4418\n4080.833\n\n    4.4K\n\n\n\nMint\n1388\n1669\n1519.167\n\n    1.5K\n\n\n\nRegular Espresso\n890\n1218\n1023.417\n\n    1.1K"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex10/Hands-on_Ex10.html#combining-bullet-chart-and-sparklines",
+    "href": "Hands-on_Ex/Hands-on_Ex10/Hands-on_Ex10.html#combining-bullet-chart-and-sparklines",
+    "title": "Hands-on Exercise 10",
+    "section": "6.5 Combining Bullet Chart and Sparklines",
+    "text": "6.5 Combining Bullet Chart and Sparklines\nA full dashboard row can carry both the trend and the target comparison. We add the target and actual totals, then draw a sparkline and a bullet chart side by side.\n\nbullet &lt;- coffeechain %&gt;%\n  filter(Date &gt;= \"2013-01-01\") %&gt;%\n  group_by(`Product`) %&gt;%\n  summarise(`Target` = sum(`Budget Sales`),\n            `Actual` = sum(`Sales`)) %&gt;%\n  ungroup()\n\n\nsales_data &lt;- sales_data %&gt;%\n  left_join(bullet)\n\n\nsales_data %&gt;%\n  gt() %&gt;%\n  gt_plt_sparkline('Monthly Sales') %&gt;%\n  gt_plt_bullet(column = Actual,\n                target = Target,\n                width = 28,\n                palette = c(\"lightblue\", \"black\")) %&gt;%\n  gt_theme_538()\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nProduct\nMin\nMax\nAverage\nMonthly Sales\nActual\n\n\n\n\nAmaretto\n1016\n1210\n1119.000\n\n    1.2K\n\n\n    \n\n\n\nCaffe Latte\n1398\n1653\n1528.333\n\n    1.5K\n\n\n    \n\n\n\nCaffe Mocha\n3322\n3828\n3613.917\n\n    3.7K\n\n\n    \n\n\n\nChamomile\n2967\n3395\n3217.417\n\n    3.3K\n\n\n    \n\n\n\nColombian\n5132\n5961\n5457.250\n\n    5.5K\n\n\n    \n\n\n\nDarjeeling\n2926\n3281\n3112.667\n\n    3.0K\n\n\n    \n\n\n\nDecaf Espresso\n3181\n3493\n3326.833\n\n    3.2K\n\n\n    \n\n\n\nDecaf Irish Cream\n2463\n2901\n2648.250\n\n    2.7K\n\n\n    \n\n\n\nEarl Grey\n2730\n3005\n2841.833\n\n    3.0K\n\n\n    \n\n\n\nGreen Tea\n1339\n1476\n1398.750\n\n    1.5K\n\n\n    \n\n\n\nLemon\n3851\n4418\n4080.833\n\n    4.4K\n\n\n    \n\n\n\nMint\n1388\n1669\n1519.167\n\n    1.5K\n\n\n    \n\n\n\nRegular Espresso\n890\n1218\n1023.417\n\n    1.1K"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex10/Hands-on_Ex10.html#preparing-the-list-column",
+    "href": "Hands-on_Ex/Hands-on_Ex10/Hands-on_Ex10.html#preparing-the-list-column",
+    "title": "Hands-on Exercise 10",
+    "section": "7.1 Preparing the List Column",
+    "text": "7.1 Preparing the List Column\nLike gtExtras, reactablefmtr needs the monthly sales as a list column.\n\nreport &lt;- report %&gt;%\n  group_by(Product) %&gt;%\n  summarize(`Monthly Sales` = list(Sales))"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex10/Hands-on_Ex10.html#basic-interactive-sparklines",
+    "href": "Hands-on_Ex/Hands-on_Ex10/Hands-on_Ex10.html#basic-interactive-sparklines",
+    "title": "Hands-on Exercise 10",
+    "section": "7.2 Basic Interactive Sparklines",
+    "text": "7.2 Basic Interactive Sparklines\nreact_sparkline() draws an interactive sparkline in each row. Hovering over a line reveals the underlying values.\n\nreactable(\n  report,\n  columns = list(\n    Product = colDef(maxWidth = 200),\n    `Monthly Sales` = colDef(\n      cell = react_sparkline(report)\n    )\n  )\n)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex10/Hands-on_Ex10.html#showing-all-rows",
+    "href": "Hands-on_Ex/Hands-on_Ex10/Hands-on_Ex10.html#showing-all-rows",
+    "title": "Hands-on Exercise 10",
+    "section": "7.3 Showing All Rows",
+    "text": "7.3 Showing All Rows\nBy default the table pages at 10 rows. Setting defaultPageSize to 13 shows every product on one page.\n\nreactable(\n  report,\n  defaultPageSize = 13,\n  columns = list(\n    Product = colDef(maxWidth = 200),\n    `Monthly Sales` = colDef(\n      cell = react_sparkline(report)\n    )\n  )\n)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex10/Hands-on_Ex10.html#adding-points-and-labels",
+    "href": "Hands-on_Ex/Hands-on_Ex10/Hands-on_Ex10.html#adding-points-and-labels",
+    "title": "Hands-on Exercise 10",
+    "section": "7.4 Adding Points and Labels",
+    "text": "7.4 Adding Points and Labels\nhighlight_points marks the lowest and highest months in red and blue, and labels prints the first and last values.\n\nreactable(\n  report,\n  defaultPageSize = 13,\n  columns = list(\n    Product = colDef(maxWidth = 200),\n    `Monthly Sales` = colDef(\n      cell = react_sparkline(\n        report,\n        highlight_points = highlight_points(\n          min = \"red\", max = \"blue\"),\n        labels = c(\"first\", \"last\")\n      )\n    )\n  )\n)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex10/Hands-on_Ex10.html#adding-a-reference-line",
+    "href": "Hands-on_Ex/Hands-on_Ex10/Hands-on_Ex10.html#adding-a-reference-line",
+    "title": "Hands-on Exercise 10",
+    "section": "7.5 Adding a Reference Line",
+    "text": "7.5 Adding a Reference Line\nstatline draws a reference line, here the mean of each product’s monthly sales.\n\nreactable(\n  report,\n  defaultPageSize = 13,\n  columns = list(\n    Product = colDef(maxWidth = 200),\n    `Monthly Sales` = colDef(\n      cell = react_sparkline(\n        report,\n        highlight_points = highlight_points(\n          min = \"red\", max = \"blue\"),\n        statline = \"mean\"\n      )\n    )\n  )\n)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex10/Hands-on_Ex10.html#adding-a-bandline",
+    "href": "Hands-on_Ex/Hands-on_Ex10/Hands-on_Ex10.html#adding-a-bandline",
+    "title": "Hands-on Exercise 10",
+    "section": "7.6 Adding a Bandline",
+    "text": "7.6 Adding a Bandline\nInstead of a reference line, a band can show the interquartile range behind the sparkline.\n\nreactable(\n  report,\n  defaultPageSize = 13,\n  columns = list(\n    Product = colDef(maxWidth = 200),\n    `Monthly Sales` = colDef(\n      cell = react_sparkline(\n        report,\n        highlight_points = highlight_points(\n          min = \"red\", max = \"blue\"),\n        line_width = 1,\n        bandline = \"innerquartiles\",\n        bandline_color = \"green\"\n      )\n    )\n  )\n)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex10/Hands-on_Ex10.html#sparkbars-instead-of-sparklines",
+    "href": "Hands-on_Ex/Hands-on_Ex10/Hands-on_Ex10.html#sparkbars-instead-of-sparklines",
+    "title": "Hands-on Exercise 10",
+    "section": "7.7 Sparkbars Instead of Sparklines",
+    "text": "7.7 Sparkbars Instead of Sparklines\nThe same data can be shown as small bars rather than a line, using react_sparkbar().\n\nreactable(\n  report,\n  defaultPageSize = 13,\n  columns = list(\n    Product = colDef(maxWidth = 200),\n    `Monthly Sales` = colDef(\n      cell = react_sparkbar(\n        report,\n        highlight_bars = highlight_bars(\n          min = \"red\", max = \"blue\"),\n        bandline = \"innerquartiles\",\n        statline = \"mean\")\n    )\n  )\n)"
+  },
+  {
     "objectID": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html",
     "href": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html",
     "title": "Hands-on Exercise 3",
